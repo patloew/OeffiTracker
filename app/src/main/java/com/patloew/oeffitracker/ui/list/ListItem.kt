@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,7 +64,7 @@ fun TripRow(trip: Trip?) {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
                     }
-                    .padding(bottom = 0.5.dp),
+                    .padding(bottom = 1.dp),
                 tint = MaterialTheme.colors.primary
             )
 
@@ -99,15 +100,14 @@ fun TripRow(trip: Trip?) {
             )
 
             Icon(
-                Icons.Filled.Place,
+                painterResource(id = R.drawable.ic_flag),
                 stringResource(id = R.string.accessibility_icon_place),
                 Modifier
                     .constrainAs(endIcon) {
                         start.linkTo(startIcon.start)
                         top.linkTo(line.bottom)
                         bottom.linkTo(parent.bottom)
-                    }
-                    .padding(top = 0.5.dp),
+                    },
                 tint = MaterialTheme.colors.primary
             )
 
@@ -167,7 +167,7 @@ fun TripRow(trip: Trip?) {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
                     }
-                    .padding(bottom = 0.5.dp),
+                    .padding(bottom = 1.dp),
                 tint = MaterialTheme.colors.primary
             )
 
@@ -185,15 +185,14 @@ fun TripRow(trip: Trip?) {
             )
 
             Icon(
-                Icons.Filled.Place,
+                painterResource(id = R.drawable.ic_flag),
                 stringResource(id = R.string.accessibility_icon_place),
                 Modifier
                     .constrainAs(endIcon) {
                         start.linkTo(startIcon.start)
                         top.linkTo(line.bottom)
                         bottom.linkTo(parent.bottom)
-                    }
-                    .padding(top = 0.5.dp),
+                    },
                 tint = MaterialTheme.colors.primary
             )
         }

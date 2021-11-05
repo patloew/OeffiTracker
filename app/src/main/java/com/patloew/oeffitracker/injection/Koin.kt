@@ -3,6 +3,7 @@ package com.patloew.oeffitracker.injection
 import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
+import com.patloew.oeffitracker.ui.create.CreateViewModel
 import com.patloew.oeffitracker.ui.list.ListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -30,4 +31,5 @@ val appModule = module {
     single { get<AppDatabase>().tripDao() }
 
     viewModel { ListViewModel(get()) }
+    viewModel { CreateViewModel(get()) }
 }

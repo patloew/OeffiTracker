@@ -2,4 +2,11 @@
     <string name="app_name">Public Transport Tracker</string>
     <string name="accessibility_icon_place">Place</string>
     <string name="accessibility_icon_add">Add</string>
+    <string name="toolbar_title_create">Create trip</string>
+    <string name="label_start_city">Departure</string>
+    <string name="label_end_city">Destination</string>
+    <string name="label_fare">Fare</string>
+    <string name="action_back">Back</string>
+    <string name="label_date">Date</string>
+    <string name="button_add">Add</string>
 </resources>

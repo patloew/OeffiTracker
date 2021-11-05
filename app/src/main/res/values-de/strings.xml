@@ -3,4 +3,11 @@
     <string name="app_name">Öffi Tracker</string>
     <string name="accessibility_icon_place">Ort</string>
     <string name="accessibility_icon_add">Hinzufügen</string>
+    <string name="toolbar_title_create">Fahrt hinzufügen</string>
+    <string name="label_start_city">Start</string>
+    <string name="label_end_city">Ziel</string>
+    <string name="label_fare">Fahrpreis</string>
+    <string name="action_back">Zurück</string>
+    <string name="label_date">Datum</string>
+    <string name="button_add">Hinzufügen</string>
 </resources>

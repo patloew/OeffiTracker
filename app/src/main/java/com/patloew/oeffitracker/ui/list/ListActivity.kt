@@ -2,12 +2,16 @@ package com.patloew.oeffitracker.ui.list
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
@@ -21,6 +25,7 @@ import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.PreviewTheme
+import com.patloew.oeffitracker.ui.create.CreateActivity
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -52,23 +57,27 @@ class ListActivity : ComponentActivity() {
 
         setContent {
             OeffiTrackerTheme {
-                MainContent(viewModel.trips, viewModel::addTrips)
+                MainContent(viewModel.trips)
             }
         }
     }
 }
 
 @Composable
-fun MainContent(trips: Flow<PagingData<Trip>>, onFabClick: () -> Unit) {
+fun MainContent(trips: Flow<PagingData<Trip>>) {
+    val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val listState = rememberLazyListState()
+    val createTripLauncher = rememberLauncherForActivityResult(contract = CreateActivity.Contract) { created ->
+        if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
+    }
 
-    // A surface container using the 'background' color from the theme
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { TopAppBar(title = { Text(stringResource(id = R.string.app_name)) }) },
             floatingActionButton = {
-                FloatingActionButton(onClick = onFabClick) {
+                FloatingActionButton(onClick = { createTripLauncher.launch(Unit) }) {
                     Icon(
                         Icons.Filled.Add,
                         stringResource(id = R.string.accessibility_icon_add),
@@ -76,15 +85,15 @@ fun MainContent(trips: Flow<PagingData<Trip>>, onFabClick: () -> Unit) {
                     )
                 }
             },
-            content = { TripList(trips) }
+            content = { TripList(trips, listState) }
         )
     }
 }
 
 @Composable
-fun TripList(trips: Flow<PagingData<Trip>>) {
+fun TripList(trips: Flow<PagingData<Trip>>, listState: LazyListState) {
     val lazyTripItems = trips.collectAsLazyPagingItems()
-    LazyColumn {
+    LazyColumn(state = listState) {
         items(items = lazyTripItems, key = { it.id }) { trip ->
             TripRow(trip)
             Divider()
@@ -104,7 +113,8 @@ fun ListPreview() {
                         Trip("Linz", "Graz", 1500, LocalDate.now(), 0)
                     )
                 )
-            )
+            ),
+            rememberLazyListState()
         )
     }
 }
