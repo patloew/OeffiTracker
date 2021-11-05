@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.PreviewTheme
@@ -64,10 +66,14 @@ fun MainContent(trips: Flow<PagingData<Trip>>, onFabClick: () -> Unit) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = { TopAppBar(title = { Text("Öffi Tracker") }) },
+            topBar = { TopAppBar(title = { Text(stringResource(id = R.string.app_name)) }) },
             floatingActionButton = {
                 FloatingActionButton(onClick = onFabClick) {
-                    Icon(Icons.Filled.Add, "Add")
+                    Icon(
+                        Icons.Filled.Add,
+                        stringResource(id = R.string.accessibility_icon_add),
+                        tint = MaterialTheme.colors.onSecondary
+                    )
                 }
             },
             content = { TripList(trips) }
@@ -113,7 +119,24 @@ class ListViewModel(
         viewModelScope.launch {
             val random = SecureRandom()
             tripDao.update(Trip("Wien", "Linz", random.nextInt(10000), LocalDate.now(), System.currentTimeMillis()))
-            tripDao.update(Trip("Linz", "Graz", random.nextInt(10000), LocalDate.now(), System.currentTimeMillis()))
+            tripDao.update(
+                Trip(
+                    "Linz",
+                    "St. Pölten",
+                    random.nextInt(10000),
+                    LocalDate.now(),
+                    System.currentTimeMillis()
+                )
+            )
+            tripDao.update(
+                Trip(
+                    "Vöcklabruck",
+                    "Bad Hofgastein",
+                    random.nextInt(10000),
+                    LocalDate.now(),
+                    System.currentTimeMillis()
+                )
+            )
         }
     }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Öffi Tracker</string>
+    <string name="accessibility_icon_place">Ort</string>
+    <string name="accessibility_icon_add">Hinzufügen</string>
+</resources>

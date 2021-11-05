@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Oeffi Tracker</string>
+    <string name="app_name">Public Transport Tracker</string>
+    <string name="accessibility_icon_place">Place</string>
+    <string name="accessibility_icon_add">Add</string>
 </resources>
