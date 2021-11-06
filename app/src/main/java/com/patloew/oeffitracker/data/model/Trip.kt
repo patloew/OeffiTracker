@@ -23,11 +23,11 @@ import java.time.LocalDate
 data class Trip(
     val startCity: String,
     val endCity: String,
-    val price: Int,
+    val fare: Int,
     val date: LocalDate,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Int = 0
 ) {
     @Ignore
-    val floatPrice: Float = price / 100f
+    val floatFare: Float = fare / 100f
 }

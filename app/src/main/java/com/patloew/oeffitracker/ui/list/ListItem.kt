@@ -37,10 +37,9 @@ import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
-import java.text.DecimalFormat
+import com.patloew.oeffitracker.ui.dateFormat
+import com.patloew.oeffitracker.ui.priceFormat
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -55,9 +54,6 @@ import java.time.format.FormatStyle
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License. */
-
-val priceFormat = DecimalFormat("0.00 €")
-val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
 fun TripRow(
@@ -154,7 +150,7 @@ fun TripRow(
                     top.linkTo(parent.top)
                     bottom.linkTo(date.top)
                 },
-                text = priceFormat.format(trip.floatPrice),
+                text = priceFormat.format(trip.floatFare),
                 maxLines = 1,
                 style = MaterialTheme.typography.body1
             )

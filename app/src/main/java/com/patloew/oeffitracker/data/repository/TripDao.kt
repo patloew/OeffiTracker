@@ -1,8 +1,12 @@
 package com.patloew.oeffitracker.data.repository
 
 import androidx.paging.PagingSource
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Trip
+import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -28,6 +32,9 @@ interface TripDao {
 
     @Query("DELETE FROM trip WHERE id = :tripId")
     suspend fun deleteById(tripId: Int)
+
+    @Query("SELECT SUM(fare) FROM trip WHERE date BETWEEN :startDate and :endDate")
+    fun getSumOfFaresBetween(startDate: String, endDate: String): Flow<Int?>
 
     @Query("SELECT * FROM trip ORDER BY createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>

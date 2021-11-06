@@ -17,7 +17,7 @@ import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
-import com.patloew.oeffitracker.ui.list.dateFormat
+import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -118,7 +118,7 @@ class CreateViewModel(
                 Trip(
                     startCity = startCity.value,
                     endCity = endCity.value,
-                    price = fare.value!!,
+                    fare = fare.value!!,
                     date = date.value,
                     createdTimestamp = System.currentTimeMillis()
                 )

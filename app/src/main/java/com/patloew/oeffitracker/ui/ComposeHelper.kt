@@ -5,6 +5,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
+import java.text.DecimalFormat
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -19,6 +22,10 @@ import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License. */
+
+val percentageFormat = DecimalFormat("0.0%")
+val priceFormat = DecimalFormat("0.00 €")
+val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
 fun PreviewTheme(content: @Composable () -> Unit) {

@@ -15,4 +15,5 @@
     <string name="alert_delete_text">Willst du die Fahrt von \"%s\" nach \"%s\" am %s löschen?</string>
     <string name="action_cancel">Abbrechen</string>
     <string name="action_duplicate_for_today">Heute duplizieren</string>
+    <string name="progress_description">%s von %s</string>
 </resources>
