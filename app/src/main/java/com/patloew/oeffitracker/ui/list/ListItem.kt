@@ -7,15 +7,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -53,7 +60,10 @@ val priceFormat = DecimalFormat("0.00 €")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
-fun TripRow(trip: Trip?) {
+fun TripRow(
+    trip: Trip?,
+    onDelete: (id: Int) -> Unit
+) {
     if (trip != null) {
         ConstraintLayout(
             modifier = Modifier
@@ -61,6 +71,8 @@ fun TripRow(trip: Trip?) {
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
+            val showMoreMenu = remember { mutableStateOf(false) }
+            val showDeleteDialog = remember { mutableStateOf(false) }
 
             Icon(
                 Icons.Filled.Place,
@@ -158,18 +170,54 @@ fun TripRow(trip: Trip?) {
                 style = MaterialTheme.typography.caption
             )
 
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.constrainAs(moreIcon) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
+            Box(modifier = Modifier.constrainAs(moreIcon) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }) {
+                IconButton(onClick = { showMoreMenu.value = true }) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        stringResource(id = R.string.accessibility_icon_place),
+                        tint = MaterialTheme.colors.primary
+                    )
                 }
-            ) {
-                Icon(
-                    Icons.Filled.MoreVert,
-                    stringResource(id = R.string.accessibility_icon_place),
-                    tint = MaterialTheme.colors.primary
+
+                if (showMoreMenu.value) {
+                    DropdownMenu(expanded = true, onDismissRequest = { showMoreMenu.value = false }) {
+                        DropdownMenuItem(onClick = {
+                            showMoreMenu.value = false
+                            showDeleteDialog.value = true
+                        }) { Text(stringResource(id = R.string.action_delete)) }
+                    }
+                }
+            }
+
+            if (showDeleteDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog.value = false },
+                    title = { Text(stringResource(id = R.string.alert_delete_title)) },
+                    text = {
+                        Text(
+                            stringResource(
+                                id = R.string.alert_delete_text,
+                                trip.startCity,
+                                trip.endCity,
+                                dateFormat.format(trip.date)
+                            )
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = { onDelete(trip.id) },
+                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error)
+                        ) { Text(stringResource(id = R.string.action_delete)) }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showDeleteDialog.value = false
+                        }) { Text(stringResource(id = R.string.action_cancel)) }
+                    },
                 )
             }
 
@@ -227,9 +275,9 @@ fun TripRow(trip: Trip?) {
 fun TripRowPreview() {
     PreviewTheme {
         Column {
-            TripRow(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()))
+            TripRow(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { })
             Divider()
-            TripRow(trip = null)
+            TripRow(trip = null, { })
             Divider()
         }
     }

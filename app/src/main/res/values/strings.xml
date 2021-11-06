@@ -9,4 +9,8 @@
     <string name="action_back">Back</string>
     <string name="label_date">Date</string>
     <string name="button_add">Add</string>
+    <string name="action_delete">Delete</string>
+    <string name="alert_delete_title">Delete trip</string>
+    <string name="alert_delete_text">Do you want to delete trip from \"%s\" to \"%s\" on %s?</string>
+    <string name="action_cancel">Cancel</string>
 </resources>

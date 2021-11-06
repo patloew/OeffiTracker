@@ -46,7 +46,7 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun ListScreen(trips: Flow<PagingData<Trip>>) {
+fun ListScreen(viewModel: ListViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
@@ -67,17 +67,27 @@ fun ListScreen(trips: Flow<PagingData<Trip>>) {
                     )
                 }
             },
-            content = { TripList(trips, listState) }
+            content = {
+                TripList(
+                    onDelete = viewModel::onDelete,
+                    viewModel.trips,
+                    listState
+                )
+            }
         )
     }
 }
 
 @Composable
-fun TripList(trips: Flow<PagingData<Trip>>, listState: LazyListState) {
+fun TripList(
+    onDelete: (id: Int) -> Unit,
+    trips: Flow<PagingData<Trip>>,
+    listState: LazyListState
+) {
     val lazyTripItems = trips.collectAsLazyPagingItems()
     LazyColumn(state = listState) {
         items(items = lazyTripItems, key = { it.id }) { trip ->
-            TripRow(trip)
+            TripRow(trip, onDelete)
             Divider()
         }
     }
@@ -88,6 +98,7 @@ fun TripList(trips: Flow<PagingData<Trip>>, listState: LazyListState) {
 fun ListPreview() {
     PreviewTheme {
         TripList(
+            onDelete = { },
             trips = flowOf(
                 PagingData.from(
                     listOf(

@@ -23,8 +23,8 @@ interface TripDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(trip: Trip)
 
-    @Delete
-    suspend fun delete(trip: Trip)
+    @Query("DELETE FROM trip WHERE id = :tripId")
+    suspend fun deleteById(tripId: Int)
 
     @Query("SELECT * FROM trip ORDER BY createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>

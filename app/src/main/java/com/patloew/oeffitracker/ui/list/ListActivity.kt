@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -11,6 +12,7 @@ import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /* Copyright 2021 Patrick Löwenstein
@@ -36,7 +38,7 @@ class ListActivity : ComponentActivity() {
 
         setContent {
             OeffiTrackerTheme {
-                ListScreen(viewModel.trips)
+                ListScreen(viewModel)
             }
         }
     }
@@ -47,5 +49,11 @@ class ListViewModel(
 ) : ViewModel() {
 
     val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
+
+    fun onDelete(id: Int) {
+        viewModelScope.launch {
+            tripDao.deleteById(id)
+        }
+    }
 
 }
