@@ -61,7 +61,6 @@ fun TripRow(trip: Trip?) {
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
-            val startBarrier = createStartBarrier(date, price)
 
             Icon(
                 Icons.Filled.Place,
@@ -138,7 +137,6 @@ fun TripRow(trip: Trip?) {
 
             Text(
                 modifier = Modifier.constrainAs(price) {
-                    start.linkTo(startBarrier)
                     end.linkTo(moreIcon.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(date.top)
@@ -150,7 +148,6 @@ fun TripRow(trip: Trip?) {
 
             Text(
                 modifier = Modifier.constrainAs(date) {
-                    start.linkTo(startBarrier)
                     end.linkTo(moreIcon.start)
                     top.linkTo(price.bottom)
                     bottom.linkTo(parent.bottom)
