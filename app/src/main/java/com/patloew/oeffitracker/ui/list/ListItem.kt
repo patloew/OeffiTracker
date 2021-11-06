@@ -49,7 +49,7 @@ import java.time.format.FormatStyle
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-private val priceFormat = DecimalFormat("0.00 €")
+val priceFormat = DecimalFormat("0.00 €")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable

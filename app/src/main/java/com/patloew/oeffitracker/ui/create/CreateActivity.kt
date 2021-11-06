@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.security.SecureRandom
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -107,6 +106,9 @@ class CreateViewModel(
     val date: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
     val dateString: Flow<String> = date.map { dateFormat.format(it) }
 
+    private val fare: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val initialFare = ""
+
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val finishEvent: Flow<Unit> = finishChannel.receiveAsFlow()
 
@@ -116,12 +118,33 @@ class CreateViewModel(
                 Trip(
                     startCity = startCity.value,
                     endCity = endCity.value,
-                    price = SecureRandom().nextInt(10000),
+                    price = fare.value!!,
                     date = date.value,
                     createdTimestamp = System.currentTimeMillis()
                 )
             )
             finishChannel.send(Unit)
+        }
+    }
+
+    /**
+     * Parses and validates fare and sets it if valid.
+     *
+     * @return true if fare is valid
+     */
+    fun setFare(fareString: String): Boolean {
+        val newFare = fareString.replace(',', '.')
+        return when {
+            newFare.isEmpty() -> {
+                fare.value = null
+                true
+            }
+            newFare.matches(Regex("^\\d+(\\.\\d{0,2})?$")) ->
+                newFare.toFloatOrNull()?.let { newFareFloat ->
+                    fare.value = newFareFloat.times(100).toInt()
+                    true
+                } ?: false
+            else -> false
         }
     }
 }

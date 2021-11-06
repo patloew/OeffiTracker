@@ -37,7 +37,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -88,7 +87,17 @@ fun CreateScreen(
                     }
                 )
             },
-            content = { CreateContent(onDateClick, onCreateClick, viewModel.startCity, viewModel.endCity, viewModel.dateString) }
+            content = {
+                CreateContent(
+                    onDateClick,
+                    onCreateClick,
+                    viewModel::setFare,
+                    viewModel.startCity,
+                    viewModel.endCity,
+                    viewModel.dateString,
+                    viewModel.initialFare
+                )
+            }
         )
     }
 }
@@ -97,9 +106,11 @@ fun CreateScreen(
 fun CreateContent(
     onDateClick: () -> Unit,
     onCreateClick: () -> Unit,
+    setFare: (String) -> Boolean,
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
-    dateFlow: Flow<String>
+    dateFlow: Flow<String>,
+    initialFare: String
 ) {
     Column(
         modifier = Modifier
@@ -107,7 +118,7 @@ fun CreateContent(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        var fare by remember { mutableStateOf(TextFieldValue("0")) }
+        var fare by remember { mutableStateOf(initialFare) }
         val endCityFocusRequester = FocusRequester()
         val fareFocusRequester = FocusRequester()
 
@@ -152,7 +163,7 @@ fun CreateContent(
                 .padding(top = 16.dp)
                 .focusRequester(fareFocusRequester),
             value = fare,
-            onValueChange = { fare = it },
+            onValueChange = { newValue -> if (setFare(newValue)) fare = newValue },
             maxLines = 1,
             leadingIcon = {
                 Icon(
@@ -202,6 +213,14 @@ fun CreateContent(
 @Composable
 fun CreatePreview() {
     PreviewTheme {
-        CreateContent({ }, { }, MutableStateFlow(""), MutableStateFlow(""), flowOf(""))
+        CreateContent(
+            { },
+            { },
+            { true },
+            MutableStateFlow(""),
+            MutableStateFlow(""),
+            flowOf(""),
+            ""
+        )
     }
 }
