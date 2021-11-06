@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -28,10 +29,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
@@ -97,14 +104,15 @@ fun CreateContent(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        var fare by remember { mutableStateOf(TextFieldValue()) }
+        var fare by remember { mutableStateOf(TextFieldValue("0")) }
         var date by remember { mutableStateOf(TextFieldValue()) }
+        val endCityFocusRequester = FocusRequester()
+        val fareFocusRequester = FocusRequester()
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = startCityStateFlow.collectAsState().value,
             onValueChange = { startCityStateFlow.value = it },
-            maxLines = 1,
             leadingIcon = {
                 Icon(
                     Icons.Filled.Place,
@@ -112,16 +120,18 @@ fun CreateContent(
                     tint = MaterialTheme.colors.primary
                 )
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { endCityFocusRequester.requestFocus() }),
             label = { Text(stringResource(id = R.string.label_start_city)) }
         )
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(top = 16.dp)
+                .focusRequester(endCityFocusRequester),
             value = endCityStateFlow.collectAsState().value,
             onValueChange = { endCityStateFlow.value = it },
-            maxLines = 1,
             leadingIcon = {
                 Icon(
                     painterResource(id = R.drawable.ic_flag),
@@ -129,17 +139,19 @@ fun CreateContent(
                     tint = MaterialTheme.colors.primary
                 )
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { fareFocusRequester.requestFocus() }),
             label = { Text(stringResource(id = R.string.label_end_city)) }
         )
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(top = 16.dp)
+                .focusRequester(fareFocusRequester),
             value = fare,
             onValueChange = { fare = it },
             maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             leadingIcon = {
                 Icon(
                     painterResource(id = R.drawable.ic_fare),
@@ -147,6 +159,9 @@ fun CreateContent(
                     tint = MaterialTheme.colors.primary
                 )
             },
+            visualTransformation = { TransformedText(AnnotatedString("${it.text} €"), OffsetMapping.Identity) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+            keyboardActions = KeyboardActions(onNext = { onDateClick() }),
             label = { Text(stringResource(id = R.string.label_fare)) }
         )
 
@@ -155,8 +170,6 @@ fun CreateContent(
                 modifier = Modifier.fillMaxWidth(),
                 value = date,
                 onValueChange = { date = it },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 leadingIcon = {
                     Icon(
                         painterResource(id = R.drawable.ic_calendar),

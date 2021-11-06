@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -56,9 +58,10 @@ fun TripRow(trip: Trip?) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
-            val (startIcon, startCity, endIcon, endCity, line, price, date) = createRefs()
+            val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
+            val startBarrier = createStartBarrier(date, price)
 
             Icon(
                 Icons.Filled.Place,
@@ -98,7 +101,7 @@ fun TripRow(trip: Trip?) {
                         end.linkTo(startIcon.end)
                         bottom.linkTo(endIcon.top)
                     }
-                    .size(width = 1.5.dp, height = 6.dp)
+                    .size(width = 1.5.dp, height = 8.dp)
                     .clip(RoundedCornerShape(2.dp))
                     .background(MaterialTheme.colors.onSurface)
             )
@@ -135,8 +138,10 @@ fun TripRow(trip: Trip?) {
 
             Text(
                 modifier = Modifier.constrainAs(price) {
-                    end.linkTo(parent.end)
-                    baseline.linkTo(startCity.baseline)
+                    start.linkTo(startBarrier)
+                    end.linkTo(moreIcon.start)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(date.top)
                 },
                 text = priceFormat.format(trip.floatPrice),
                 maxLines = 1,
@@ -145,14 +150,31 @@ fun TripRow(trip: Trip?) {
 
             Text(
                 modifier = Modifier.constrainAs(date) {
-                    end.linkTo(parent.end)
-                    baseline.linkTo(endCity.baseline)
+                    start.linkTo(startBarrier)
+                    end.linkTo(moreIcon.start)
+                    top.linkTo(price.bottom)
+                    bottom.linkTo(parent.bottom)
                 },
                 text = dateFormat.format(trip.date),
                 maxLines = 1,
                 fontWeight = FontWeight.Normal,
                 style = MaterialTheme.typography.caption
             )
+
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.constrainAs(moreIcon) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            ) {
+                Icon(
+                    Icons.Filled.MoreVert,
+                    stringResource(id = R.string.accessibility_icon_place),
+                    tint = MaterialTheme.colors.primary
+                )
+            }
 
         }
     } else {
