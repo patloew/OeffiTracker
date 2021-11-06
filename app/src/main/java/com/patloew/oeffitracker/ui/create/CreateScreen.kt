@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
@@ -81,8 +84,10 @@ fun CreateScreen(
                             stringResource(id = R.string.action_back),
                             tint = MaterialTheme.colors.onPrimary,
                             modifier = Modifier
+                                .padding(8.dp)
+                                .clip(CircleShape)
                                 .clickable { navigationAction() }
-                                .padding(16.dp)
+                                .padding(8.dp)
                         )
                     }
                 )
@@ -195,15 +200,16 @@ fun CreateContent(
 
             Box(modifier = Modifier
                 .matchParentSize()
+                .padding(top = 8.dp)
+                .clip(RoundedCornerShape(4.dp))
                 .clickable { onDateClick() })
-
         }
 
         Button(
             onClick = { onCreateClick() },
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 24.dp)
         ) { Text(stringResource(id = R.string.button_add)) }
     }
 
