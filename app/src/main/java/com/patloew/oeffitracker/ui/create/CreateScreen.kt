@@ -43,7 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.PreviewTheme
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -86,7 +88,7 @@ fun CreateScreen(
                     }
                 )
             },
-            content = { CreateContent(onDateClick, onCreateClick, viewModel.startCity, viewModel.endCity) }
+            content = { CreateContent(onDateClick, onCreateClick, viewModel.startCity, viewModel.endCity, viewModel.dateString) }
         )
     }
 }
@@ -97,6 +99,7 @@ fun CreateContent(
     onCreateClick: () -> Unit,
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
+    dateFlow: Flow<String>
 ) {
     Column(
         modifier = Modifier
@@ -105,7 +108,6 @@ fun CreateContent(
             .verticalScroll(rememberScrollState())
     ) {
         var fare by remember { mutableStateOf(TextFieldValue("0")) }
-        var date by remember { mutableStateOf(TextFieldValue()) }
         val endCityFocusRequester = FocusRequester()
         val fareFocusRequester = FocusRequester()
 
@@ -168,8 +170,8 @@ fun CreateContent(
         Box(modifier = Modifier.padding(top = 16.dp)) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = date,
-                onValueChange = { date = it },
+                value = dateFlow.collectAsState(initial = "").value,
+                onValueChange = { },
                 leadingIcon = {
                     Icon(
                         painterResource(id = R.drawable.ic_calendar),
@@ -200,6 +202,6 @@ fun CreateContent(
 @Composable
 fun CreatePreview() {
     PreviewTheme {
-        CreateContent({ }, { }, MutableStateFlow(""), MutableStateFlow(""))
+        CreateContent({ }, { }, MutableStateFlow(""), MutableStateFlow(""), flowOf(""))
     }
 }

@@ -17,16 +17,20 @@ import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
+import com.patloew.oeffitracker.ui.list.dateFormat
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.SecureRandom
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -64,11 +68,17 @@ class CreateActivity : FragmentActivity() {
                     onDateClick = {
                         MaterialDatePicker.Builder.datePicker()
                             .setTitleText("")
-                            .setSelection(System.currentTimeMillis())
+                            .setSelection(viewModel.date.value.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
                             .setCalendarConstraints(
                                 CalendarConstraints.Builder().setValidator(DateValidatorPointBackward.now()).build()
                             )
                             .build()
+                            .apply {
+                                addOnPositiveButtonClickListener { timeMillis ->
+                                    viewModel.date.value =
+                                        Instant.ofEpochMilli(timeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+                                }
+                            }
                             .show(supportFragmentManager, null)
                     },
                     onCreateClick = { viewModel.onCreate() },
@@ -94,6 +104,9 @@ class CreateViewModel(
     val startCity: MutableStateFlow<String> = MutableStateFlow("")
     val endCity: MutableStateFlow<String> = MutableStateFlow("")
 
+    val date: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    val dateString: Flow<String> = date.map { dateFormat.format(it) }
+
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val finishEvent: Flow<Unit> = finishChannel.receiveAsFlow()
 
@@ -104,7 +117,7 @@ class CreateViewModel(
                     startCity = startCity.value,
                     endCity = endCity.value,
                     price = SecureRandom().nextInt(10000),
-                    date = LocalDate.now(),
+                    date = date.value,
                     createdTimestamp = System.currentTimeMillis()
                 )
             )

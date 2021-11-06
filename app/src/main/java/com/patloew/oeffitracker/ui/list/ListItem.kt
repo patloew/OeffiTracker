@@ -50,7 +50,7 @@ import java.time.format.FormatStyle
  * limitations under the License. */
 
 private val priceFormat = DecimalFormat("0.00 €")
-private val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
 fun TripRow(trip: Trip?) {
