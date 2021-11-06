@@ -13,4 +13,5 @@
     <string name="alert_delete_title">Delete trip</string>
     <string name="alert_delete_text">Do you want to delete trip from \"%s\" to \"%s\" on %s?</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_duplicate_for_today">Duplicate today</string>
 </resources>

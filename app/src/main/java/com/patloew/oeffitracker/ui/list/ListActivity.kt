@@ -11,9 +11,12 @@ import androidx.paging.PagingData
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -50,9 +53,20 @@ class ListViewModel(
 
     val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
 
+    private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
+    val scrollToTopEvent: Flow<Unit> = scrollToTopChannel.receiveAsFlow()
+
     fun onDelete(id: Int) {
         viewModelScope.launch {
             tripDao.deleteById(id)
+        }
+    }
+
+    fun onDuplicateForToday(trip: Trip) {
+        viewModelScope.launch {
+            val newTrip = trip.copy(id = 0, date = LocalDate.now(), createdTimestamp = System.currentTimeMillis())
+            tripDao.insert(newTrip)
+            scrollToTopChannel.send(Unit)
         }
     }
 

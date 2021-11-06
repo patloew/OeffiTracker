@@ -114,7 +114,7 @@ class CreateViewModel(
 
     fun onCreate() {
         viewModelScope.launch {
-            tripDao.update(
+            tripDao.insert(
                 Trip(
                     startCity = startCity.value,
                     endCity = endCity.value,

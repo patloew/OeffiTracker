@@ -62,7 +62,8 @@ val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 @Composable
 fun TripRow(
     trip: Trip?,
-    onDelete: (id: Int) -> Unit
+    onDelete: (id: Int) -> Unit,
+    onDuplicateForToday: (Trip) -> Unit
 ) {
     if (trip != null) {
         ConstraintLayout(
@@ -187,6 +188,11 @@ fun TripRow(
                     DropdownMenu(expanded = true, onDismissRequest = { showMoreMenu.value = false }) {
                         DropdownMenuItem(onClick = {
                             showMoreMenu.value = false
+                            onDuplicateForToday(trip)
+                        }) { Text(stringResource(id = R.string.action_duplicate_for_today)) }
+
+                        DropdownMenuItem(onClick = {
+                            showMoreMenu.value = false
                             showDeleteDialog.value = true
                         }) { Text(stringResource(id = R.string.action_delete)) }
                     }
@@ -275,9 +281,9 @@ fun TripRow(
 fun TripRowPreview() {
     PreviewTheme {
         Column {
-            TripRow(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { })
+            TripRow(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { })
             Divider()
-            TripRow(trip = null, { })
+            TripRow(trip = null, { }, { })
             Divider()
         }
     }

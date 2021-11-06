@@ -14,4 +14,5 @@
     <string name="alert_delete_title">Fahrt löschen</string>
     <string name="alert_delete_text">Willst du die Fahrt von \"%s\" nach \"%s\" am %s löschen?</string>
     <string name="action_cancel">Abbrechen</string>
+    <string name="action_duplicate_for_today">Heute duplizieren</string>
 </resources>

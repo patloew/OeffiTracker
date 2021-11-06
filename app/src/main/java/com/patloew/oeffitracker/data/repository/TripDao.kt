@@ -20,6 +20,9 @@ import com.patloew.oeffitracker.data.model.Trip
 
 @Dao
 interface TripDao {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(trip: Trip)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(trip: Trip)
 
