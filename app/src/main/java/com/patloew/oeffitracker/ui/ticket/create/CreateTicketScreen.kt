@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.trip.create
+package com.patloew.oeffitracker.ui.ticket.create
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,11 +62,12 @@ import kotlinx.coroutines.flow.flowOf
  * limitations under the License. */
 
 @Composable
-fun CreateTripScreen(
+fun CreateTicketScreen(
     navigationAction: () -> Unit,
-    onDateClick: () -> Unit,
+    onStartDateClick: () -> Unit,
+    onEndDateClick: () -> Unit,
     onCreateClick: () -> Unit,
-    viewModel: CreateTripViewModel
+    viewModel: CreateTicketViewModel
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -76,7 +76,7 @@ fun CreateTripScreen(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(id = R.string.toolbar_title_create_trip)) },
+                    title = { Text(stringResource(id = R.string.toolbar_title_create_ticket)) },
                     navigationIcon = {
                         Icon(
                             Icons.Filled.ArrowBack,
@@ -92,15 +92,16 @@ fun CreateTripScreen(
                 )
             },
             content = {
-                CreateTripContent(
-                    onDateClick,
+                CreateTicketContent(
+                    onStartDateClick,
+                    onEndDateClick,
                     onCreateClick,
-                    viewModel::setFare,
+                    viewModel::setPrice,
                     viewModel.saveEnabled,
-                    viewModel.startCity,
-                    viewModel.endCity,
-                    viewModel.dateString,
-                    viewModel.initialFare
+                    viewModel.name,
+                    viewModel.startDateString,
+                    viewModel.endDateString,
+                    viewModel.initialPrice
                 )
             }
         )
@@ -108,15 +109,16 @@ fun CreateTripScreen(
 }
 
 @Composable
-fun CreateTripContent(
-    onDateClick: () -> Unit,
+fun CreateTicketContent(
+    onStartDateClick: () -> Unit,
+    onEndDateClick: () -> Unit,
     onCreateClick: () -> Unit,
-    setFare: (String) -> Boolean,
+    setPrice: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
-    startCityStateFlow: MutableStateFlow<String>,
-    endCityStateFlow: MutableStateFlow<String>,
-    dateFlow: Flow<String>,
-    initialFare: String
+    nameStateFlow: MutableStateFlow<String>,
+    startDateFlow: Flow<String>,
+    endDateFlow: Flow<String>,
+    initialPrice: String
 ) {
     Column(
         modifier = Modifier
@@ -124,52 +126,32 @@ fun CreateTripContent(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        var fare by remember { mutableStateOf(initialFare) }
-        val endCityFocusRequester = FocusRequester()
-        val fareFocusRequester = FocusRequester()
+        var price by remember { mutableStateOf(initialPrice) }
+        val priceFocusRequester = FocusRequester()
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = startCityStateFlow.collectAsState().value,
-            onValueChange = { startCityStateFlow.value = it },
+            value = nameStateFlow.collectAsState().value,
+            onValueChange = { nameStateFlow.value = it },
             leadingIcon = {
                 Icon(
-                    Icons.Filled.Place,
+                    painterResource(id = R.drawable.ic_receipt),
                     contentDescription = null,
                     tint = MaterialTheme.colors.primary
                 )
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { endCityFocusRequester.requestFocus() }),
-            label = { Text(stringResource(id = R.string.label_start_city)) }
+            keyboardActions = KeyboardActions(onNext = { priceFocusRequester.requestFocus() }),
+            label = { Text(stringResource(id = R.string.label_ticket_name)) }
         )
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
-                .focusRequester(endCityFocusRequester),
-            value = endCityStateFlow.collectAsState().value,
-            onValueChange = { endCityStateFlow.value = it },
-            leadingIcon = {
-                Icon(
-                    painterResource(id = R.drawable.ic_flag),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { fareFocusRequester.requestFocus() }),
-            label = { Text(stringResource(id = R.string.label_end_city)) }
-        )
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .focusRequester(fareFocusRequester),
-            value = fare,
-            onValueChange = { newValue -> if (setFare(newValue)) fare = newValue },
+                .focusRequester(priceFocusRequester),
+            value = price,
+            onValueChange = { newValue -> if (setPrice(newValue)) price = newValue },
             maxLines = 1,
             leadingIcon = {
                 Icon(
@@ -180,15 +162,22 @@ fun CreateTripContent(
             },
             visualTransformation = { TransformedText(AnnotatedString("${it.text} €"), OffsetMapping.Identity) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-            keyboardActions = KeyboardActions(onNext = { onDateClick() }),
-            label = { Text(stringResource(id = R.string.label_fare)) }
+            keyboardActions = KeyboardActions(onNext = { onStartDateClick() }),
+            label = { Text(stringResource(id = R.string.label_ticket_price)) }
         )
 
         DateTextField(
-            onDateClick = onDateClick,
-            dateStringFlow = dateFlow,
+            onDateClick = onStartDateClick,
+            dateStringFlow = startDateFlow,
             iconRes = R.drawable.ic_calendar,
-            labelRes = R.string.label_date
+            labelRes = R.string.label_start_date
+        )
+
+        DateTextField(
+            onDateClick = onEndDateClick,
+            dateStringFlow = endDateFlow,
+            iconRes = R.drawable.ic_calendar,
+            labelRes = R.string.label_end_date
         )
 
         Button(
@@ -204,15 +193,16 @@ fun CreateTripContent(
 
 @Preview(showBackground = true)
 @Composable
-fun CreateTripPreview() {
+fun CreateTicketPreview() {
     PreviewTheme {
-        CreateTripContent(
+        CreateTicketContent(
+            { },
             { },
             { },
             { true },
             flowOf(false),
             MutableStateFlow(""),
-            MutableStateFlow(""),
+            flowOf(""),
             flowOf(""),
             ""
         )

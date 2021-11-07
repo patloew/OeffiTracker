@@ -3,6 +3,7 @@ package com.patloew.oeffitracker.injection
 import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
+import com.patloew.oeffitracker.ui.ticket.create.CreateTicketViewModel
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
 import com.patloew.oeffitracker.ui.trip.create.CreateTripViewModel
 import com.patloew.oeffitracker.ui.trip.list.TripListViewModel
@@ -35,4 +36,5 @@ val appModule = module {
     viewModel { TripListViewModel(get()) }
     viewModel { TicketListViewModel(get()) }
     viewModel { CreateTripViewModel(get()) }
+    viewModel { CreateTicketViewModel(get()) }
 }

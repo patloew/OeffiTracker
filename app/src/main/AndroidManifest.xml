@@ -26,7 +26,12 @@
 
         <activity
             android:name=".ui.trip.create.CreateTripActivity"
-            android:label="@string/toolbar_title_create"
+            android:label="@string/toolbar_title_create_trip"
+            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+
+        <activity
+            android:name=".ui.ticket.create.CreateTicketActivity"
+            android:label="@string/toolbar_title_create_ticket"
             android:theme="@style/Theme.OeffiTracker.NoActionBar" />
 
     </application>

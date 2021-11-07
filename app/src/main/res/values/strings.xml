@@ -2,7 +2,7 @@
     <string name="app_name">Public Transport Tracker</string>
     <string name="accessibility_icon_place">Place</string>
     <string name="accessibility_icon_add">Add</string>
-    <string name="toolbar_title_create">Create trip</string>
+    <string name="toolbar_title_create_trip">Add trip</string>
     <string name="label_start_city">Departure</string>
     <string name="label_end_city">Destination</string>
     <string name="label_fare">Fare</string>
@@ -22,4 +22,9 @@
     <string name="empty_state_trip_text">Add trips to track your progress for a season ticket.</string>
     <string name="empty_state_ticket_title">No tickets yet</string>
     <string name="empty_state_ticket_text">Add season tickets to track your progess.</string>
+    <string name="label_start_date">Validity start date</string>
+    <string name="label_end_date">Validity end date</string>
+    <string name="toolbar_title_create_ticket">Add ticket</string>
+    <string name="label_ticket_name">Name</string>
+    <string name="label_ticket_price">Price</string>
 </resources>

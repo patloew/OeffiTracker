@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.trip.create
+package com.patloew.oeffitracker.ui.ticket.create
 
 import android.app.Activity
 import android.content.Context
@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.data.repository.TripDao
+import com.patloew.oeffitracker.data.model.Ticket
+import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.showDatePicker
@@ -43,30 +43,37 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class CreateTripActivity : FragmentActivity() {
+class CreateTicketActivity : FragmentActivity() {
 
     object Contract : ActivityResultContract<Unit, Boolean>() {
         override fun createIntent(context: Context, input: Unit): Intent =
-            Intent(context, CreateTripActivity::class.java)
+            Intent(context, CreateTicketActivity::class.java)
 
         override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
             resultCode == Activity.RESULT_OK
     }
 
-    private val viewModel: CreateTripViewModel by viewModel()
+    private val viewModel: CreateTicketViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             OeffiTrackerTheme {
-                CreateTripScreen(
+                CreateTicketScreen(
                     navigationAction = { finish() },
-                    onDateClick = {
+                    onStartDateClick = {
                         showDatePicker(
-                            preSelected = viewModel.date.value,
-                            fragmentManager = supportFragmentManager
-                        ) { selectedDate -> viewModel.date.value = selectedDate }
+                            preSelected = viewModel.startDate.value,
+                            supportFragmentManager
+                        ) { selectedDate ->
+                            viewModel.startDate.value = selectedDate
+                        }
+                    },
+                    onEndDateClick = {
+                        showDatePicker(preSelected = viewModel.endDate.value, supportFragmentManager) { selectedDate ->
+                            viewModel.endDate.value = selectedDate
+                        }
                     },
                     onCreateClick = { viewModel.onCreate() },
                     viewModel
@@ -84,21 +91,23 @@ class CreateTripActivity : FragmentActivity() {
     }
 }
 
-class CreateTripViewModel(
-    private val tripDao: TripDao
+class CreateTicketViewModel(
+    private val ticketDao: TicketDao
 ) : ViewModel() {
 
-    val startCity: MutableStateFlow<String> = MutableStateFlow("")
-    val endCity: MutableStateFlow<String> = MutableStateFlow("")
+    val name: MutableStateFlow<String> = MutableStateFlow("")
 
-    val date: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
-    val dateString: Flow<String> = date.map { dateFormat.format(it) }
+    val startDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now().minusYears(1).plusDays(1))
+    val startDateString: Flow<String> = startDate.map { dateFormat.format(it) }
 
-    private val fare: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val initialFare = ""
+    val endDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    val endDateString: Flow<String> = endDate.map { dateFormat.format(it) }
 
-    val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
-        startCity.isNotEmpty() && endCity.isNotEmpty() && fare != null && fare > 0
+    private val price: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val initialPrice = ""
+
+    val saveEnabled: Flow<Boolean> = combine(name, price) { name, price ->
+        name.isNotEmpty() && price != null && price > 0
     }
 
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
@@ -106,12 +115,12 @@ class CreateTripViewModel(
 
     fun onCreate() {
         viewModelScope.launch {
-            tripDao.insert(
-                Trip(
-                    startCity = startCity.value,
-                    endCity = endCity.value,
-                    fare = fare.value!!,
-                    date = date.value,
+            ticketDao.insert(
+                Ticket(
+                    name = name.value,
+                    price = price.value!!,
+                    startDate = startDate.value,
+                    endDate = endDate.value,
                     createdTimestamp = System.currentTimeMillis()
                 )
             )
@@ -120,11 +129,11 @@ class CreateTripViewModel(
     }
 
     /**
-     * Parses and validates fare and sets it if valid.
+     * Parses and validates price and sets it if valid.
      *
-     * @return true if fare is valid
+     * @return true if price is valid
      */
-    fun setFare(fareString: String): Boolean =
-        checkAndSetAmount(fareString) { newFare -> fare.value = newFare }
+    fun setPrice(priceString: String): Boolean =
+        checkAndSetAmount(priceString) { newPrice -> price.value = newPrice }
 
 }

@@ -4,8 +4,15 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.fragment.app.FragmentManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import java.text.DecimalFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -34,4 +41,24 @@ fun PreviewTheme(content: @Composable () -> Unit) {
             content()
         }
     }
+}
+
+fun showDatePicker(
+    preSelected: LocalDate,
+    fragmentManager: FragmentManager,
+    onDateSelected: (selectedDate: LocalDate) -> Unit
+) {
+    MaterialDatePicker.Builder.datePicker()
+        .setTitleText("")
+        .setSelection(preSelected.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
+        .setCalendarConstraints(
+            CalendarConstraints.Builder().setValidator(DateValidatorPointBackward.now()).build()
+        )
+        .build()
+        .apply {
+            addOnPositiveButtonClickListener { timeMillis ->
+                onDateSelected(Instant.ofEpochMilli(timeMillis).atZone(ZoneOffset.UTC).toLocalDate())
+            }
+        }
+        .show(fragmentManager, null)
 }

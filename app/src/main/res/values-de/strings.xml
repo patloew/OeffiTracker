@@ -3,7 +3,7 @@
     <string name="app_name">Öffi Tracker</string>
     <string name="accessibility_icon_place">Ort</string>
     <string name="accessibility_icon_add">Hinzufügen</string>
-    <string name="toolbar_title_create">Fahrt hinzufügen</string>
+    <string name="toolbar_title_create_trip">Fahrt hinzufügen</string>
     <string name="label_start_city">Start</string>
     <string name="label_end_city">Ziel</string>
     <string name="label_fare">Fahrpreis</string>
@@ -23,4 +23,9 @@
     <string name="empty_state_trip_text">Füge Fahrten hinzu, um den Fortschritt für eine Zeitkarte nachzuverfolgen.</string>
     <string name="empty_state_ticket_title">Noch keine Karten</string>
     <string name="empty_state_ticket_text">Füge Zeitkarten hinzu, um den Fortschritt nachzuverfolgen.</string>
+    <string name="label_start_date">Gültigkeitsbeginn</string>
+    <string name="label_end_date">Gültigkeitsende</string>
+    <string name="toolbar_title_create_ticket">Karte hinzufügen</string>
+    <string name="label_ticket_name">Name</string>
+    <string name="label_ticket_price">Preis</string>
 </resources>
