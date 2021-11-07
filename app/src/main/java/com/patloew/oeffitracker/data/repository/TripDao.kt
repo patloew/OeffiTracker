@@ -31,13 +31,13 @@ interface TripDao {
     suspend fun update(trip: Trip)
 
     @Query("DELETE FROM trip WHERE id = :tripId")
-    suspend fun deleteById(tripId: Int)
+    suspend fun deleteById(tripId: Long)
 
     @Query("SELECT COUNT(*) FROM trip")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
-    fun getSumOfFaresBetweenFlow(startDate: String, endDate: String): Flow<Int>
+    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN (SELECT startDate FROM ticket WHERE id = :ticketId) and (SELECT endDate FROM ticket WHERE id = :ticketId)")
+    fun getSumOfFaresForTicketId(ticketId: Long): Flow<Int>
 
     @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
     suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Int

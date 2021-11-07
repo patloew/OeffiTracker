@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +66,7 @@ fun TripListScreen(viewModel: TripListViewModel) {
                 onDuplicateForToday = viewModel::onDuplicateForToday,
                 viewModel.trips,
                 viewModel.isEmpty,
+                viewModel.showProgress,
                 viewModel.fareProgressData,
                 listState
             )
@@ -91,19 +93,22 @@ fun TripListScreen(viewModel: TripListViewModel) {
 
 @Composable
 fun TripListContent(
-    onDelete: (id: Int) -> Unit,
+    onDelete: (id: Long) -> Unit,
     onDuplicateForToday: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
     isEmpty: Flow<Boolean>,
+    showProgress: Flow<Boolean>,
     fareProgressData: Flow<ProgressData>,
     listState: LazyListState
 ) {
     Column {
-        Surface(elevation = 8.dp) {
-            PriceProgress(
-                progressData = fareProgressData,
-                modifier = Modifier.padding(16.dp)
-            )
+        if (showProgress.collectAsState(initial = false).value) {
+            Surface(elevation = 8.dp) {
+                PriceProgress(
+                    progressData = fareProgressData,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
 
         LazyList(
@@ -134,6 +139,7 @@ fun TripListPreview() {
                 )
             ),
             isEmpty = flowOf(false),
+            showProgress = flowOf(false),
             fareProgressData = flowOf(ProgressData(1f, "", "")),
             rememberLazyListState()
         )

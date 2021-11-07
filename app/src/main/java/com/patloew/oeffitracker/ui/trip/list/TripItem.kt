@@ -58,7 +58,7 @@ import java.time.LocalDate
 @Composable
 fun TripItem(
     trip: Trip?,
-    onDelete: (id: Int) -> Unit,
+    onDelete: (id: Long) -> Unit,
     onDuplicateForToday: (Trip) -> Unit
 ) {
     if (trip != null) {

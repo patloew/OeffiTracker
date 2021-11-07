@@ -26,7 +26,7 @@ data class Ticket(
     val startDate: LocalDate,
     val endDate: LocalDate,
     val createdTimestamp: Long,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0
+    @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) {
     @Ignore
     val floatPrice: Float = price / 100f

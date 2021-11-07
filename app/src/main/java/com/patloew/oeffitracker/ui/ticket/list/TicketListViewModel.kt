@@ -64,7 +64,7 @@ class TicketListViewModel(
     private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val scrollToTopEvent: Flow<Unit> = scrollToTopChannel.receiveAsFlow()
 
-    fun onDelete(id: Int) {
+    fun onDelete(id: Long) {
         viewModelScope.launch {
             ticketDao.deleteById(id)
         }

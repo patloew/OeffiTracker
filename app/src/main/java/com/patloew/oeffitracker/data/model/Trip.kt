@@ -26,7 +26,7 @@ data class Trip(
     val fare: Int,
     val date: LocalDate,
     val createdTimestamp: Long,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0
+    @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) {
     @Ignore
     val floatFare: Float = fare / 100f

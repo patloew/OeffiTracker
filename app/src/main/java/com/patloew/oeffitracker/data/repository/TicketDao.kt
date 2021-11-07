@@ -25,17 +25,20 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TicketDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insert(ticket: Ticket)
+    suspend fun insert(ticket: Ticket): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(ticket: Ticket)
 
     @Query("DELETE FROM ticket WHERE id = :ticketId")
-    suspend fun deleteById(ticketId: Int)
+    suspend fun deleteById(ticketId: Long)
 
     @Query("SELECT COUNT(*) FROM ticket")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT * FROM ticket ORDER BY startDate DESC")
+    @Query("SELECT price FROM ticket WHERE id = :ticketId")
+    fun getPriceById(ticketId: Long): Flow<Int>
+
+    @Query("SELECT * FROM ticket ORDER BY startDate, createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Ticket>
 }
