@@ -69,9 +69,6 @@ fun showDatePicker(
     MaterialDatePicker.Builder.datePicker()
         .setTitleText("")
         .setSelection(preSelected.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
-        .setCalendarConstraints(
-            CalendarConstraints.Builder().setValidator(DateValidatorPointBackward.now()).build()
-        )
         .build()
         .apply {
             addOnPositiveButtonClickListener { timeMillis ->
