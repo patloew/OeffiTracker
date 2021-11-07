@@ -7,11 +7,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
+import com.patloew.oeffitracker.ui.common.ProgressData
+import com.patloew.oeffitracker.ui.formatPrice
 import com.patloew.oeffitracker.ui.percentageFormat
-import com.patloew.oeffitracker.ui.priceFormat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -40,18 +40,19 @@ class TripListViewModel(
 
     val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
 
-    private val fareSum: Flow<Int?> = tripDao.getSumOfFaresBetween(
+    private val fareSum: Flow<Int> = tripDao.getSumOfFaresBetweenFlow(
         DateTimeFormatter.ISO_DATE.format(LocalDate.now().minusYears(1)),
         DateTimeFormatter.ISO_DATE.format(LocalDate.now())
     )
     private val fareSumGoal: Int = 109500
-    val fareSumProgress: Flow<Float> = fareSum.map { sum ->
-        ((sum ?: 0) / fareSumGoal.toFloat()).coerceAtMost(1f)
+    val fareProgressData: Flow<ProgressData> = fareSum.map { sum ->
+        val progress = sum / fareSumGoal.toFloat()
+        ProgressData(
+            progress = progress.coerceAtMost(1f),
+            percentageString = percentageFormat.format(progress),
+            priceString = formatPrice(fareSumGoal)
+        )
     }
-    val fareSumPercentageString: Flow<String> = fareSum.map { sum ->
-        percentageFormat.format((sum ?: 0) / fareSumGoal.toFloat())
-    }
-    val fareSumGoalString: Flow<String> = flowOf(priceFormat.format(fareSumGoal / 100f))
 
     private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val scrollToTopEvent: Flow<Unit> = scrollToTopChannel.receiveAsFlow()

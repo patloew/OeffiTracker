@@ -3,22 +3,18 @@ package com.patloew.oeffitracker.ui.trip.list
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +26,8 @@ import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.LazyList
+import com.patloew.oeffitracker.ui.common.PriceProgress
+import com.patloew.oeffitracker.ui.common.ProgressData
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -67,9 +65,7 @@ fun TripListScreen(viewModel: TripListViewModel) {
                 onDuplicateForToday = viewModel::onDuplicateForToday,
                 viewModel.trips,
                 viewModel.isEmpty,
-                viewModel.fareSumGoalString,
-                viewModel.fareSumPercentageString,
-                viewModel.fareSumProgress,
+                viewModel.fareProgressData,
                 listState
             )
 
@@ -99,32 +95,15 @@ fun TripListContent(
     onDuplicateForToday: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
     isEmpty: Flow<Boolean>,
-    fareSumGoal: Flow<String>,
-    fareSumPercentage: Flow<String>,
-    fareProgress: Flow<Float>,
+    fareProgressData: Flow<ProgressData>,
     listState: LazyListState
 ) {
     Column {
         Surface(elevation = 8.dp) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                LinearProgressIndicator(
-                    progress = fareProgress.collectAsState(initial = 0f).value,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 16.dp)
-                )
-                Text(
-                    text = stringResource(
-                        id = R.string.progress_description,
-                        fareSumPercentage.collectAsState(initial = "").value,
-                        fareSumGoal.collectAsState(initial = "").value,
-                    ),
-                    style = MaterialTheme.typography.subtitle2
-                )
-            }
+            PriceProgress(
+                progressData = fareProgressData,
+                modifier = Modifier.padding(16.dp)
+            )
         }
 
         LazyList(
@@ -155,9 +134,7 @@ fun TripListPreview() {
                 )
             ),
             isEmpty = flowOf(false),
-            fareSumGoal = flowOf(""),
-            fareSumPercentage = flowOf(""),
-            fareProgress = flowOf(0f),
+            fareProgressData = flowOf(ProgressData(1f, "", "")),
             rememberLazyListState()
         )
     }

@@ -38,7 +38,7 @@ import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.dateFormat
-import com.patloew.oeffitracker.ui.priceFormat
+import com.patloew.oeffitracker.ui.priceFormatFloat
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -150,7 +150,7 @@ fun TripItem(
                     top.linkTo(parent.top)
                     bottom.linkTo(date.top)
                 },
-                text = priceFormat.format(trip.floatFare),
+                text = priceFormatFloat.format(trip.floatFare),
                 maxLines = 1,
                 style = MaterialTheme.typography.body1
             )

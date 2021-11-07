@@ -13,7 +13,7 @@
     <string name="alert_delete_title">Delete trip</string>
     <string name="alert_delete_text">Do you want to delete trip from \"%s\" to \"%s\" on %s?</string>
     <string name="action_cancel">Cancel</string>
-    <string name="action_duplicate_for_today">Duplicate today</string>
+    <string name="action_duplicate_for_today">Repeat trip</string>
     <string name="progress_description">%s of %s</string>
     <string name="bottombar_list">Trips</string>
     <string name="bottombar_tickets">Tickets</string>
@@ -27,4 +27,6 @@
     <string name="toolbar_title_create_ticket">Add ticket</string>
     <string name="label_ticket_name">Name</string>
     <string name="label_ticket_price">Price</string>
+    <string name="accessibility_icon_date">Date</string>
+    <string name="accessibility_icon_price">Price</string>
 </resources>

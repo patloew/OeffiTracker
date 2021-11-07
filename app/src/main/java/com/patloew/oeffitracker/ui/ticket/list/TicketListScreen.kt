@@ -22,15 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.LazyList
+import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -88,7 +87,7 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
 @Composable
 fun TicketListContent(
-    tickets: Flow<PagingData<Ticket>>,
+    tickets: Flow<PagingData<TicketListData>>,
     isEmpty: Flow<Boolean>,
     listState: LazyListState
 ) {
@@ -110,7 +109,13 @@ fun TicketListPreview() {
             tickets = flowOf(
                 PagingData.from(
                     listOf(
-                        Ticket("KlimaTicket", 109500, LocalDate.now(), LocalDate.now(), System.currentTimeMillis())
+                        TicketListData(
+                            0,
+                            "KlimaTicket",
+                            "100,00 €",
+                            "01.01.20 - 01.01.21",
+                            ProgressRoundData(0.5f, "20,5%")
+                        )
                     )
                 )
             ),

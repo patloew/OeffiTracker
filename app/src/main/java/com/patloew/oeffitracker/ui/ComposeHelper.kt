@@ -31,7 +31,8 @@ import java.time.format.FormatStyle
  * limitations under the License. */
 
 val percentageFormat = DecimalFormat("0.0%")
-val priceFormat = DecimalFormat("0.00 €")
+val priceFormatFloat = DecimalFormat("0.00 €")
+val priceFormatInteger = DecimalFormat("0 €")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
@@ -61,4 +62,15 @@ fun showDatePicker(
             }
         }
         .show(fragmentManager, null)
+}
+
+/** Formats price as integer if it's ",00" */
+fun formatPrice(price: Int): String {
+    val formatter = if (price.mod(100) == 0) {
+        priceFormatInteger
+    } else {
+        priceFormatFloat
+    }
+
+    return formatter.format(price / 100f)
 }

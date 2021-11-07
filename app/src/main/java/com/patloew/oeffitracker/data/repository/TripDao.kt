@@ -36,8 +36,11 @@ interface TripDao {
     @Query("SELECT COUNT(*) FROM trip")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT SUM(fare) FROM trip WHERE date BETWEEN :startDate and :endDate")
-    fun getSumOfFaresBetween(startDate: String, endDate: String): Flow<Int?>
+    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
+    fun getSumOfFaresBetweenFlow(startDate: String, endDate: String): Flow<Int>
+
+    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
+    suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Int
 
     @Query("SELECT * FROM trip ORDER BY createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>
