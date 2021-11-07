@@ -107,12 +107,15 @@ class CreateTicketViewModel(
     val endDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
     val endDateString: Flow<String> = endDate.map { dateFormat.format(it) }
 
+    val overlappingTicket: Flow<Ticket?> = combine(startDate, endDate, ticketDao::getFirstOverlappingValidityTicket)
+
     private val price: MutableStateFlow<Int?> = MutableStateFlow(null)
     val initialPrice = ""
 
-    val saveEnabled: Flow<Boolean> = combine(name, price) { name, price ->
-        name.isNotEmpty() && price != null && price > 0
-    }
+    val saveEnabled: Flow<Boolean> =
+        combine(name, price, overlappingTicket) { name, price, overlappingTicket ->
+            name.isNotEmpty() && price != null && price > 0 && overlappingTicket == null
+        }
 
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val finishEvent: Flow<Unit> = finishChannel.receiveAsFlow()

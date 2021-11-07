@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Trip
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -41,6 +43,12 @@ interface TripDao {
 
     @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
     suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Int
+
+    suspend fun getSumOfFaresBetween(startDate: LocalDate, endDate: LocalDate): Int =
+        getSumOfFaresBetween(
+            DateTimeFormatter.ISO_DATE.format(startDate),
+            DateTimeFormatter.ISO_DATE.format(endDate)
+        )
 
     @Query("SELECT * FROM trip ORDER BY createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>

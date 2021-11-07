@@ -105,7 +105,7 @@ fun TicketItem(
                         width = Dimension.fillToConstraints
                     }
                     .padding(bottom = 2.dp),
-                text = ticket.date,
+                text = ticket.validityPeriod,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
@@ -210,7 +210,7 @@ fun TicketItem(
                 text = stringResource(
                     id = R.string.alert_delete_ticket_text,
                     ticket.name,
-                    ticket.date
+                    ticket.validityPeriod
                 ),
                 confirmButtonText = stringResource(id = R.string.action_delete),
                 confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error),

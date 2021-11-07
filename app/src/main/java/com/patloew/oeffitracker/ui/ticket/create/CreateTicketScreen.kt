@@ -48,8 +48,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.DateTextField
+import com.patloew.oeffitracker.ui.ticket.list.validityPeriod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -105,6 +107,7 @@ fun CreateTicketScreen(
                     onCreateClick,
                     viewModel::setPrice,
                     viewModel.saveEnabled,
+                    viewModel.overlappingTicket,
                     viewModel.name,
                     viewModel.startDateString,
                     viewModel.endDateString,
@@ -123,6 +126,7 @@ fun CreateTicketContent(
     onCreateClick: () -> Unit,
     setPrice: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
+    overlappingTicket: Flow<Ticket?>,
     nameStateFlow: MutableStateFlow<String>,
     startDateFlow: Flow<String>,
     endDateFlow: Flow<String>,
@@ -189,6 +193,26 @@ fun CreateTicketContent(
             labelRes = R.string.label_end_date
         )
 
+        val overlappingTicketValue = overlappingTicket.collectAsState(initial = null).value
+        if (overlappingTicketValue != null) {
+            Text(
+                text = stringResource(
+                    id = R.string.ticket_trip_validity_hint_error,
+                    overlappingTicketValue.name,
+                    overlappingTicketValue.validityPeriod
+                ),
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
+            )
+        } else {
+            Text(
+                text = stringResource(id = R.string.ticket_trip_validity_hint),
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
+            )
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -239,6 +263,7 @@ fun CreateTicketPreview() {
             { },
             { true },
             flowOf(false),
+            flowOf(null),
             MutableStateFlow(""),
             flowOf(""),
             flowOf(""),

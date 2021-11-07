@@ -1,7 +1,6 @@
 package com.patloew.oeffitracker.data.model
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
@@ -27,7 +26,4 @@ data class Ticket(
     val endDate: LocalDate,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
-) {
-    @Ignore
-    val floatPrice: Float = price / 100f
-}
+)

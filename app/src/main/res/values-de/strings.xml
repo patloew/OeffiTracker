@@ -37,4 +37,6 @@
     <string name="accessibility_icon_favorite">Favorit</string>
     <string name="item_ticket_favorite_hint">Diese Karte ist als Favorit markiert und wird in der Fahrtenliste angezeigt</string>
     <string name="ticket_add_as_favorite">Als Favorit hinzufügen</string>
+    <string name="ticket_trip_validity_hint">Alle Fahrten, die du innerhalb dieser Gültigkeitsdauer hinzufügst oder bereits hinzugefügt hast, werden automatisch dieser Fahrkarte zugeordnet.</string>
+    <string name="ticket_trip_validity_hint_error">Es gibt bereits eine Fahrkarte, die diesen Gültigkeitsbereich überschneidet (\"%s\" mit Gültigkeit %s). Da alle Fahrten innerhalb dieser Gültigkeitsdauer automatisch dieser Fahrkarte zugeordnet werden, darf es keine Überschneidungen geben.</string>
 </resources>

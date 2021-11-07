@@ -10,7 +10,6 @@ import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
-import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.formatPrice
 import com.patloew.oeffitracker.ui.percentageFormat
 import kotlinx.coroutines.channels.Channel
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -43,16 +41,13 @@ class TicketListViewModel(
     val tickets: Flow<PagingData<TicketListData>> =
         Pager(PagingConfig(pageSize = 20)) { ticketDao.getAllPagingSource() }.flow.map { pagingData ->
             pagingData.map { ticket ->
-                val priceSum: Int = tripDao.getSumOfFaresBetween(
-                    DateTimeFormatter.ISO_DATE.format(ticket.startDate),
-                    DateTimeFormatter.ISO_DATE.format(ticket.endDate)
-                )
+                val priceSum: Int = tripDao.getSumOfFaresBetween(ticket.startDate, ticket.endDate)
                 val percentage: Float = priceSum / ticket.price.toFloat()
                 TicketListData(
                     id = ticket.id,
                     name = ticket.name,
                     price = formatPrice(priceSum) + " / " + formatPrice(ticket.price),
-                    date = dateFormat.format(ticket.startDate) + " – " + dateFormat.format(ticket.endDate),
+                    validityPeriod = ticket.validityPeriod,
                     progressData = ProgressRoundData(
                         progress = percentage.coerceAtMost(1f),
                         percentageString = percentageFormat.format(percentage)

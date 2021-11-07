@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Ticket
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -39,6 +41,15 @@ interface TicketDao {
     @Query("SELECT price FROM ticket WHERE id = :ticketId")
     fun getPriceById(ticketId: Long): Flow<Int>
 
-    @Query("SELECT * FROM ticket ORDER BY startDate, createdTimestamp DESC")
+    @Query("SELECT * FROM ticket WHERE (:startDate >= startDate AND :endDate <= endDate) OR (:endDate >= startDate AND :startDate < startDate) OR (:startDate <= endDate AND :endDate > endDate) LIMIT 1")
+    suspend fun getFirstOverlappingValidityTicket(startDate: String, endDate: String): Ticket?
+
+    suspend fun getFirstOverlappingValidityTicket(startDate: LocalDate, endDate: LocalDate): Ticket? =
+        getFirstOverlappingValidityTicket(
+            DateTimeFormatter.ISO_DATE.format(startDate),
+            DateTimeFormatter.ISO_DATE.format(endDate)
+        )
+
+    @Query("SELECT * FROM ticket ORDER BY startDate DESC")
     fun getAllPagingSource(): PagingSource<Int, Ticket>
 }
