@@ -25,12 +25,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import com.patloew.oeffitracker.ui.ticket.list.TicketListScreen
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
@@ -89,19 +89,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         label = { Text(stringResource(screen.stringRes)) },
                                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                        onClick = {
-                                            navController.navigate(screen.route) {
-                                                // Pop up to the start destination of the graph to avoid building up a
-                                                // large stack of destinations on the back stack as users select items
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                // Avoid multiple copies of the same destination when reselecting the same item
-                                                launchSingleTop = true
-                                                // Restore state when reselecting a previously selected item
-                                                restoreState = true
-                                            }
-                                        }
+                                        onClick = { navController.navigate(screen) }
                                     )
                                 }
                             }
@@ -117,8 +105,8 @@ class MainActivity : ComponentActivity() {
                                     it.calculateBottomPadding()
                                 )
                             ) {
-                                composable(Screen.List.route) { TripListScreen(viewModel = tripListViewModel) }
-                                composable(Screen.Tickets.route) { TicketListScreen(viewModel = ticketListViewModel) }
+                                composable(Screen.List.route) { TripListScreen(navController, tripListViewModel) }
+                                composable(Screen.Tickets.route) { TicketListScreen(ticketListViewModel) }
                                 composable(Screen.Statistics.route) {
                                     Text("Statistics", textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
                                 }

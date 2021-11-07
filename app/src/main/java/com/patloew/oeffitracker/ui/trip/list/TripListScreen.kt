@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.ui.trip.list
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.paging.PagingData
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
@@ -29,6 +31,8 @@ import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.common.PriceProgress
 import com.patloew.oeffitracker.ui.common.ProgressData
+import com.patloew.oeffitracker.ui.main.Screen
+import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -51,7 +55,7 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun TripListScreen(viewModel: TripListViewModel) {
+fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
@@ -62,6 +66,7 @@ fun TripListScreen(viewModel: TripListViewModel) {
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
             TripListContent(
+                onProgressClick = { navController.navigate(Screen.Tickets) },
                 onDelete = viewModel::onDelete,
                 onDuplicateForToday = viewModel::onDuplicateForToday,
                 viewModel.trips,
@@ -93,6 +98,7 @@ fun TripListScreen(viewModel: TripListViewModel) {
 
 @Composable
 fun TripListContent(
+    onProgressClick: () -> Unit,
     onDelete: (id: Long) -> Unit,
     onDuplicateForToday: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
@@ -103,7 +109,7 @@ fun TripListContent(
 ) {
     Column {
         if (showProgress.collectAsState(initial = false).value) {
-            Surface(elevation = 8.dp) {
+            Surface(elevation = 8.dp, modifier = Modifier.clickable { onProgressClick() }) {
                 PriceProgress(
                     progressData = fareProgressData,
                     modifier = Modifier.padding(16.dp)
@@ -128,6 +134,7 @@ fun TripListContent(
 fun TripListPreview() {
     PreviewTheme {
         TripListContent(
+            onProgressClick = { },
             onDelete = { },
             onDuplicateForToday = { },
             trips = flowOf(
