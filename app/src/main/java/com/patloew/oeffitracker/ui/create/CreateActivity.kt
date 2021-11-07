@@ -23,6 +23,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -108,6 +109,10 @@ class CreateViewModel(
 
     private val fare: MutableStateFlow<Int?> = MutableStateFlow(null)
     val initialFare = ""
+
+    val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
+        startCity.isNotEmpty() && endCity.isNotEmpty() && fare != null && fare > 0
+    }
 
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val finishEvent: Flow<Unit> = finishChannel.receiveAsFlow()

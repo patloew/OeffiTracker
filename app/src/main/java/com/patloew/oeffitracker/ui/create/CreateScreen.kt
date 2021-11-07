@@ -97,6 +97,7 @@ fun CreateScreen(
                     onDateClick,
                     onCreateClick,
                     viewModel::setFare,
+                    viewModel.saveEnabled,
                     viewModel.startCity,
                     viewModel.endCity,
                     viewModel.dateString,
@@ -112,6 +113,7 @@ fun CreateContent(
     onDateClick: () -> Unit,
     onCreateClick: () -> Unit,
     setFare: (String) -> Boolean,
+    saveEnabled: Flow<Boolean>,
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
     dateFlow: Flow<String>,
@@ -207,6 +209,7 @@ fun CreateContent(
 
         Button(
             onClick = { onCreateClick() },
+            enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp)
@@ -223,6 +226,7 @@ fun CreatePreview() {
             { },
             { },
             { true },
+            flowOf(false),
             MutableStateFlow(""),
             MutableStateFlow(""),
             flowOf(""),
