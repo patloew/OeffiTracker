@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
@@ -35,7 +36,8 @@ import java.time.format.DateTimeFormatter
 
 class TicketListViewModel(
     private val ticketDao: TicketDao,
-    private val tripDao: TripDao
+    private val tripDao: TripDao,
+    private val settingsRepo: SettingsRepo
 ) : ViewModel() {
 
     val tickets: Flow<PagingData<TicketListData>> =
@@ -59,6 +61,8 @@ class TicketListViewModel(
             }
         }
 
+    val highlightedTicketId: Flow<Long?> = settingsRepo.highlightedTicketIdFlow()
+
     val isEmpty: Flow<Boolean> = ticketDao.getCount().map { it == 0 }
 
     private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
@@ -67,6 +71,15 @@ class TicketListViewModel(
     fun onDelete(id: Long) {
         viewModelScope.launch {
             ticketDao.deleteById(id)
+            if (settingsRepo.getHighlightedTicketId() == id) {
+                settingsRepo.setHighlightedTicketId(null)
+            }
+        }
+    }
+
+    fun onMakeFavorite(id: Long) {
+        viewModelScope.launch {
+            settingsRepo.setHighlightedTicketId(id)
         }
     }
 

@@ -56,14 +56,14 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyList(
-                data = viewModel.tickets,
-                getKey = { it.id },
+            TicketListContent(
+                onDelete = viewModel::onDelete,
+                onMakeFavorite = viewModel::onMakeFavorite,
+                highlightedTicketId = viewModel.highlightedTicketId,
+                tickets = viewModel.tickets,
                 isEmpty = viewModel.isEmpty,
-                emptyTitleRes = R.string.empty_state_ticket_title,
-                emptyTextRes = R.string.empty_state_ticket_text,
                 listState = listState
-            ) { ticket -> TicketItem(ticket) }
+            )
 
             FloatingActionButton(
                 onClick = { createTicketLauncher.launch(Unit) },
@@ -87,7 +87,10 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
 @Composable
 fun TicketListContent(
+    onDelete: (Long) -> Unit,
+    onMakeFavorite: (Long) -> Unit,
     tickets: Flow<PagingData<TicketListData>>,
+    highlightedTicketId: Flow<Long?>,
     isEmpty: Flow<Boolean>,
     listState: LazyListState
 ) {
@@ -98,7 +101,7 @@ fun TicketListContent(
         emptyTitleRes = R.string.empty_state_ticket_title,
         emptyTextRes = R.string.empty_state_ticket_text,
         listState = listState
-    ) { ticket -> TicketItem(ticket) }
+    ) { ticket -> TicketItem(onDelete, onMakeFavorite, highlightedTicketId, ticket) }
 }
 
 @Preview(showBackground = true)
@@ -106,6 +109,8 @@ fun TicketListContent(
 fun TicketListPreview() {
     PreviewTheme {
         TicketListContent(
+            onDelete = { },
+            onMakeFavorite = { },
             tickets = flowOf(
                 PagingData.from(
                     listOf(
@@ -119,6 +124,7 @@ fun TicketListPreview() {
                     )
                 )
             ),
+            highlightedTicketId = flowOf(0),
             isEmpty = flowOf(false),
             rememberLazyListState()
         )

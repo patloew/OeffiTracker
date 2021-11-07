@@ -7,18 +7,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +32,8 @@ import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
+import com.patloew.oeffitracker.ui.common.ActionAlertDialog
+import com.patloew.oeffitracker.ui.common.MoreMenu
 import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.priceFormatFloat
 import java.time.LocalDate
@@ -68,8 +65,6 @@ fun TripItem(
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
-            val showMoreMenu = remember { mutableStateOf(false) }
-            val showDeleteDialog = remember { mutableStateOf(false) }
 
             Icon(
                 Icons.Filled.Place,
@@ -167,61 +162,41 @@ fun TripItem(
                 style = MaterialTheme.typography.caption
             )
 
-            Box(modifier = Modifier.constrainAs(moreIcon) {
-                end.linkTo(parent.end)
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-            }) {
-                IconButton(onClick = { showMoreMenu.value = true }) {
-                    Icon(
-                        Icons.Filled.MoreVert,
-                        stringResource(id = R.string.accessibility_icon_place),
-                        tint = MaterialTheme.colors.primary
-                    )
-                }
+            val showMoreMenu = remember { mutableStateOf(false) }
+            val showDeleteDialog = remember { mutableStateOf(false) }
 
-                if (showMoreMenu.value) {
-                    DropdownMenu(expanded = true, onDismissRequest = { showMoreMenu.value = false }) {
-                        DropdownMenuItem(onClick = {
-                            showMoreMenu.value = false
-                            onDuplicateForToday(trip)
-                        }) { Text(stringResource(id = R.string.action_duplicate_for_today)) }
+            MoreMenu(
+                modifier = Modifier.constrainAs(moreIcon) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                },
+                showMoreMenu = showMoreMenu
+            ) {
+                DropdownMenuItem(onClick = {
+                    showMoreMenu.value = false
+                    onDuplicateForToday(trip)
+                }) { Text(stringResource(id = R.string.action_duplicate_for_today)) }
 
-                        DropdownMenuItem(onClick = {
-                            showMoreMenu.value = false
-                            showDeleteDialog.value = true
-                        }) { Text(stringResource(id = R.string.action_delete)) }
-                    }
-                }
+                DropdownMenuItem(onClick = {
+                    showMoreMenu.value = false
+                    showDeleteDialog.value = true
+                }) { Text(stringResource(id = R.string.action_delete)) }
             }
 
-            if (showDeleteDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { showDeleteDialog.value = false },
-                    title = { Text(stringResource(id = R.string.alert_delete_title)) },
-                    text = {
-                        Text(
-                            stringResource(
-                                id = R.string.alert_delete_text,
-                                trip.startCity,
-                                trip.endCity,
-                                dateFormat.format(trip.date)
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = { onDelete(trip.id) },
-                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error)
-                        ) { Text(stringResource(id = R.string.action_delete)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showDeleteDialog.value = false
-                        }) { Text(stringResource(id = R.string.action_cancel)) }
-                    },
-                )
-            }
+            ActionAlertDialog(
+                showAlertDialog = showDeleteDialog,
+                title = stringResource(id = R.string.alert_delete_trip_title),
+                text = stringResource(
+                    id = R.string.alert_delete_trip_text,
+                    trip.startCity,
+                    trip.endCity,
+                    dateFormat.format(trip.date)
+                ),
+                confirmButtonText = stringResource(id = R.string.action_delete),
+                confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error),
+                positiveAction = { onDelete(trip.id) }
+            )
 
         }
     } else {

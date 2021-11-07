@@ -36,7 +36,7 @@ val appModule = module {
     single { SettingsRepo(get()) }
 
     viewModel { TripListViewModel(get(), get(), get()) }
-    viewModel { TicketListViewModel(get(), get()) }
+    viewModel { TicketListViewModel(get(), get(), get()) }
     viewModel { CreateTripViewModel(get()) }
     viewModel { CreateTicketViewModel(get(), get()) }
 }

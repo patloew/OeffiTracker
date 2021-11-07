@@ -10,8 +10,8 @@
     <string name="label_date">Date</string>
     <string name="button_add">Add</string>
     <string name="action_delete">Delete</string>
-    <string name="alert_delete_title">Delete trip</string>
-    <string name="alert_delete_text">Do you want to delete trip from \"%s\" to \"%s\" on %s?</string>
+    <string name="alert_delete_trip_title">Delete trip</string>
+    <string name="alert_delete_trip_text">Do you want to delete trip from \"%s\" to \"%s\" on %s?</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_duplicate_for_today">Repeat trip</string>
     <string name="progress_description">%s of %s</string>
@@ -29,4 +29,10 @@
     <string name="label_ticket_price">Price</string>
     <string name="accessibility_icon_date">Date</string>
     <string name="accessibility_icon_price">Price</string>
+    <string name="accessibility_icon_more">More</string>
+    <string name="alert_delete_ticket_title">Delete ticket</string>
+    <string name="alert_delete_ticket_text">Do you want to delete ticket \"%s\" valid from %s?</string>
+    <string name="action_make_favorite">Make favorite</string>
+    <string name="accessibility_icon_favorite">Favorite</string>
+    <string name="item_ticket_favorite_hint">This ticket is marked as favorite and will be shown on the trip list</string>
 </resources>
