@@ -1,12 +1,10 @@
 package com.patloew.oeffitracker.ui.ticket.create
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -18,8 +16,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -45,6 +40,7 @@ import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.DateTextField
+import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.ticket.list.validityPeriod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,18 +76,7 @@ fun CreateTicketScreen(
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(id = R.string.toolbar_title_create_ticket)) },
-                    navigationIcon = {
-                        Icon(
-                            Icons.Filled.ArrowBack,
-                            stringResource(id = R.string.action_back),
-                            tint = MaterialTheme.colors.onPrimary,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clip(CircleShape)
-                                .clickable { navigationAction() }
-                                .padding(8.dp)
-                        )
-                    }
+                    navigationIcon = { NavigationBackIcon { navigationAction() } }
                 )
             },
             content = {

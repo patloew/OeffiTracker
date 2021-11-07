@@ -7,7 +7,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,7 +17,6 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -41,30 +39,28 @@ data class ProgressRoundData(
 
 @Composable
 fun PriceProgressRound(
-    progressData: Flow<ProgressRoundData>,
+    progressData: ProgressRoundData,
     modifier: Modifier
 ) {
     Box(modifier = modifier) {
-        val data = progressData.collectAsState(initial = ProgressRoundData(0f, "")).value
-
         val h6Style = MaterialTheme.typography.h6
         var textStyle by remember { mutableStateOf(h6Style) }
         var textSizingFinished by remember { mutableStateOf(false) }
 
         CircularProgressIndicator(
             progress = 1f,
-            color = MaterialTheme.colors.secondary,
+            color = MaterialTheme.colors.primary.copy(alpha = 0.34f),
             strokeWidth = 6.dp,
             modifier = Modifier.size(80.dp)
         )
         CircularProgressIndicator(
-            progress = data.progress,
+            progress = progressData.progress,
             color = MaterialTheme.colors.primary,
             strokeWidth = 6.dp,
             modifier = Modifier.size(80.dp)
         )
         Text(
-            text = data.percentageString,
+            text = progressData.percentageString,
             style = textStyle,
             overflow = TextOverflow.Clip,
             softWrap = false,

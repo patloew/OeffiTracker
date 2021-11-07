@@ -112,7 +112,7 @@ fun TripListContent(
         if (showProgress.collectAsState(initial = false).value) {
             Surface(elevation = 8.dp, modifier = Modifier.clickable { onProgressClick() }) {
                 PriceProgress(
-                    progressData = fareProgressData,
+                    progressDataFlow = fareProgressData,
                     modifier = Modifier.padding(16.dp)
                 )
             }

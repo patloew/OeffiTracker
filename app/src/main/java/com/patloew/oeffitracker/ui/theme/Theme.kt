@@ -21,24 +21,17 @@ import androidx.compose.runtime.Composable
  * limitations under the License. */
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Green300,
+    primaryVariant = Green300Variant,
+    secondary = TealA700,
+    secondaryVariant = TealA700Variant
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    primary = Green700,
+    primaryVariant = Green700Variant,
+    secondary = TealA400,
+    secondaryVariant = TealA400Variant
 )
 
 @Composable

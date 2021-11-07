@@ -16,7 +16,14 @@ import androidx.compose.ui.graphics.Color
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+// Dark Mode: https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=00BFA5&primary.color=81C784
+val Green300 = Color(0xff81c784)
+val Green300Variant = Color(0xff519657)
+val TealA700 = Color(0xff00bfa5)
+val TealA700Variant = Color(0xff008e76)
+
+// Light Mode: https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=1DE9B6&primary.color=388E3C
+val Green700 = Color(0xff388e3c)
+val Green700Variant = Color(0xff00600f)
+val TealA400 = Color(0xff1de9b6)
+val TealA400Variant = Color(0xff00b686)

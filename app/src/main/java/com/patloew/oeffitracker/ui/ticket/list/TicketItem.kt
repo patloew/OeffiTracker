@@ -168,7 +168,7 @@ fun TicketItem(
             }
 
             PriceProgressRound(
-                progressData = flowOf(ticket.progressData),
+                progressData = ticket.progressData,
                 modifier = Modifier.constrainAs(progress) {
                     top.linkTo(parent.top)
                     end.linkTo(moreIcon.start)
@@ -258,7 +258,7 @@ fun TicketItem(
             )
 
             PriceProgressRound(
-                progressData = flowOf(ProgressRoundData(0f, "")),
+                progressData = ProgressRoundData(0f, ""),
                 modifier = Modifier.constrainAs(progress) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)

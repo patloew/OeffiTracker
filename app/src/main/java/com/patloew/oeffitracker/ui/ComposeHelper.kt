@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.patloew.oeffitracker.ui.main.Screen
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme

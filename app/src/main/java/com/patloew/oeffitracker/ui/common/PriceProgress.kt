@@ -36,16 +36,17 @@ data class ProgressData(
 
 @Composable
 fun PriceProgress(
-    progressData: Flow<ProgressData>,
+    progressDataFlow: Flow<ProgressData>,
     modifier: Modifier
 ) {
-    val progressData = progressData.collectAsState(initial = ProgressData(0f, "", "")).value
+    val progressData = progressDataFlow.collectAsState(initial = ProgressData(0f, "", "")).value
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         LinearProgressIndicator(
             progress = progressData.progress,
+            backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.34f),
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 16.dp)
