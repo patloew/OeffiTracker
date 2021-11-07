@@ -58,7 +58,6 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
         Box(modifier = Modifier.fillMaxSize()) {
             TicketListContent(
                 onDelete = viewModel::onDelete,
-                onMakeFavorite = viewModel::onMakeFavorite,
                 highlightedTicketId = viewModel.highlightedTicketId,
                 tickets = viewModel.tickets,
                 isEmpty = viewModel.isEmpty,
@@ -88,7 +87,6 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 @Composable
 fun TicketListContent(
     onDelete: (Long) -> Unit,
-    onMakeFavorite: (Long) -> Unit,
     tickets: Flow<PagingData<TicketListData>>,
     highlightedTicketId: Flow<Long?>,
     isEmpty: Flow<Boolean>,
@@ -101,7 +99,7 @@ fun TicketListContent(
         emptyTitleRes = R.string.empty_state_ticket_title,
         emptyTextRes = R.string.empty_state_ticket_text,
         listState = listState
-    ) { ticket -> TicketItem(onDelete, onMakeFavorite, highlightedTicketId, ticket) }
+    ) { ticket -> TicketItem(onDelete, highlightedTicketId, ticket) }
 }
 
 @Preview(showBackground = true)
@@ -110,7 +108,6 @@ fun TicketListPreview() {
     PreviewTheme {
         TicketListContent(
             onDelete = { },
-            onMakeFavorite = { },
             tickets = flowOf(
                 PagingData.from(
                     listOf(

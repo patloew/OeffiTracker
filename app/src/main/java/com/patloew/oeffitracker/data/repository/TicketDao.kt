@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter
 @Dao
 interface TicketDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insert(ticket: Ticket): Long
+    suspend fun insert(ticket: Ticket)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(ticket: Ticket)
@@ -40,6 +40,9 @@ interface TicketDao {
 
     @Query("SELECT price FROM ticket WHERE id = :ticketId")
     fun getPriceById(ticketId: Long): Flow<Int>
+
+    @Query("SELECT id FROM ticket ORDER BY startDate DESC LIMIT 1")
+    fun getLatestTicketId(): Flow<Long?>
 
     @Query("SELECT * FROM ticket WHERE (:startDate >= startDate AND :endDate <= endDate) OR (:endDate >= startDate AND :startDate < startDate) OR (:startDate <= endDate AND :endDate > endDate) LIMIT 1")
     suspend fun getFirstOverlappingValidityTicket(startDate: String, endDate: String): Ticket?

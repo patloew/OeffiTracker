@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                             BottomNavigation {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentDestination = navBackStackEntry?.destination
-                                listOf(Screen.List, Screen.Tickets, Screen.Statistics).forEach { screen ->
+                                listOf(Screen.List, Screen.Tickets).forEach { screen ->
                                     BottomNavigationItem(
                                         icon = {
                                             Icon(

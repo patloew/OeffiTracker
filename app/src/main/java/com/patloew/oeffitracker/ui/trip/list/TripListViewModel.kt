@@ -6,7 +6,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.common.ProgressData
@@ -38,18 +37,17 @@ import java.time.LocalDate
 
 class TripListViewModel(
     private val tripDao: TripDao,
-    private val ticketDao: TicketDao,
-    private val settingsRepo: SettingsRepo
+    private val ticketDao: TicketDao
 ) : ViewModel() {
 
     val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
 
     val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
 
-    val showProgress: Flow<Boolean> = settingsRepo.highlightedTicketIdFlow().map { it != null }
-    private val fareSum: Flow<Int> = settingsRepo.highlightedTicketIdFlow()
+    val showProgress: Flow<Boolean> = ticketDao.getLatestTicketId().map { it != null }
+    private val fareSum: Flow<Int> = ticketDao.getLatestTicketId()
         .flatMapConcat { ticketId -> ticketId?.let { tripDao.getSumOfFaresForTicketId(it) } ?: flowOf(0) }
-    private val fareSumGoal: Flow<Int> = settingsRepo.highlightedTicketIdFlow()
+    private val fareSumGoal: Flow<Int> = ticketDao.getLatestTicketId()
         .flatMapConcat { ticketId -> ticketId?.let { ticketDao.getPriceById(it) } ?: flowOf(0) }
     val fareProgressData: Flow<ProgressData> = combine(fareSum, fareSumGoal) { sum, goal ->
         val progress = sum / goal.toFloat()

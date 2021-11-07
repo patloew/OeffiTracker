@@ -13,7 +13,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.data.model.Ticket
-import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
@@ -93,13 +92,10 @@ class CreateTicketActivity : FragmentActivity() {
 }
 
 class CreateTicketViewModel(
-    private val ticketDao: TicketDao,
-    private val settingsRepo: SettingsRepo
+    private val ticketDao: TicketDao
 ) : ViewModel() {
 
     val name: MutableStateFlow<String> = MutableStateFlow("")
-
-    val favorite: MutableStateFlow<Boolean> = MutableStateFlow(true)
 
     val startDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now().minusYears(1).plusDays(1))
     val startDateString: Flow<String> = startDate.map { dateFormat.format(it) }
@@ -122,7 +118,7 @@ class CreateTicketViewModel(
 
     fun onCreate() {
         viewModelScope.launch {
-            val ticketId = ticketDao.insert(
+            ticketDao.insert(
                 Ticket(
                     name = name.value,
                     price = price.value!!,
@@ -131,9 +127,6 @@ class CreateTicketViewModel(
                     createdTimestamp = System.currentTimeMillis()
                 )
             )
-            if (favorite.value) {
-                settingsRepo.setHighlightedTicketId(ticketId)
-            }
             finishChannel.send(Unit)
         }
     }

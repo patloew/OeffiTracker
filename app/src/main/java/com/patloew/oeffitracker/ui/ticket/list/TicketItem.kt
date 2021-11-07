@@ -3,14 +3,13 @@ package com.patloew.oeffitracker.ui.ticket.list
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +51,6 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun TicketItem(
     onDelete: (Long) -> Unit,
-    onMakeFavorite: (Long) -> Unit,
     highlightedTicketId: Flow<Long?>,
     ticket: TicketListData?
 ) {
@@ -90,8 +88,7 @@ fun TicketItem(
                         start.linkTo(parent.start)
                         top.linkTo(name.bottom, margin = 12.dp)
                         end.linkTo(date.start)
-                    }
-                    .padding(bottom = 1.dp),
+                    },
                 tint = MaterialTheme.colors.primary
             )
 
@@ -103,8 +100,7 @@ fun TicketItem(
                         bottom.linkTo(dateIcon.bottom)
                         end.linkTo(progress.start, margin = 16.dp)
                         width = Dimension.fillToConstraints
-                    }
-                    .padding(bottom = 2.dp),
+                    },
                 text = ticket.validityPeriod,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -120,8 +116,7 @@ fun TicketItem(
                         start.linkTo(parent.start)
                         top.linkTo(dateIcon.bottom, margin = 8.dp)
                         end.linkTo(price.start)
-                    }
-                    .padding(bottom = 1.dp),
+                    },
                 tint = MaterialTheme.colors.primary
             )
 
@@ -134,7 +129,7 @@ fun TicketItem(
                         end.linkTo(progress.start, margin = 16.dp)
                         width = Dimension.fillToConstraints
                     }
-                    .padding(bottom = 2.dp),
+                    .padding(bottom = 1.dp),
                 text = ticket.price,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -144,30 +139,31 @@ fun TicketItem(
 
             if (isHighlightedTicket) {
                 Icon(
-                    Icons.Filled.Favorite,
-                    stringResource(id = R.string.accessibility_icon_favorite),
+                    painterResource(id = R.drawable.ic_tram),
+                    contentDescription = null,
                     Modifier
                         .constrainAs(favIcon) {
-                            start.linkTo(parent.start)
+                            start.linkTo(priceIcon.start)
                             top.linkTo(priceIcon.bottom, margin = 8.dp)
-                            end.linkTo(favorite.start)
+                            end.linkTo(priceIcon.end)
                         }
-                        .padding(bottom = 1.dp),
+                        .size(22.dp),
                     tint = MaterialTheme.colors.primary
                 )
 
                 Text(
                     modifier = Modifier
                         .constrainAs(favorite) {
-                            start.linkTo(favIcon.end, margin = 8.dp)
+                            start.linkTo(price.start)
                             top.linkTo(favIcon.top)
                             end.linkTo(parent.end, margin = 16.dp)
                             bottom.linkTo(favIcon.bottom)
                             width = Dimension.fillToConstraints
-                        },
+                        }
+                        .padding(bottom = 2.dp),
                     text = stringResource(id = R.string.item_ticket_favorite_hint),
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.body2
                 )
             }
 
@@ -191,13 +187,6 @@ fun TicketItem(
                 },
                 showMoreMenu = showMoreMenu
             ) {
-                if (!isHighlightedTicket) {
-                    DropdownMenuItem(onClick = {
-                        showMoreMenu.value = false
-                        onMakeFavorite(ticket.id)
-                    }) { Text(stringResource(id = R.string.action_make_favorite)) }
-                }
-
                 DropdownMenuItem(onClick = {
                     showMoreMenu.value = false
                     showDeleteDialog.value = true
@@ -287,7 +276,6 @@ fun TicketItemPreview() {
         Column {
             TicketItem(
                 onDelete = { },
-                onMakeFavorite = { },
                 highlightedTicketId = flowOf(0),
                 ticket = TicketListData(
                     0,
@@ -298,7 +286,7 @@ fun TicketItemPreview() {
                 )
             )
             Divider()
-            TicketItem(onDelete = {}, onMakeFavorite = { }, highlightedTicketId = flowOf(0), ticket = null)
+            TicketItem(onDelete = { }, highlightedTicketId = flowOf(0), ticket = null)
             Divider()
         }
     }
