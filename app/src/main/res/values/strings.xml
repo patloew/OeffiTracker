@@ -15,4 +15,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_duplicate_for_today">Duplicate today</string>
     <string name="progress_description">%s of %s</string>
+    <string name="bottombar_list">Trips</string>
+    <string name="bottombar_tickets">Tickets</string>
+    <string name="bottombar_statistics">Statistics</string>
 </resources>

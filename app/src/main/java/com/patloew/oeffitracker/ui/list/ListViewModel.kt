@@ -1,8 +1,5 @@
 package com.patloew.oeffitracker.ui.list
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -12,14 +9,12 @@ import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.percentageFormat
 import com.patloew.oeffitracker.ui.priceFormat
-import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -36,21 +31,6 @@ import java.time.format.DateTimeFormatter
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License. */
-
-class ListActivity : ComponentActivity() {
-
-    private val viewModel: ListViewModel by viewModel()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            OeffiTrackerTheme {
-                ListScreen(viewModel)
-            }
-        }
-    }
-}
 
 class ListViewModel(
     private val tripDao: TripDao

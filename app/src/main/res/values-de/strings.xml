@@ -16,4 +16,7 @@
     <string name="action_cancel">Abbrechen</string>
     <string name="action_duplicate_for_today">Heute duplizieren</string>
     <string name="progress_description">%s von %s</string>
+    <string name="bottombar_list">Fahrten</string>
+    <string name="bottombar_tickets">Karten</string>
+    <string name="bottombar_statistics">Statistiken</string>
 </resources>

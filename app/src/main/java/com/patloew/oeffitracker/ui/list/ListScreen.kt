@@ -1,8 +1,10 @@
 package com.patloew.oeffitracker.ui.list
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -12,13 +14,10 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,7 +57,6 @@ import java.time.LocalDate
 @Composable
 fun ListScreen(viewModel: ListViewModel) {
     val coroutineScope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
     val createTripLauncher = rememberLauncherForActivityResult(contract = CreateActivity.Contract) { created ->
@@ -66,32 +64,31 @@ fun ListScreen(viewModel: ListViewModel) {
     }
 
     Surface(color = MaterialTheme.colors.background) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = { TopAppBar(title = { Text(stringResource(id = R.string.app_name)) }) },
-            floatingActionButton = {
-                FloatingActionButton(onClick = { createTripLauncher.launch(Unit) }) {
-                    Icon(
-                        Icons.Filled.Add,
-                        stringResource(id = R.string.accessibility_icon_add),
-                        tint = MaterialTheme.colors.onSecondary
-                    )
-                }
-            },
-            content = {
-                TripList(
-                    onDelete = viewModel::onDelete,
-                    onDuplicateForToday = viewModel::onDuplicateForToday,
-                    viewModel.trips,
-                    viewModel.fareSumGoalString,
-                    viewModel.fareSumPercentageString,
-                    viewModel.fareSumProgress,
-                    listState
+        Box(modifier = Modifier.fillMaxSize()) {
+            TripList(
+                onDelete = viewModel::onDelete,
+                onDuplicateForToday = viewModel::onDuplicateForToday,
+                viewModel.trips,
+                viewModel.fareSumGoalString,
+                viewModel.fareSumPercentageString,
+                viewModel.fareSumProgress,
+                listState
+            )
+
+            FloatingActionButton(
+                onClick = { createTripLauncher.launch(Unit) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    stringResource(id = R.string.accessibility_icon_add),
+                    tint = MaterialTheme.colors.onSecondary
                 )
             }
-        )
+        }
     }
-
 
     LaunchedEffect(viewModel.scrollToTopEvent) {
         viewModel.scrollToTopEvent.collect { listState.animateScrollToItem(0) }
@@ -109,7 +106,7 @@ fun TripList(
     listState: LazyListState
 ) {
     Column {
-        Surface(elevation = 4.dp) {
+        Surface(elevation = 8.dp) {
             Row(
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
