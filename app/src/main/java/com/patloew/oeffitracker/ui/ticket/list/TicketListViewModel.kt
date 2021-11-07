@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.ticket
+package com.patloew.oeffitracker.ui.ticket.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class TicketViewModel(
+class TicketListViewModel(
     private val ticketDao: TicketDao
 ) : ViewModel() {
 

@@ -31,11 +31,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.ui.list.ListScreen
-import com.patloew.oeffitracker.ui.list.ListViewModel
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
-import com.patloew.oeffitracker.ui.ticket.TicketScreen
-import com.patloew.oeffitracker.ui.ticket.TicketViewModel
+import com.patloew.oeffitracker.ui.ticket.list.TicketListScreen
+import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
+import com.patloew.oeffitracker.ui.trip.list.TripListScreen
+import com.patloew.oeffitracker.ui.trip.list.TripListViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /* Copyright 2021 Patrick Löwenstein
@@ -60,8 +60,8 @@ sealed class Screen(val route: String, @StringRes val stringRes: Int, @DrawableR
 
 class MainActivity : ComponentActivity() {
 
-    private val listViewModel: ListViewModel by viewModel()
-    private val ticketViewModel: TicketViewModel by viewModel()
+    private val tripListViewModel: TripListViewModel by viewModel()
+    private val ticketListViewModel: TicketListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,8 +117,8 @@ class MainActivity : ComponentActivity() {
                                     it.calculateBottomPadding()
                                 )
                             ) {
-                                composable(Screen.List.route) { ListScreen(viewModel = listViewModel) }
-                                composable(Screen.Tickets.route) { TicketScreen(viewModel = ticketViewModel) }
+                                composable(Screen.List.route) { TripListScreen(viewModel = tripListViewModel) }
+                                composable(Screen.Tickets.route) { TicketListScreen(viewModel = ticketListViewModel) }
                                 composable(Screen.Statistics.route) {
                                     Text("Statistics", textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
                                 }

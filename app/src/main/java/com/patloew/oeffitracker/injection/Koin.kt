@@ -3,9 +3,9 @@ package com.patloew.oeffitracker.injection
 import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
-import com.patloew.oeffitracker.ui.create.CreateViewModel
-import com.patloew.oeffitracker.ui.list.ListViewModel
-import com.patloew.oeffitracker.ui.ticket.TicketViewModel
+import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
+import com.patloew.oeffitracker.ui.trip.create.CreateTripViewModel
+import com.patloew.oeffitracker.ui.trip.list.TripListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -32,7 +32,7 @@ val appModule = module {
     single { get<AppDatabase>().tripDao() }
     single { get<AppDatabase>().ticketDao() }
 
-    viewModel { ListViewModel(get()) }
-    viewModel { TicketViewModel(get()) }
-    viewModel { CreateViewModel(get()) }
+    viewModel { TripListViewModel(get()) }
+    viewModel { TicketListViewModel(get()) }
+    viewModel { CreateTripViewModel(get()) }
 }

@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.list
+package com.patloew.oeffitracker.ui.trip.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -56,7 +56,7 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun TripRow(
+fun TripItem(
     trip: Trip?,
     onDelete: (id: Int) -> Unit,
     onDuplicateForToday: (Trip) -> Unit
@@ -274,12 +274,12 @@ fun TripRow(
 
 @Preview(showBackground = true)
 @Composable
-fun TripRowPreview() {
+fun TripItemPreview() {
     PreviewTheme {
         Column {
-            TripRow(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { })
+            TripItem(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { })
             Divider()
-            TripRow(trip = null, { }, { })
+            TripItem(trip = null, { }, { })
             Divider()
         }
     }

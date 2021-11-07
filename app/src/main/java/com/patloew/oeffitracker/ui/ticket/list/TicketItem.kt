@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.ticket
+package com.patloew.oeffitracker.ui.ticket.list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +28,7 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun TicketRow(
+fun TicketItem(
     ticket: Ticket?
 ) {
     if (ticket != null) {
@@ -52,10 +52,10 @@ fun TicketRow(
 
 @Preview(showBackground = true)
 @Composable
-fun TicketRowPreview() {
+fun TicketItemPreview() {
     PreviewTheme {
         Column {
-            TicketRow(
+            TicketItem(
                 ticket = Ticket(
                     "Klimaticket",
                     109500,
@@ -65,7 +65,7 @@ fun TicketRowPreview() {
                 )
             )
             Divider()
-            TicketRow(ticket = null)
+            TicketItem(ticket = null)
             Divider()
         }
     }

@@ -6,8 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Ticket
-import com.patloew.oeffitracker.data.model.Trip
-import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *

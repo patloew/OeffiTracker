@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.ticket
+package com.patloew.oeffitracker.ui.ticket.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -47,13 +46,12 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun TicketScreen(viewModel: TicketViewModel) {
-    val coroutineScope = rememberCoroutineScope()
+fun TicketListScreen(viewModel: TicketListViewModel) {
     val listState = rememberLazyListState()
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            TicketList(
+            TicketListContent(
                 viewModel.tickets,
                 listState
             )
@@ -79,14 +77,14 @@ fun TicketScreen(viewModel: TicketViewModel) {
 }
 
 @Composable
-fun TicketList(
+fun TicketListContent(
     tickets: Flow<PagingData<Ticket>>,
     listState: LazyListState
 ) {
     val lazyTicketItems = tickets.collectAsLazyPagingItems()
     LazyColumn(state = listState) {
         items(items = lazyTicketItems, key = { it.id }) { ticket ->
-            TicketRow(ticket)
+            TicketItem(ticket)
             Divider()
         }
     }
@@ -94,9 +92,9 @@ fun TicketList(
 
 @Preview(showBackground = true)
 @Composable
-fun TicketPreview() {
+fun TicketListPreview() {
     PreviewTheme {
-        TicketList(
+        TicketListContent(
             tickets = flowOf(
                 PagingData.from(
                     listOf(

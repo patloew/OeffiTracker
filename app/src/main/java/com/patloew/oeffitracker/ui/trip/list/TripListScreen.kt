@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.list
+package com.patloew.oeffitracker.ui.trip.list
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
@@ -33,7 +33,7 @@ import androidx.paging.compose.items
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
-import com.patloew.oeffitracker.ui.create.CreateActivity
+import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -55,17 +55,17 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Composable
-fun ListScreen(viewModel: ListViewModel) {
+fun TripListScreen(viewModel: TripListViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
-    val createTripLauncher = rememberLauncherForActivityResult(contract = CreateActivity.Contract) { created ->
+    val createTripLauncher = rememberLauncherForActivityResult(contract = CreateTripActivity.Contract) { created ->
         if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
     }
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            TripList(
+            TripListContent(
                 onDelete = viewModel::onDelete,
                 onDuplicateForToday = viewModel::onDuplicateForToday,
                 viewModel.trips,
@@ -96,7 +96,7 @@ fun ListScreen(viewModel: ListViewModel) {
 }
 
 @Composable
-fun TripList(
+fun TripListContent(
     onDelete: (id: Int) -> Unit,
     onDuplicateForToday: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
@@ -131,7 +131,7 @@ fun TripList(
         val lazyTripItems = trips.collectAsLazyPagingItems()
         LazyColumn(state = listState) {
             items(items = lazyTripItems, key = { it.id }) { trip ->
-                TripRow(trip, onDelete, onDuplicateForToday)
+                TripItem(trip, onDelete, onDuplicateForToday)
                 Divider()
             }
         }
@@ -141,9 +141,9 @@ fun TripList(
 
 @Preview(showBackground = true)
 @Composable
-fun ListPreview() {
+fun TripListPreview() {
     PreviewTheme {
-        TripList(
+        TripListContent(
             onDelete = { },
             onDuplicateForToday = { },
             trips = flowOf(

@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.list
+package com.patloew.oeffitracker.ui.trip.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,7 +32,7 @@ import java.time.format.DateTimeFormatter
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class ListViewModel(
+class TripListViewModel(
     private val tripDao: TripDao
 ) : ViewModel() {
 

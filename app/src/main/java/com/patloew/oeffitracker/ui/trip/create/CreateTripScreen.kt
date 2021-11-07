@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.create
+package com.patloew.oeffitracker.ui.trip.create
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -64,11 +64,11 @@ import kotlinx.coroutines.flow.flowOf
  * limitations under the License. */
 
 @Composable
-fun CreateScreen(
+fun CreateTripScreen(
     navigationAction: () -> Unit,
     onDateClick: () -> Unit,
     onCreateClick: () -> Unit,
-    viewModel: CreateViewModel
+    viewModel: CreateTripViewModel
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -93,7 +93,7 @@ fun CreateScreen(
                 )
             },
             content = {
-                CreateContent(
+                CreateTripContent(
                     onDateClick,
                     onCreateClick,
                     viewModel::setFare,
@@ -109,7 +109,7 @@ fun CreateScreen(
 }
 
 @Composable
-fun CreateContent(
+fun CreateTripContent(
     onDateClick: () -> Unit,
     onCreateClick: () -> Unit,
     setFare: (String) -> Boolean,
@@ -220,9 +220,9 @@ fun CreateContent(
 
 @Preview(showBackground = true)
 @Composable
-fun CreatePreview() {
+fun CreateTripPreview() {
     PreviewTheme {
-        CreateContent(
+        CreateTripContent(
             { },
             { },
             { true },

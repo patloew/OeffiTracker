@@ -1,4 +1,4 @@
-package com.patloew.oeffitracker.ui.create
+package com.patloew.oeffitracker.ui.trip.create
 
 import android.app.Activity
 import android.content.Context
@@ -46,24 +46,24 @@ import java.time.ZoneOffset
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class CreateActivity : FragmentActivity() {
+class CreateTripActivity : FragmentActivity() {
 
     object Contract : ActivityResultContract<Unit, Boolean>() {
         override fun createIntent(context: Context, input: Unit): Intent =
-            Intent(context, CreateActivity::class.java)
+            Intent(context, CreateTripActivity::class.java)
 
         override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
             resultCode == Activity.RESULT_OK
     }
 
-    private val viewModel: CreateViewModel by viewModel()
+    private val viewModel: CreateTripViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             OeffiTrackerTheme {
-                CreateScreen(
+                CreateTripScreen(
                     navigationAction = { finish() },
                     onDateClick = {
                         MaterialDatePicker.Builder.datePicker()
@@ -97,7 +97,7 @@ class CreateActivity : FragmentActivity() {
     }
 }
 
-class CreateViewModel(
+class CreateTripViewModel(
     private val tripDao: TripDao
 ) : ViewModel() {
 
