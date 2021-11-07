@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
@@ -28,11 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.PreviewTheme
+import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -69,6 +66,7 @@ fun TripListScreen(viewModel: TripListViewModel) {
                 onDelete = viewModel::onDelete,
                 onDuplicateForToday = viewModel::onDuplicateForToday,
                 viewModel.trips,
+                viewModel.isEmpty,
                 viewModel.fareSumGoalString,
                 viewModel.fareSumPercentageString,
                 viewModel.fareSumProgress,
@@ -100,6 +98,7 @@ fun TripListContent(
     onDelete: (id: Int) -> Unit,
     onDuplicateForToday: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
+    isEmpty: Flow<Boolean>,
     fareSumGoal: Flow<String>,
     fareSumPercentage: Flow<String>,
     fareProgress: Flow<Float>,
@@ -128,13 +127,14 @@ fun TripListContent(
             }
         }
 
-        val lazyTripItems = trips.collectAsLazyPagingItems()
-        LazyColumn(state = listState) {
-            items(items = lazyTripItems, key = { it.id }) { trip ->
-                TripItem(trip, onDelete, onDuplicateForToday)
-                Divider()
-            }
-        }
+        LazyList(
+            data = trips,
+            getKey = { it.id },
+            isEmpty = isEmpty,
+            emptyTitleRes = R.string.empty_state_trip_title,
+            emptyTextRes = R.string.empty_state_trip_text,
+            listState = listState
+        ) { trip -> TripItem(trip, onDelete, onDuplicateForToday) }
     }
 
 }
@@ -154,6 +154,7 @@ fun TripListPreview() {
                     )
                 )
             ),
+            isEmpty = flowOf(false),
             fareSumGoal = flowOf(""),
             fareSumPercentage = flowOf(""),
             fareProgress = flowOf(0f),

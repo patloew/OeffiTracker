@@ -38,6 +38,8 @@ class TripListViewModel(
 
     val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
 
+    val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
+
     private val fareSum: Flow<Int?> = tripDao.getSumOfFaresBetween(
         DateTimeFormatter.ISO_DATE.format(LocalDate.now().minusYears(1)),
         DateTimeFormatter.ISO_DATE.format(LocalDate.now())

@@ -9,6 +9,7 @@ import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.repository.TicketDao
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,8 @@ class TicketListViewModel(
 ) : ViewModel() {
 
     val tickets: Flow<PagingData<Ticket>> = Pager(PagingConfig(pageSize = 20)) { ticketDao.getAllPagingSource() }.flow
+
+    val isEmpty: Flow<Boolean> = ticketDao.getCount().map { it == 0 }
 
     private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val scrollToTopEvent: Flow<Unit> = scrollToTopChannel.receiveAsFlow()

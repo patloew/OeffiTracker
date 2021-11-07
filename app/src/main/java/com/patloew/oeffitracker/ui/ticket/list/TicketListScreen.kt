@@ -3,10 +3,8 @@ package com.patloew.oeffitracker.ui.ticket.list
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -21,11 +19,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
+import com.patloew.oeffitracker.ui.common.LazyList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -51,10 +48,14 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            TicketListContent(
-                viewModel.tickets,
-                listState
-            )
+            LazyList(
+                data = viewModel.tickets,
+                getKey = { it.id },
+                isEmpty = viewModel.isEmpty,
+                emptyTitleRes = R.string.empty_state_ticket_title,
+                emptyTextRes = R.string.empty_state_ticket_text,
+                listState = listState
+            ) { ticket -> TicketItem(ticket) }
 
             FloatingActionButton(
                 onClick = { /* TODO */ },
@@ -79,15 +80,17 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 @Composable
 fun TicketListContent(
     tickets: Flow<PagingData<Ticket>>,
+    isEmpty: Flow<Boolean>,
     listState: LazyListState
 ) {
-    val lazyTicketItems = tickets.collectAsLazyPagingItems()
-    LazyColumn(state = listState) {
-        items(items = lazyTicketItems, key = { it.id }) { ticket ->
-            TicketItem(ticket)
-            Divider()
-        }
-    }
+    LazyList(
+        data = tickets,
+        getKey = { it.id },
+        isEmpty = isEmpty,
+        emptyTitleRes = R.string.empty_state_ticket_title,
+        emptyTextRes = R.string.empty_state_ticket_text,
+        listState = listState
+    ) { ticket -> TicketItem(ticket) }
 }
 
 @Preview(showBackground = true)
@@ -102,6 +105,7 @@ fun TicketListPreview() {
                     )
                 )
             ),
+            isEmpty = flowOf(false),
             rememberLazyListState()
         )
     }

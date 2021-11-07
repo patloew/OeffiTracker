@@ -18,4 +18,8 @@
     <string name="bottombar_list">Trips</string>
     <string name="bottombar_tickets">Tickets</string>
     <string name="bottombar_statistics">Statistics</string>
+    <string name="empty_state_trip_title">No trips yet</string>
+    <string name="empty_state_trip_text">Add trips to track your progress for a season ticket.</string>
+    <string name="empty_state_ticket_title">No tickets yet</string>
+    <string name="empty_state_ticket_text">Add season tickets to track your progess.</string>
 </resources>

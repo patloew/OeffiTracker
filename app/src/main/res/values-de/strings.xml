@@ -19,4 +19,8 @@
     <string name="bottombar_list">Fahrten</string>
     <string name="bottombar_tickets">Karten</string>
     <string name="bottombar_statistics">Statistiken</string>
+    <string name="empty_state_trip_title">Noch keine Fahrten</string>
+    <string name="empty_state_trip_text">Füge Fahrten hinzu, um den Fortschritt für eine Zeitkarte nachzuverfolgen.</string>
+    <string name="empty_state_ticket_title">Noch keine Karten</string>
+    <string name="empty_state_ticket_text">Füge Zeitkarten hinzu, um den Fortschritt nachzuverfolgen.</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Ticket
+import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -31,6 +32,9 @@ interface TicketDao {
 
     @Query("DELETE FROM ticket WHERE id = :ticketId")
     suspend fun deleteById(ticketId: Int)
+
+    @Query("SELECT COUNT(*) FROM ticket")
+    fun getCount(): Flow<Int>
 
     @Query("SELECT * FROM ticket ORDER BY startDate DESC")
     fun getAllPagingSource(): PagingSource<Int, Ticket>
