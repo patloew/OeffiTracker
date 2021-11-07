@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -100,6 +101,7 @@ fun CreateTicketScreen(
                     onCreateClick,
                     viewModel::setPrice,
                     viewModel.saveEnabled,
+                    viewModel.endDateBeforeStartDate,
                     viewModel.overlappingTicket,
                     viewModel.name,
                     viewModel.startDateString,
@@ -118,6 +120,7 @@ fun CreateTicketContent(
     onCreateClick: () -> Unit,
     setPrice: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
+    endDateBeforeStartDate: Flow<Boolean>,
     overlappingTicket: Flow<Ticket?>,
     nameStateFlow: MutableStateFlow<String>,
     startDateFlow: Flow<String>,
@@ -185,24 +188,25 @@ fun CreateTicketContent(
         )
 
         val overlappingTicketValue = overlappingTicket.collectAsState(initial = null).value
-        if (overlappingTicketValue != null) {
-            Text(
-                text = stringResource(
-                    id = R.string.ticket_trip_validity_hint_error,
+        val (validityHintText, validityHintColor) = when {
+            endDateBeforeStartDate.collectAsState(initial = false).value ->
+                stringResource(id = R.string.ticket_trip_validity_hint_enddate_startdate_error) to
+                        MaterialTheme.colors.error
+            overlappingTicketValue != null ->
+                stringResource(
+                    id = R.string.ticket_trip_validity_hint_overlap_error,
                     overlappingTicketValue.name,
                     overlappingTicketValue.validityPeriod
-                ),
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.error,
-                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
-            )
-        } else {
-            Text(
-                text = stringResource(id = R.string.ticket_trip_validity_hint),
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
-            )
+                ) to MaterialTheme.colors.error
+            else -> stringResource(id = R.string.ticket_trip_validity_hint) to Color.Unspecified
         }
+
+        Text(
+            text = validityHintText,
+            style = MaterialTheme.typography.caption,
+            color = validityHintColor,
+            modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
+        )
 
         Button(
             onClick = { onCreateClick() },
@@ -224,6 +228,7 @@ fun CreateTicketPreview() {
             { },
             { },
             { true },
+            flowOf(false),
             flowOf(false),
             flowOf(null),
             MutableStateFlow(""),

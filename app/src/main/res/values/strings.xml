@@ -34,5 +34,6 @@
     <string name="alert_delete_ticket_text">Do you want to delete ticket \"%s\" valid from %s?</string>
     <string name="item_ticket_favorite_hint">This ticket is shown on the trip list</string>
     <string name="ticket_trip_validity_hint">All trips that are or already were added within this validity period will automatically be assigned to this ticket.</string>
-    <string name="ticket_trip_validity_hint_error">A ticket that overlaps this validity period already exists (\"%s\" with validity period %s). Since trips within this validity period will automatically be assigned to this ticket, overlapping validity periods are not allowed.</string>
+    <string name="ticket_trip_validity_hint_overlap_error">A ticket that overlaps this validity period already exists (\"%s\" with validity period %s). Since trips within this validity period will automatically be assigned to this ticket, overlapping validity periods are not allowed.</string>
+    <string name="ticket_trip_validity_hint_enddate_startdate_error">Ticket validity end date must be after start date.</string>
 </resources>
