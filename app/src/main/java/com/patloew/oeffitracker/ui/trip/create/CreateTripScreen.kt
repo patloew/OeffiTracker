@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.trip.create
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -76,7 +77,7 @@ fun CreateTripScreen(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(id = R.string.toolbar_title_create_trip)) },
+                    title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
                     navigationIcon = {
                         Icon(
                             Icons.Filled.ArrowBack,
@@ -100,7 +101,8 @@ fun CreateTripScreen(
                     viewModel.startCity,
                     viewModel.endCity,
                     viewModel.dateString,
-                    viewModel.initialFare
+                    viewModel.initialFare,
+                    viewModel.buttonTextRes
                 )
             }
         )
@@ -116,7 +118,8 @@ fun CreateTripContent(
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
     dateFlow: Flow<String>,
-    initialFare: String
+    initialFare: String,
+    @StringRes buttonTextRes: Int
 ) {
     Column(
         modifier = Modifier
@@ -197,7 +200,7 @@ fun CreateTripContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp)
-        ) { Text(stringResource(id = R.string.button_add)) }
+        ) { Text(stringResource(id = buttonTextRes)) }
     }
 
 }
@@ -214,7 +217,8 @@ fun CreateTripPreview() {
             MutableStateFlow(""),
             MutableStateFlow(""),
             flowOf(""),
-            ""
+            "",
+            0
         )
     }
 }

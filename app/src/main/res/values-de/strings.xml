@@ -37,4 +37,6 @@
     <string name="ticket_trip_validity_hint">Alle Fahrten, die du innerhalb dieser Gültigkeitsdauer hinzufügst oder bereits hinzugefügt hast, werden automatisch dieser Fahrkarte zugeordnet.</string>
     <string name="ticket_trip_validity_hint_overlap_error">Es gibt bereits eine Fahrkarte, die diesen Gültigkeitsbereich überschneidet (\"%s\" mit Gültigkeit %s). Da alle Fahrten innerhalb dieser Gültigkeitsdauer automatisch dieser Fahrkarte zugeordnet werden, darf es keine Überschneidungen geben.</string>
     <string name="ticket_trip_validity_hint_enddate_startdate_error">Das Gültigkeitsende der Karte darf nicht vor dem Gültigkeitsbeginn liegen.</string>
+    <string name="toolbar_title_edit_trip">Fahrt bearbeiten</string>
+    <string name="button_edit">Bearbeiten</string>
 </resources>

@@ -6,18 +6,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.showDatePicker
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
+import com.patloew.oeffitracker.ui.viewModelFactory
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +29,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -43,9 +46,11 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+private const val EXTRA_EDIT_TRIP = "editTrip"
+
 class CreateTripActivity : FragmentActivity() {
 
-    object Contract : ActivityResultContract<Unit, Boolean>() {
+    object CreateContract : ActivityResultContract<Unit, Boolean>() {
         override fun createIntent(context: Context, input: Unit): Intent =
             Intent(context, CreateTripActivity::class.java)
 
@@ -53,7 +58,25 @@ class CreateTripActivity : FragmentActivity() {
             resultCode == Activity.RESULT_OK
     }
 
-    private val viewModel: CreateTripViewModel by viewModel()
+    object EditContract : ActivityResultContract<Trip, Boolean>() {
+        override fun createIntent(context: Context, input: Trip): Intent =
+            Intent(context, CreateTripActivity::class.java).apply {
+                putExtra(EXTRA_EDIT_TRIP, input)
+            }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
+            resultCode == Activity.RESULT_OK
+    }
+
+    private val viewModelFactory: CreateTripViewModel.Factory by inject()
+    private val viewModel: CreateTripViewModel by viewModelFactory {
+        val editTrip: Trip? = intent.getParcelableExtra(EXTRA_EDIT_TRIP)
+        if (editTrip != null) {
+            viewModelFactory.edit(editTrip)
+        } else {
+            viewModelFactory.create()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,18 +107,34 @@ class CreateTripActivity : FragmentActivity() {
     }
 }
 
+
 class CreateTripViewModel(
-    private val tripDao: TripDao
+    private val tripDao: TripDao,
+    private val editTrip: Trip?
 ) : ViewModel() {
 
-    val startCity: MutableStateFlow<String> = MutableStateFlow("")
-    val endCity: MutableStateFlow<String> = MutableStateFlow("")
+    @StringRes
+    val toolbarTitleRes: Int = if (editTrip == null) {
+        R.string.toolbar_title_create_trip
+    } else {
+        R.string.toolbar_title_edit_trip
+    }
 
-    val date: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    @StringRes
+    val buttonTextRes: Int = if (editTrip == null) {
+        R.string.button_add
+    } else {
+        R.string.button_edit
+    }
+
+    val startCity: MutableStateFlow<String> = MutableStateFlow(editTrip?.startCity ?: "")
+    val endCity: MutableStateFlow<String> = MutableStateFlow(editTrip?.endCity ?: "")
+
+    val date: MutableStateFlow<LocalDate> = MutableStateFlow(editTrip?.date ?: LocalDate.now())
     val dateString: Flow<String> = date.map { dateFormat.format(it) }
 
-    private val fare: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val initialFare = ""
+    private val fare: MutableStateFlow<Int?> = MutableStateFlow(editTrip?.fare)
+    val initialFare = editTrip?.floatFareString ?: ""
 
     val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
         startCity.isNotEmpty() && endCity.isNotEmpty() && (fare == null || fare > 0)
@@ -106,15 +145,26 @@ class CreateTripViewModel(
 
     fun onCreate() {
         viewModelScope.launch {
-            tripDao.insert(
-                Trip(
-                    startCity = startCity.value.trim(),
-                    endCity = endCity.value.trim(),
-                    fare = fare.value,
-                    date = date.value,
-                    createdTimestamp = System.currentTimeMillis()
+            if (editTrip != null) {
+                tripDao.update(
+                    editTrip.copy(
+                        startCity = startCity.value.trim(),
+                        endCity = endCity.value.trim(),
+                        fare = fare.value,
+                        date = date.value
+                    )
                 )
-            )
+            } else {
+                tripDao.insert(
+                    Trip(
+                        startCity = startCity.value.trim(),
+                        endCity = endCity.value.trim(),
+                        fare = fare.value,
+                        date = date.value,
+                        createdTimestamp = System.currentTimeMillis()
+                    )
+                )
+            }
             finishChannel.send(Unit)
         }
     }
@@ -126,5 +176,17 @@ class CreateTripViewModel(
      */
     fun setFare(fareString: String): Boolean =
         checkAndSetAmount(fareString) { newFare -> fare.value = newFare }
+
+    private val Trip.floatFareString: String?
+        get() = if (fare?.mod(100) == 0) {
+            floatFare!!.toInt().toString()
+        } else {
+            floatFare?.toString()?.replace('.', ',')
+        }
+
+    class Factory(private val tripDao: TripDao) {
+        fun create() = CreateTripViewModel(tripDao, editTrip = null)
+        fun edit(trip: Trip) = CreateTripViewModel(tripDao, editTrip = trip)
+    }
 
 }

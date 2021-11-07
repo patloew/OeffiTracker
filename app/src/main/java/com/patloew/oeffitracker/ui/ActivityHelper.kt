@@ -1,11 +1,9 @@
-package com.patloew.oeffitracker.data.model
+package com.patloew.oeffitracker.ui
 
-import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
-import java.time.LocalDate
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -21,16 +19,10 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Entity
-@Parcelize
-data class Trip(
-    val startCity: String,
-    val endCity: String,
-    val fare: Int?,
-    val date: LocalDate,
-    val createdTimestamp: Long,
-    @PrimaryKey(autoGenerate = true) val id: Long = 0
-) : Parcelable {
-    @Ignore
-    val floatFare: Float? = fare?.div(100f)
+inline fun <reified VM : ViewModel> ComponentActivity.viewModelFactory(
+    crossinline createViewModel: () -> VM
+): Lazy<VM> = viewModels {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T = createViewModel() as T
+    }
 }

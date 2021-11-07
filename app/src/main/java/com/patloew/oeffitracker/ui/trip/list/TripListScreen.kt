@@ -59,9 +59,10 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
-    val createTripLauncher = rememberLauncherForActivityResult(contract = CreateTripActivity.Contract) { created ->
-        if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
-    }
+    val createTripLauncher =
+        rememberLauncherForActivityResult(contract = CreateTripActivity.CreateContract) { created ->
+            if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
+        }
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {

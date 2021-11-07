@@ -1,6 +1,8 @@
 package com.patloew.oeffitracker.ui.trip.list
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +39,7 @@ import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.MoreMenu
 import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.priceFormatFloat
+import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -60,9 +63,12 @@ fun TripItem(
     onDuplicateForToday: (Trip) -> Unit
 ) {
     if (trip != null) {
+        val editTripLauncher = rememberLauncherForActivityResult(contract = CreateTripActivity.EditContract) { }
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { editTripLauncher.launch(trip) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
@@ -141,11 +147,13 @@ fun TripItem(
             )
 
             Text(
-                modifier = Modifier.constrainAs(price) {
-                    end.linkTo(moreIcon.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(date.top)
-                }.alpha(if (trip.fare == null) 0.6f else 1f),
+                modifier = Modifier
+                    .constrainAs(price) {
+                        end.linkTo(moreIcon.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(date.top)
+                    }
+                    .alpha(if (trip.fare == null) 0.6f else 1f),
                 text = trip.floatFare?.let(priceFormatFloat::format) ?: "? €",
                 maxLines = 1,
                 style = MaterialTheme.typography.body1

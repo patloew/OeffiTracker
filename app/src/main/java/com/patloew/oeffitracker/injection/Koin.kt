@@ -35,8 +35,9 @@ val appModule = module {
     single { get<AppDatabase>().ticketDao() }
     single { SettingsRepo(get()) }
 
+    single { CreateTripViewModel.Factory(get()) }
+
     viewModel { TripListViewModel(get(), get()) }
     viewModel { TicketListViewModel(get(), get()) }
-    viewModel { CreateTripViewModel(get()) }
     viewModel { CreateTicketViewModel(get()) }
 }
