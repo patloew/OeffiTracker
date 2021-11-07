@@ -2,11 +2,13 @@ package com.patloew.oeffitracker.ui.ticket.create
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -16,10 +18,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -38,6 +43,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
@@ -101,6 +108,7 @@ fun CreateTicketScreen(
                     viewModel.name,
                     viewModel.startDateString,
                     viewModel.endDateString,
+                    viewModel.favorite,
                     viewModel.initialPrice
                 )
             }
@@ -118,6 +126,7 @@ fun CreateTicketContent(
     nameStateFlow: MutableStateFlow<String>,
     startDateFlow: Flow<String>,
     endDateFlow: Flow<String>,
+    favoriteState: MutableStateFlow<Boolean>,
     initialPrice: String
 ) {
     Column(
@@ -180,12 +189,41 @@ fun CreateTicketContent(
             labelRes = R.string.label_end_date
         )
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { favoriteState.value = !favoriteState.value }
+                .padding(horizontal = 12.dp, vertical = 16.dp)
+        ) {
+            Icon(
+                Icons.Filled.Favorite,
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary
+            )
+
+            Text(
+                text = stringResource(id = R.string.ticket_add_as_favorite),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            )
+
+            Switch(
+                checked = favoriteState.collectAsState().value,
+                onCheckedChange = { favoriteState.value = it }
+            )
+        }
+
         Button(
             onClick = { onCreateClick() },
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
         ) { Text(stringResource(id = R.string.button_add)) }
     }
 
@@ -204,6 +242,7 @@ fun CreateTicketPreview() {
             MutableStateFlow(""),
             flowOf(""),
             flowOf(""),
+            MutableStateFlow(true),
             ""
         )
     }

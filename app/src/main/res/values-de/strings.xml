@@ -36,4 +36,5 @@
     <string name="action_make_favorite">Als Favorit markieren</string>
     <string name="accessibility_icon_favorite">Favorit</string>
     <string name="item_ticket_favorite_hint">Diese Karte ist als Favorit markiert und wird in der Fahrtenliste angezeigt</string>
+    <string name="ticket_add_as_favorite">Als Favorit hinzufügen</string>
 </resources>

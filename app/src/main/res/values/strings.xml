@@ -35,4 +35,5 @@
     <string name="action_make_favorite">Make favorite</string>
     <string name="accessibility_icon_favorite">Favorite</string>
     <string name="item_ticket_favorite_hint">This ticket is marked as favorite and will be shown on the trip list</string>
+    <string name="ticket_add_as_favorite">Add as favorite</string>
 </resources>

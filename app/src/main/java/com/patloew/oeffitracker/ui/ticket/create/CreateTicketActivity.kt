@@ -99,6 +99,8 @@ class CreateTicketViewModel(
 
     val name: MutableStateFlow<String> = MutableStateFlow("")
 
+    val favorite: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
     val startDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now().minusYears(1).plusDays(1))
     val startDateString: Flow<String> = startDate.map { dateFormat.format(it) }
 
@@ -126,7 +128,9 @@ class CreateTicketViewModel(
                     createdTimestamp = System.currentTimeMillis()
                 )
             )
-            settingsRepo.setHighlightedTicketId(ticketId)
+            if (favorite.value) {
+                settingsRepo.setHighlightedTicketId(ticketId)
+            }
             finishChannel.send(Unit)
         }
     }
