@@ -1,12 +1,13 @@
-package com.patloew.oeffitracker.data
+package com.patloew.oeffitracker.data.repository
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.paging.PagingSource
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.data.repository.TicketDao
-import com.patloew.oeffitracker.data.repository.TripDao
+import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -22,9 +23,17 @@ import com.patloew.oeffitracker.data.repository.TripDao
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Database(entities = [Trip::class, Ticket::class], version = 1)
-@TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun tripDao(): TripDao
-    abstract fun ticketDao(): TicketDao
+@Dao
+interface TicketDao {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(ticket: Ticket)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(ticket: Ticket)
+
+    @Query("DELETE FROM ticket WHERE id = :ticketId")
+    suspend fun deleteById(ticketId: Int)
+
+    @Query("SELECT * FROM ticket ORDER BY startDate DESC")
+    fun getAllPagingSource(): PagingSource<Int, Ticket>
 }

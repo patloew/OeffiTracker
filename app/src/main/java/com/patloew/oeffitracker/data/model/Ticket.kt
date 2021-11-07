@@ -1,12 +1,9 @@
-package com.patloew.oeffitracker.data
+package com.patloew.oeffitracker.data.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.patloew.oeffitracker.data.model.Ticket
-import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.data.repository.TicketDao
-import com.patloew.oeffitracker.data.repository.TripDao
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -22,9 +19,15 @@ import com.patloew.oeffitracker.data.repository.TripDao
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Database(entities = [Trip::class, Ticket::class], version = 1)
-@TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun tripDao(): TripDao
-    abstract fun ticketDao(): TicketDao
+@Entity
+data class Ticket(
+    val name: String,
+    val price: Int,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val createdTimestamp: Long,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
+) {
+    @Ignore
+    val floatPrice: Float = price / 100f
 }

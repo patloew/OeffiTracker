@@ -5,6 +5,7 @@ import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
 import com.patloew.oeffitracker.ui.create.CreateViewModel
 import com.patloew.oeffitracker.ui.list.ListViewModel
+import com.patloew.oeffitracker.ui.ticket.TicketViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -29,7 +30,9 @@ val appModule = module {
             .build()
     }
     single { get<AppDatabase>().tripDao() }
+    single { get<AppDatabase>().ticketDao() }
 
     viewModel { ListViewModel(get()) }
+    viewModel { TicketViewModel(get()) }
     viewModel { CreateViewModel(get()) }
 }
