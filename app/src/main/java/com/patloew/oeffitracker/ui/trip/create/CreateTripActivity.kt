@@ -98,7 +98,7 @@ class CreateTripViewModel(
     val initialFare = ""
 
     val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
-        startCity.isNotEmpty() && endCity.isNotEmpty() && fare != null && fare > 0
+        startCity.isNotEmpty() && endCity.isNotEmpty() && (fare == null || fare > 0)
     }
 
     private val finishChannel: Channel<Unit> = Channel(Channel.CONFLATED)
@@ -108,9 +108,9 @@ class CreateTripViewModel(
         viewModelScope.launch {
             tripDao.insert(
                 Trip(
-                    startCity = startCity.value,
-                    endCity = endCity.value,
-                    fare = fare.value!!,
+                    startCity = startCity.value.trim(),
+                    endCity = endCity.value.trim(),
+                    fare = fare.value,
                     date = date.value,
                     createdTimestamp = System.currentTimeMillis()
                 )

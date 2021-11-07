@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -144,8 +145,8 @@ fun TripItem(
                     end.linkTo(moreIcon.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(date.top)
-                },
-                text = priceFormatFloat.format(trip.floatFare),
+                }.alpha(if (trip.fare == null) 0.6f else 1f),
+                text = trip.floatFare?.let(priceFormatFloat::format) ?: "? €",
                 maxLines = 1,
                 style = MaterialTheme.typography.body1
             )

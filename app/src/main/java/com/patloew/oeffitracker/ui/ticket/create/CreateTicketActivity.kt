@@ -128,7 +128,7 @@ class CreateTicketViewModel(
         viewModelScope.launch {
             ticketDao.insert(
                 Ticket(
-                    name = name.value,
+                    name = name.value.trim(),
                     price = price.value!!,
                     startDate = startDate.value,
                     endDate = endDate.value,
