@@ -50,6 +50,6 @@ interface TripDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
-    @Query("SELECT * FROM trip ORDER BY createdTimestamp DESC")
+    @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>
 }
