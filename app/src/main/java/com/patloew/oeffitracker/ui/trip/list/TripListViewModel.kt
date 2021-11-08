@@ -75,4 +75,17 @@ class TripListViewModel(
         }
     }
 
+    fun onReturnTrip(trip: Trip) {
+        viewModelScope.launch {
+            val newTrip = trip.copy(
+                id = 0,
+                startCity = trip.endCity,
+                endCity = trip.startCity,
+                date = LocalDate.now(),
+                createdTimestamp = System.currentTimeMillis()
+            )
+            tripDao.insert(newTrip)
+            scrollToTopChannel.send(Unit)
+        }
+    }
 }

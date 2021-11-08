@@ -39,4 +39,5 @@
     <string name="ticket_trip_validity_hint_enddate_startdate_error">Das Gültigkeitsende der Karte darf nicht vor dem Gültigkeitsbeginn liegen.</string>
     <string name="toolbar_title_edit_trip">Fahrt bearbeiten</string>
     <string name="button_edit">Bearbeiten</string>
+    <string name="action_return_trip">Rückfahrt</string>
 </resources>

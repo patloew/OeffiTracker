@@ -60,7 +60,8 @@ import java.time.LocalDate
 fun TripItem(
     trip: Trip?,
     onDelete: (id: Long) -> Unit,
-    onDuplicateForToday: (Trip) -> Unit
+    onDuplicateForToday: (Trip) -> Unit,
+    onReturnTrip: (Trip) -> Unit
 ) {
     if (trip != null) {
         val editTripLauncher = rememberLauncherForActivityResult(contract = CreateTripActivity.EditContract) { }
@@ -189,6 +190,11 @@ fun TripItem(
 
                 DropdownMenuItem(onClick = {
                     showMoreMenu.value = false
+                    onReturnTrip(trip)
+                }) { Text(stringResource(id = R.string.action_return_trip)) }
+
+                DropdownMenuItem(onClick = {
+                    showMoreMenu.value = false
                     showDeleteDialog.value = true
                 }) { Text(stringResource(id = R.string.action_delete)) }
             }
@@ -261,9 +267,9 @@ fun TripItem(
 fun TripItemPreview() {
     PreviewTheme {
         Column {
-            TripItem(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { })
+            TripItem(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { }, { })
             Divider()
-            TripItem(trip = null, { }, { })
+            TripItem(trip = null, { }, { }, { })
             Divider()
         }
     }

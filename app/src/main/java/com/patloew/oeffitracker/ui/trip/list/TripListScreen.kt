@@ -68,8 +68,9 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
         Box(modifier = Modifier.fillMaxSize()) {
             TripListContent(
                 onProgressClick = { navController.navigate(Screen.Tickets) },
-                onDelete = viewModel::onDelete,
-                onDuplicateForToday = viewModel::onDuplicateForToday,
+                viewModel::onDelete,
+                viewModel::onDuplicateForToday,
+                viewModel::onReturnTrip,
                 viewModel.trips,
                 viewModel.isEmpty,
                 viewModel.showProgress,
@@ -102,6 +103,7 @@ fun TripListContent(
     onProgressClick: () -> Unit,
     onDelete: (id: Long) -> Unit,
     onDuplicateForToday: (Trip) -> Unit,
+    onReturnTrip: (Trip) -> Unit,
     trips: Flow<PagingData<Trip>>,
     isEmpty: Flow<Boolean>,
     showProgress: Flow<Boolean>,
@@ -125,7 +127,7 @@ fun TripListContent(
             emptyTitleRes = R.string.empty_state_trip_title,
             emptyTextRes = R.string.empty_state_trip_text,
             listState = listState
-        ) { trip -> TripItem(trip, onDelete, onDuplicateForToday) }
+        ) { trip -> TripItem(trip, onDelete, onDuplicateForToday, onReturnTrip) }
     }
 
 }
@@ -138,6 +140,7 @@ fun TripListPreview() {
             onProgressClick = { },
             onDelete = { },
             onDuplicateForToday = { },
+            onReturnTrip = { },
             trips = flowOf(
                 PagingData.from(
                     listOf(
