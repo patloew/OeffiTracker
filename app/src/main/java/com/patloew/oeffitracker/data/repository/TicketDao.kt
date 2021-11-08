@@ -41,7 +41,7 @@ interface TicketDao {
     @Query("SELECT price FROM ticket WHERE id = :ticketId")
     fun getPriceById(ticketId: Long): Flow<Int>
 
-    @Query("SELECT id FROM ticket ORDER BY startDate DESC LIMIT 1")
+    @Query("SELECT id FROM ticket WHERE date('now') BETWEEN startDate and endDate LIMIT 1")
     fun getLatestTicketId(): Flow<Long?>
 
     @Query("SELECT * FROM ticket WHERE (:startDate >= startDate AND :endDate <= endDate) OR (:endDate >= startDate AND :startDate < startDate) OR (:startDate <= endDate AND :endDate > endDate) LIMIT 1")
