@@ -4,7 +4,9 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.time.Duration
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -28,9 +30,12 @@ data class Trip(
     val endCity: String,
     val fare: Int?,
     val date: LocalDate,
+    val duration: Duration?,
+    val delay: Duration?,
+    val distance: Float?,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) : Parcelable {
-    @Ignore
+    @Ignore @IgnoredOnParcel
     val floatFare: Float? = fare?.div(100f)
 }

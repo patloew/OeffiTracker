@@ -69,7 +69,12 @@ class TripListViewModel(
 
     fun onDuplicateForToday(trip: Trip) {
         viewModelScope.launch {
-            val newTrip = trip.copy(id = 0, date = LocalDate.now(), createdTimestamp = System.currentTimeMillis())
+            val newTrip = trip.copy(
+                id = 0,
+                date = LocalDate.now(),
+                delay = null,
+                createdTimestamp = System.currentTimeMillis()
+            )
             tripDao.insert(newTrip)
             scrollToTopChannel.send(Unit)
         }
@@ -82,6 +87,7 @@ class TripListViewModel(
                 startCity = trip.endCity,
                 endCity = trip.startCity,
                 date = LocalDate.now(),
+                delay = null,
                 createdTimestamp = System.currentTimeMillis()
             )
             tripDao.insert(newTrip)

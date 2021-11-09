@@ -21,13 +21,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.PagingData
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.common.PriceProgress
 import com.patloew.oeffitracker.ui.common.ProgressData
@@ -36,9 +34,7 @@ import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -128,31 +124,5 @@ fun TripListContent(
             emptyTextRes = R.string.empty_state_trip_text,
             listState = listState
         ) { trip -> TripItem(trip, onDelete, onDuplicateForToday, onReturnTrip) }
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TripListPreview() {
-    PreviewTheme {
-        TripListContent(
-            onProgressClick = { },
-            onDelete = { },
-            onDuplicateForToday = { },
-            onReturnTrip = { },
-            trips = flowOf(
-                PagingData.from(
-                    listOf(
-                        Trip("Wien", "Linz", 2000, LocalDate.now(), 0),
-                        Trip("Linz", "Graz", 1500, LocalDate.now(), 0)
-                    )
-                )
-            ),
-            isEmpty = flowOf(false),
-            showProgress = flowOf(false),
-            fareProgressData = flowOf(ProgressData(1f, "", "")),
-            rememberLazyListState()
-        )
     }
 }

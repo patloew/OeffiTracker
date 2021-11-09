@@ -40,4 +40,10 @@
     <string name="toolbar_title_edit_trip">Fahrt bearbeiten</string>
     <string name="button_edit">Bearbeiten</string>
     <string name="action_return_trip">Rückfahrt</string>
+    <string name="label_duration">Fahrtdauer</string>
+    <string name="duration_picker_title_duration">Fahrtdauer auswählen</string>
+    <string name="label_delay">Verspätung</string>
+    <string name="duration_picker_title_delay">Verspätung auswählen</string>
+    <string name="label_distance">Distanz</string>
+    <string name="create_trip_hint_optional_fields">Optionale Angaben</string>
 </resources>

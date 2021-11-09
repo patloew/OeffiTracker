@@ -4,13 +4,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -28,19 +26,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Trip
-import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.MoreMenu
 import com.patloew.oeffitracker.ui.dateFormat
 import com.patloew.oeffitracker.ui.priceFormatFloat
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
-import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -258,19 +253,6 @@ fun TripItem(
                     },
                 tint = MaterialTheme.colors.primary
             )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TripItemPreview() {
-    PreviewTheme {
-        Column {
-            TripItem(trip = Trip("Wien", "Graz", 2500, LocalDate.now(), System.currentTimeMillis()), { }, { }, { })
-            Divider()
-            TripItem(trip = null, { }, { }, { })
-            Divider()
         }
     }
 }

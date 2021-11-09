@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.data
 
 import androidx.room.TypeConverter
+import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -20,8 +21,19 @@ import java.time.format.DateTimeFormatter
 
 object Converters {
     @TypeConverter
-    fun fromLocalDate(value: LocalDate?): String? = value?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    fun isoDateStringFromLocalDate(value: LocalDate?): String? =
+        value?.format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     @TypeConverter
-    fun toLocalDate(value: String?): LocalDate? = value?.let { LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE) }
+    fun isoDateStringToLocalDate(value: String?): LocalDate? =
+        value?.let { LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE) }
+
+    @TypeConverter
+    fun minutesFromDuration(value: Duration?): Int? =
+        value?.toMinutes()?.toInt()
+
+    @TypeConverter
+    fun minutesToDuration(value: Int?): Duration? =
+        value?.let { Duration.ofMinutes(value.toLong()) }
+
 }

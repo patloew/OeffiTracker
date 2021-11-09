@@ -26,9 +26,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -36,15 +38,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.ui.PreviewTheme
-import com.patloew.oeffitracker.ui.common.DateTextField
+import com.patloew.oeffitracker.ui.amountVisualTransformation
+import com.patloew.oeffitracker.ui.common.ClickActionTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -64,6 +64,10 @@ import kotlinx.coroutines.flow.flowOf
 fun CreateTripScreen(
     navigationAction: () -> Unit,
     onDateClick: () -> Unit,
+    onDurationClick: () -> Unit,
+    onDurationClear: () -> Unit,
+    onDelayClick: () -> Unit,
+    onDelayClear: () -> Unit,
     onCreateClick: () -> Unit,
     viewModel: CreateTripViewModel
 ) {
@@ -81,13 +85,21 @@ fun CreateTripScreen(
             content = {
                 CreateTripContent(
                     onDateClick,
+                    onDurationClick,
+                    onDurationClear,
+                    onDelayClick,
+                    onDelayClear,
                     onCreateClick,
                     viewModel::setFare,
+                    viewModel::setDistance,
                     viewModel.saveEnabled,
                     viewModel.startCity,
                     viewModel.endCity,
+                    viewModel.durationString,
+                    viewModel.delayString,
                     viewModel.dateString,
                     viewModel.initialFare,
+                    viewModel.initialDistance,
                     viewModel.buttonTextRes
                 )
             }
@@ -95,30 +107,43 @@ fun CreateTripScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateTripContent(
     onDateClick: () -> Unit,
+    onDurationClick: () -> Unit,
+    onDurationClear: () -> Unit,
+    onDelayClick: () -> Unit,
+    onDelayClear: () -> Unit,
     onCreateClick: () -> Unit,
     setFare: (String) -> Boolean,
+    setDistance: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
+    durationFlow: Flow<String>,
+    delayFlow: Flow<String>,
     dateFlow: Flow<String>,
     initialFare: String,
+    initialDistance: String,
     @StringRes buttonTextRes: Int
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         var fare by remember { mutableStateOf(initialFare) }
+        var distance by remember { mutableStateOf(initialDistance) }
         val endCityFocusRequester = FocusRequester()
         val fareFocusRequester = FocusRequester()
+        val distanceFocusRequester = FocusRequester()
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             value = startCityStateFlow.collectAsState().value,
             onValueChange = { startCityStateFlow.value = it },
             leadingIcon = {
@@ -136,7 +161,7 @@ fun CreateTripContent(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
                 .focusRequester(endCityFocusRequester),
             value = endCityStateFlow.collectAsState().value,
             onValueChange = { endCityStateFlow.value = it },
@@ -152,10 +177,24 @@ fun CreateTripContent(
             label = { Text(stringResource(id = R.string.label_end_city)) }
         )
 
+        ClickActionTextField(
+            modifier = Modifier.padding(top = 8.dp),
+            onClick = onDateClick,
+            textFlow = dateFlow,
+            iconRes = R.drawable.ic_calendar,
+            labelRes = R.string.label_date
+        )
+
+        Text(
+            text = stringResource(id = R.string.create_trip_hint_optional_fields),
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(top = 24.dp)
+        )
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
                 .focusRequester(fareFocusRequester),
             value = fare,
             onValueChange = { newValue -> if (setFare(newValue)) fare = newValue },
@@ -167,17 +206,54 @@ fun CreateTripContent(
                     tint = MaterialTheme.colors.primary
                 )
             },
-            visualTransformation = { TransformedText(AnnotatedString("${it.text} €"), OffsetMapping.Identity) },
+            visualTransformation = amountVisualTransformation(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-            keyboardActions = KeyboardActions(onNext = { onDateClick() }),
+            keyboardActions = KeyboardActions(onNext = { distanceFocusRequester.requestFocus() }),
             label = { Text(stringResource(id = R.string.label_fare)) }
         )
 
-        DateTextField(
-            onDateClick = onDateClick,
-            dateStringFlow = dateFlow,
-            iconRes = R.drawable.ic_calendar,
-            labelRes = R.string.label_date
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .focusRequester(distanceFocusRequester),
+            value = distance,
+            onValueChange = { newValue -> if (setDistance(newValue)) distance = newValue },
+            maxLines = 1,
+            leadingIcon = {
+                Icon(
+                    painterResource(id = R.drawable.ic_distance),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+            },
+            visualTransformation = {
+                val suffix = if (it.text.isNotEmpty()) " km" else ""
+                TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+            keyboardActions = KeyboardActions(onNext = { keyboardController?.hide() }),
+            label = { Text(stringResource(id = R.string.label_distance)) }
+        )
+
+        ClickActionTextField(
+            modifier = Modifier.padding(top = 8.dp),
+            onClick = onDurationClick,
+            onClear = onDurationClear,
+            textFlow = durationFlow,
+            iconRes = R.drawable.ic_clock,
+            labelRes = R.string.label_duration
+        )
+
+        ClickActionTextField(
+            modifier = Modifier.padding(top = 8.dp),
+            onClick = onDelayClick,
+            onClear = onDelayClear,
+            textFlow = delayFlow,
+            iconRes = R.drawable.ic_delay,
+            labelRes = R.string.label_delay
         )
 
         Button(
@@ -185,26 +261,8 @@ fun CreateTripContent(
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
+                .padding(top = 32.dp, bottom = 16.dp)
         ) { Text(stringResource(id = buttonTextRes)) }
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CreateTripPreview() {
-    PreviewTheme {
-        CreateTripContent(
-            { },
-            { },
-            { true },
-            flowOf(false),
-            MutableStateFlow(""),
-            MutableStateFlow(""),
-            flowOf(""),
-            "",
-            0
-        )
-    }
 }

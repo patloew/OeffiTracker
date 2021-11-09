@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -13,11 +14,13 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patloew.oeffitracker.R
 import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
@@ -35,16 +38,20 @@ import kotlinx.coroutines.flow.Flow
  * limitations under the License. */
 
 @Composable
-fun DateTextField(
-    onDateClick: () -> Unit,
-    dateStringFlow: Flow<String>,
+fun ClickActionTextField(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onClear: (() -> Unit)? = null,
+    textFlow: Flow<String>,
     @DrawableRes iconRes: Int,
     @StringRes labelRes: Int
+
 ) {
-    Box(modifier = Modifier.padding(top = 16.dp)) {
+    Box(modifier = modifier) {
+        val text = textFlow.collectAsState(initial = "").value
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = dateStringFlow.collectAsState(initial = "").value,
+            value = text,
             onValueChange = { },
             leadingIcon = {
                 Icon(
@@ -60,6 +67,20 @@ fun DateTextField(
             .matchParentSize()
             .padding(top = 8.dp)
             .clip(RoundedCornerShape(4.dp))
-            .clickable { onDateClick() })
+            .clickable { onClick() })
+
+        if (onClear != null && text.isNotEmpty()) {
+            Icon(
+                painterResource(id = R.drawable.ic_clear),
+                contentDescription = null,
+                tint = MaterialTheme.colors.onSurface.copy(alpha = 0.67f),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .clip(CircleShape)
+                    .clickable { onClear() }
+                    .padding(12.dp)
+                    .align(Alignment.CenterEnd)
+            )
+        }
     }
 }

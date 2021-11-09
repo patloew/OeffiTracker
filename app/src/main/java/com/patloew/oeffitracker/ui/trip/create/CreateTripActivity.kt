@@ -18,7 +18,9 @@ import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
+import com.patloew.oeffitracker.ui.formatDuration
 import com.patloew.oeffitracker.ui.showDatePicker
+import com.patloew.oeffitracker.ui.showDurationPicker
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import com.patloew.oeffitracker.ui.viewModelFactory
 import kotlinx.coroutines.channels.Channel
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.time.Duration
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -91,6 +94,22 @@ class CreateTripActivity : FragmentActivity() {
                             fragmentManager = supportFragmentManager
                         ) { selectedDate -> viewModel.date.value = selectedDate }
                     },
+                    onDurationClick = {
+                        showDurationPicker(
+                            preSelected = viewModel.duration.value ?: Duration.ZERO,
+                            titleText = resources.getString(R.string.duration_picker_title_duration),
+                            fragmentManager = supportFragmentManager
+                        ) { selectedDuration -> viewModel.duration.value = selectedDuration }
+                    },
+                    onDurationClear = { viewModel.duration.value = null },
+                    onDelayClick = {
+                        showDurationPicker(
+                            preSelected = viewModel.delay.value ?: Duration.ZERO,
+                            titleText = resources.getString(R.string.duration_picker_title_delay),
+                            fragmentManager = supportFragmentManager
+                        ) { selectedDuration -> viewModel.delay.value = selectedDuration }
+                    },
+                    onDelayClear = { viewModel.delay.value = null },
                     onCreateClick = { viewModel.onCreate() },
                     viewModel
                 )
@@ -136,6 +155,15 @@ class CreateTripViewModel(
     private val fare: MutableStateFlow<Int?> = MutableStateFlow(editTrip?.fare)
     val initialFare = editTrip?.floatFareString ?: ""
 
+    val duration: MutableStateFlow<Duration?> = MutableStateFlow(editTrip?.duration)
+    val durationString: Flow<String> = duration.map { it?.let(::formatDuration) ?: "" }
+
+    val delay: MutableStateFlow<Duration?> = MutableStateFlow(editTrip?.delay)
+    val delayString: Flow<String> = delay.map { it?.let(::formatDuration) ?: "" }
+
+    private val distance: MutableStateFlow<Float?> = MutableStateFlow(editTrip?.distance)
+    val initialDistance = editTrip?.floatDistanceString ?: ""
+
     val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
         startCity.isNotEmpty() && endCity.isNotEmpty() && (fare == null || fare > 0)
     }
@@ -151,7 +179,10 @@ class CreateTripViewModel(
                         startCity = startCity.value.trim(),
                         endCity = endCity.value.trim(),
                         fare = fare.value,
-                        date = date.value
+                        date = date.value,
+                        duration = duration.value,
+                        distance = distance.value,
+                        delay = delay.value
                     )
                 )
             } else {
@@ -161,12 +192,26 @@ class CreateTripViewModel(
                         endCity = endCity.value.trim(),
                         fare = fare.value,
                         date = date.value,
+                        duration = duration.value,
+                        delay = delay.value,
+                        distance = distance.value,
                         createdTimestamp = System.currentTimeMillis()
                     )
                 )
             }
             finishChannel.send(Unit)
         }
+    }
+
+    fun setDistance(distanceString: String): Boolean = when {
+        distanceString.isEmpty() -> {
+            distance.value = null
+            true
+        }
+        else -> distanceString.replace(',', '.').toFloatOrNull()?.let {
+            distance.value = it
+            true
+        } ?: false
     }
 
     /**
@@ -176,6 +221,13 @@ class CreateTripViewModel(
      */
     fun setFare(fareString: String): Boolean =
         checkAndSetAmount(fareString) { newFare -> fare.value = newFare }
+
+    private val Trip.floatDistanceString: String?
+        get() = if (distance?.mod(1.0) == 0.0) {
+            distance.toInt().toString()
+        } else {
+            distance?.toString()?.replace('.', ',')
+        }
 
     private val Trip.floatFareString: String?
         get() = if (fare?.mod(100) == 0) {

@@ -4,13 +4,20 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.patloew.oeffitracker.ui.main.Screen
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import java.text.DecimalFormat
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -76,6 +83,29 @@ fun showDatePicker(
         .show(fragmentManager, null)
 }
 
+fun showDurationPicker(
+    preSelected: Duration,
+    titleText: CharSequence,
+    fragmentManager: FragmentManager,
+    onDurationSelected: (selectedDuration: Duration?) -> Unit
+) {
+    MaterialTimePicker.Builder()
+        .setTitleText(titleText)
+        .setHour(preSelected.toHoursPart())
+        .setMinute(preSelected.toMinutesPart())
+        .setTimeFormat(TimeFormat.CLOCK_24H)
+        .build()
+        .apply {
+            addOnPositiveButtonClickListener {
+                onDurationSelected(
+                    Duration.ofHours(hour.toLong()).plusMinutes(minute.toLong())
+                        .takeIf { it != Duration.ZERO }
+                )
+            }
+        }
+        .show(fragmentManager, null)
+}
+
 /** Formats price as integer if it's ",00" */
 fun formatPrice(price: Int): String {
     val formatter = if (price.mod(100) == 0) {
@@ -85,4 +115,15 @@ fun formatPrice(price: Int): String {
     }
 
     return formatter.format(price / 100f)
+}
+
+fun formatDuration(duration: Duration) = if (duration.toHoursPart() == 0) {
+    "${duration.toMinutesPart()} min"
+} else {
+    "${duration.toHoursPart()} h ${duration.toMinutesPart()} min"
+}
+
+fun amountVisualTransformation(): VisualTransformation = VisualTransformation {
+    val suffix = if (it.text.isNotEmpty()) " €" else ""
+    TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
 }

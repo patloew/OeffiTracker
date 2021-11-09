@@ -29,17 +29,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
-import com.patloew.oeffitracker.ui.common.DateTextField
+import com.patloew.oeffitracker.ui.amountVisualTransformation
+import com.patloew.oeffitracker.ui.common.ClickActionTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.ticket.list.validityPeriod
 import kotlinx.coroutines.flow.Flow
@@ -152,22 +150,24 @@ fun CreateTicketContent(
                     tint = MaterialTheme.colors.primary
                 )
             },
-            visualTransformation = { TransformedText(AnnotatedString("${it.text} €"), OffsetMapping.Identity) },
+            visualTransformation = amountVisualTransformation(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
             keyboardActions = KeyboardActions(onNext = { onStartDateClick() }),
             label = { Text(stringResource(id = R.string.label_ticket_price)) }
         )
 
-        DateTextField(
-            onDateClick = onStartDateClick,
-            dateStringFlow = startDateFlow,
+        ClickActionTextField(
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onStartDateClick,
+            textFlow = startDateFlow,
             iconRes = R.drawable.ic_calendar,
             labelRes = R.string.label_start_date
         )
 
-        DateTextField(
-            onDateClick = onEndDateClick,
-            dateStringFlow = endDateFlow,
+        ClickActionTextField(
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onEndDateClick,
+            textFlow = endDateFlow,
             iconRes = R.drawable.ic_calendar,
             labelRes = R.string.label_end_date
         )

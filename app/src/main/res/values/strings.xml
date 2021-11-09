@@ -39,4 +39,10 @@
     <string name="toolbar_title_edit_trip">Edit trip</string>
     <string name="button_edit">Edit</string>
     <string name="action_return_trip">Return trip</string>
+    <string name="label_duration">Duration</string>
+    <string name="duration_picker_title_duration">Select duration</string>
+    <string name="label_delay">Delay</string>
+    <string name="duration_picker_title_delay">Select delay</string>
+    <string name="label_distance">Distance</string>
+    <string name="create_trip_hint_optional_fields">Optional data</string>
 </resources>
