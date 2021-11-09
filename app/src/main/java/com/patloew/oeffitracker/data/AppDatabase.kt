@@ -22,7 +22,11 @@ import com.patloew.oeffitracker.data.repository.TripDao
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Database(entities = [Trip::class, Ticket::class], version = 1)
+@Database(
+    version = 1,
+    entities = [Trip::class, Ticket::class],
+    autoMigrations = []
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao
