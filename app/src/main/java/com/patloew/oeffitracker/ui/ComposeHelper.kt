@@ -89,10 +89,14 @@ fun showDurationPicker(
     fragmentManager: FragmentManager,
     onDurationSelected: (selectedDuration: Duration?) -> Unit
 ) {
+    // Workaround until https://issuetracker.google.com/issues/205866514 is fixed
+    val (hours, minutes) = preSelected.hoursMin
     MaterialTimePicker.Builder()
         .setTitleText(titleText)
-        .setHour(preSelected.toHoursPart())
-        .setMinute(preSelected.toMinutesPart())
+        .setHour(hours)
+        .setMinute(minutes)
+        //.setHour(preSelected.toHoursPart())
+        //.setMinute(preSelected.toMinutesPart())
         .setTimeFormat(TimeFormat.CLOCK_24H)
         .build()
         .apply {
@@ -117,11 +121,29 @@ fun formatPrice(price: Int): String {
     return formatter.format(price / 100f)
 }
 
+// Workaround until https://issuetracker.google.com/issues/205866514 is fixed
+private val Duration.hoursMin: Pair<Int, Int>
+    get() {
+        val hours = (toMinutes() / 60f).toInt()
+        val minutes = toMinutes().mod(60)
+        return hours to minutes
+    }
+
+// Workaround until https://issuetracker.google.com/issues/205866514 is fixed
+fun formatDuration(duration: Duration): String {
+    val (hours, minutes) = duration.hoursMin
+    return if (hours == 0) {
+        "$minutes min"
+    } else {
+        "$hours h $minutes min"
+    }
+}
+/*
 fun formatDuration(duration: Duration) = if (duration.toHoursPart() == 0) {
     "${duration.toMinutesPart()} min"
 } else {
     "${duration.toHoursPart()} h ${duration.toMinutesPart()} min"
-}
+}*/
 
 fun amountVisualTransformation(): VisualTransformation = VisualTransformation {
     val suffix = if (it.text.isNotEmpty()) " €" else ""
