@@ -52,4 +52,5 @@
     <string name="transport_type_tram">Tram</string>
     <string name="transport_type_subway">U-Bahn</string>
     <string name="label_transport_type">Transportmittel</string>
+    <string name="accessibility_icon_selected">Ausgewählt</string>
 </resources>

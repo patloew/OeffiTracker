@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
@@ -53,7 +54,8 @@ fun Chip(
             Icon(
                 modifier = Modifier.padding(start = 6.dp),
                 painter = painterResource(id = R.drawable.ic_check),
-                contentDescription = null
+                contentDescription = stringResource(id = R.string.accessibility_icon_selected),
+                tint = MaterialTheme.colors.onSecondary
             )
         }
 
