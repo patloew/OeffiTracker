@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.data
 
 import androidx.room.TypeConverter
+import com.patloew.oeffitracker.data.model.TransportType
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -36,4 +37,9 @@ object Converters {
     fun minutesToDuration(value: Int?): Duration? =
         value?.let { Duration.ofMinutes(value.toLong()) }
 
+    @TypeConverter
+    fun stringFromTransportType(value: TransportType?): String? = value?.toString()
+
+    @TypeConverter
+    fun stringToTransportType(value: String?): TransportType? = value?.let(TransportType::valueOf)
 }

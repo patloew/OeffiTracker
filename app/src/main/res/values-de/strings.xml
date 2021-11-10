@@ -46,4 +46,10 @@
     <string name="duration_picker_title_delay">Verspätung auswählen</string>
     <string name="label_distance">Distanz</string>
     <string name="create_trip_hint_optional_fields">Optionale Angaben</string>
+    <string name="transport_type_train">Zug</string>
+    <string name="transport_type_coach">Fernbus</string>
+    <string name="transport_type_bus">Bus</string>
+    <string name="transport_type_tram">Tram</string>
+    <string name="transport_type_subway">U-Bahn</string>
+    <string name="label_transport_type">Transportmittel</string>
 </resources>

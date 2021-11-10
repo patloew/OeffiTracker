@@ -45,4 +45,10 @@
     <string name="duration_picker_title_delay">Select delay</string>
     <string name="label_distance">Distance</string>
     <string name="create_trip_hint_optional_fields">Optional data</string>
+    <string name="transport_type_train">Train</string>
+    <string name="transport_type_coach">Coach</string>
+    <string name="transport_type_bus">Bus</string>
+    <string name="transport_type_tram">Tram</string>
+    <string name="transport_type_subway">Subway</string>
+    <string name="label_transport_type">Means of transport</string>
 </resources>

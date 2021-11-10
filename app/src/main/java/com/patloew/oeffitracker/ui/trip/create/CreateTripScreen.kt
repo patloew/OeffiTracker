@@ -40,7 +40,10 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.data.model.TransportType
 import com.patloew.oeffitracker.ui.amountVisualTransformation
+import com.patloew.oeffitracker.ui.common.Chip
+import com.patloew.oeffitracker.ui.common.FlowRowTextField
 import com.patloew.oeffitracker.ui.common.ClickActionTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import kotlinx.coroutines.flow.Flow
@@ -65,10 +68,7 @@ fun CreateTripScreen(
     navigationAction: () -> Unit,
     onDateClick: () -> Unit,
     onDurationClick: () -> Unit,
-    onDurationClear: () -> Unit,
     onDelayClick: () -> Unit,
-    onDelayClear: () -> Unit,
-    onCreateClick: () -> Unit,
     viewModel: CreateTripViewModel
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -86,10 +86,11 @@ fun CreateTripScreen(
                 CreateTripContent(
                     onDateClick,
                     onDurationClick,
-                    onDurationClear,
+                    onDurationClear = { viewModel.duration.value = null },
                     onDelayClick,
-                    onDelayClear,
-                    onCreateClick,
+                    onDelayClear = { viewModel.delay.value = null },
+                    viewModel::onTypeClick,
+                    viewModel::onCreate,
                     viewModel::setFare,
                     viewModel::setDistance,
                     viewModel.saveEnabled,
@@ -98,6 +99,7 @@ fun CreateTripScreen(
                     viewModel.durationString,
                     viewModel.delayString,
                     viewModel.dateString,
+                    viewModel.types,
                     viewModel.initialFare,
                     viewModel.initialDistance,
                     viewModel.buttonTextRes
@@ -115,6 +117,7 @@ fun CreateTripContent(
     onDurationClear: () -> Unit,
     onDelayClick: () -> Unit,
     onDelayClear: () -> Unit,
+    onTypeClick: (TransportType) -> Unit,
     onCreateClick: () -> Unit,
     setFare: (String) -> Boolean,
     setDistance: (String) -> Boolean,
@@ -124,6 +127,7 @@ fun CreateTripContent(
     durationFlow: Flow<String>,
     delayFlow: Flow<String>,
     dateFlow: Flow<String>,
+    types: Flow<Map<TransportType, Boolean>>,
     initialFare: String,
     initialDistance: String,
     @StringRes buttonTextRes: Int
@@ -256,12 +260,23 @@ fun CreateTripContent(
             labelRes = R.string.label_delay
         )
 
+        FlowRowTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            types.collectAsState(initial = emptyMap()).value.entries.forEach { (type, selected) ->
+                Chip(text = stringResource(id = type.stringRes), isSelected = selected) { onTypeClick(type) }
+            }
+        }
+
+
         Button(
             onClick = { onCreateClick() },
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp, bottom = 16.dp)
+                .padding(top = 24.dp, bottom = 16.dp)
         ) { Text(stringResource(id = buttonTextRes)) }
     }
 

@@ -14,6 +14,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.data.model.TransportType
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
@@ -101,7 +102,6 @@ class CreateTripActivity : FragmentActivity() {
                             fragmentManager = supportFragmentManager
                         ) { selectedDuration -> viewModel.duration.value = selectedDuration }
                     },
-                    onDurationClear = { viewModel.duration.value = null },
                     onDelayClick = {
                         showDurationPicker(
                             preSelected = viewModel.delay.value ?: Duration.ZERO,
@@ -109,8 +109,6 @@ class CreateTripActivity : FragmentActivity() {
                             fragmentManager = supportFragmentManager
                         ) { selectedDuration -> viewModel.delay.value = selectedDuration }
                     },
-                    onDelayClear = { viewModel.delay.value = null },
-                    onCreateClick = { viewModel.onCreate() },
                     viewModel
                 )
             }
@@ -164,6 +162,10 @@ class CreateTripViewModel(
     private val distance: MutableStateFlow<Float?> = MutableStateFlow(editTrip?.distance)
     val initialDistance = editTrip?.floatDistanceString ?: ""
 
+    val types: MutableStateFlow<Map<TransportType, Boolean>> = MutableStateFlow(typesWithSelected(editTrip?.type))
+    val selectedType: TransportType?
+        get() = types.value.firstNotNullOfOrNull { (type, isSelected) -> type.takeIf { isSelected } }
+
     val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
         startCity.isNotEmpty() && endCity.isNotEmpty() && (fare == null || fare > 0)
     }
@@ -182,7 +184,8 @@ class CreateTripViewModel(
                         date = date.value,
                         duration = duration.value,
                         distance = distance.value,
-                        delay = delay.value
+                        delay = delay.value,
+                        type = selectedType
                     )
                 )
             } else {
@@ -195,6 +198,7 @@ class CreateTripViewModel(
                         duration = duration.value,
                         delay = delay.value,
                         distance = distance.value,
+                        type = selectedType,
                         createdTimestamp = System.currentTimeMillis()
                     )
                 )
@@ -202,6 +206,17 @@ class CreateTripViewModel(
             finishChannel.send(Unit)
         }
     }
+
+    fun onTypeClick(type: TransportType) {
+        if (types.value[type] == true) { // type is currently selected
+            types.value = typesWithSelected(null)
+        } else {
+            types.value = typesWithSelected(type)
+        }
+    }
+
+    private fun typesWithSelected(selected: TransportType?) =
+        TransportType.values().associateWith { type -> type == selected }
 
     fun setDistance(distanceString: String): Boolean = when {
         distanceString.isEmpty() -> {

@@ -33,6 +33,7 @@ data class Trip(
     val duration: Duration?,
     val delay: Duration?,
     val distance: Float?,
+    val type: TransportType?,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) : Parcelable {
