@@ -7,7 +7,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.patloew.oeffitracker.data.repository.TicketDao
-import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.formatPrice
 import com.patloew.oeffitracker.ui.percentageFormat
@@ -32,24 +31,23 @@ import kotlinx.coroutines.launch
  * limitations under the License. */
 
 class TicketListViewModel(
-    private val ticketDao: TicketDao,
-    private val tripDao: TripDao
+    private val ticketDao: TicketDao
 ) : ViewModel() {
 
     val tickets: Flow<PagingData<TicketListData>> =
-        Pager(PagingConfig(pageSize = 20)) { ticketDao.getAllPagingSource() }.flow.map { pagingData ->
+        Pager(PagingConfig(pageSize = 20)) { ticketDao.getTicketWithStatisticsPagingSource() }.flow.map { pagingData ->
             pagingData.map { ticket ->
-                val priceSum: Int = tripDao.getSumOfFaresBetween(ticket.startDate, ticket.endDate)
-                val percentage: Float = priceSum / ticket.price.toFloat()
+                val percentage: Float = ticket.fareSum / ticket.price.toFloat()
                 TicketListData(
                     id = ticket.id,
                     name = ticket.name,
-                    price = formatPrice(priceSum) + " / " + formatPrice(ticket.price),
+                    price = formatPrice(ticket.fareSum) + " / " + formatPrice(ticket.price),
                     validityPeriod = ticket.validityPeriod,
                     progressData = ProgressRoundData(
                         progress = percentage.coerceAtMost(1f),
                         percentageString = percentageFormat.format(percentage)
-                    )
+                    ),
+                    durationSum = ticket.durationSum
                 )
             }
         }

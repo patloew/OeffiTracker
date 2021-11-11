@@ -97,10 +97,10 @@ class CreateTicketViewModel(
 
     val name: MutableStateFlow<String> = MutableStateFlow("")
 
-    val startDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now().minusYears(1).plusDays(1))
+    val startDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
     val startDateString: Flow<String> = startDate.map { dateFormat.format(it) }
 
-    val endDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    val endDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now().plusYears(1).minusDays(1))
     val endDateString: Flow<String> = endDate.map { dateFormat.format(it) }
 
     val overlappingTicket: Flow<Ticket?> = combine(startDate, endDate, ticketDao::getFirstOverlappingValidityTicket)

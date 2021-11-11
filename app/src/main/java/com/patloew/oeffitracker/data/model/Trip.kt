@@ -3,6 +3,7 @@ package com.patloew.oeffitracker.data.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -23,7 +24,7 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Entity
+@Entity(indices = [Index(value = ["date"], orders = [Index.Order.DESC], name = "index_trip_date")])
 @Parcelize
 data class Trip(
     val startCity: String,

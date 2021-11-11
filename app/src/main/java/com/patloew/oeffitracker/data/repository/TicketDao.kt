@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.patloew.oeffitracker.data.model.Ticket
+import com.patloew.oeffitracker.data.model.TicketWithStatistics
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -53,6 +54,31 @@ interface TicketDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
-    @Query("SELECT * FROM ticket ORDER BY startDate DESC")
-    fun getAllPagingSource(): PagingSource<Int, Ticket>
+    @Query(
+        """
+        SELECT
+            ticket.id,
+            ticket.name, 
+            ticket.price, 
+            ticket.startDate, 
+            ticket.endDate,
+            trips.fareSum,
+            trips.durationSum,
+            trips.delaySum,
+            trips.distanceSum
+        FROM 
+            ticket
+        LEFT JOIN (
+            SELECT 
+                date, 
+                COALESCE(SUM(fare), 0) as fareSum,
+                SUM(duration) as durationSum,
+                SUM(delay) as delaySum, 
+                SUM(distance) as distanceSum
+            FROM trip
+        ) trips ON trips.date BETWEEN ticket.startDate and ticket.endDate
+        ORDER BY ticket.startDate DESC
+    """
+    )
+    fun getTicketWithStatisticsPagingSource(): PagingSource<Int, TicketWithStatistics>
 }

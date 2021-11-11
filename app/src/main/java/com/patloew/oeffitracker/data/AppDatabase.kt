@@ -24,10 +24,11 @@ import com.patloew.oeffitracker.data.repository.TripDao
  * limitations under the License. */
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [Trip::class, Ticket::class],
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
     ]
 )
 @TypeConverters(Converters::class)

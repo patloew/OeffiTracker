@@ -33,6 +33,7 @@ import com.patloew.oeffitracker.ui.common.PriceProgressRound
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import java.time.Duration
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -282,7 +283,8 @@ fun TicketItemPreview() {
                     "KlimaTicket",
                     "100,00 €",
                     "01.01.20 - 01.01.21",
-                    ProgressRoundData(0.5f, "20,5%")
+                    ProgressRoundData(0.5f, "20,5%"),
+                    Duration.ZERO
                 )
             )
             Divider()

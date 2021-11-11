@@ -4,7 +4,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -18,17 +17,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.PagingData
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.LazyList
-import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketActivity
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 /* Copyright 2021 Patrick Löwenstein
@@ -56,13 +49,14 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            TicketListContent(
-                onDelete = viewModel::onDelete,
-                highlightedTicketId = viewModel.highlightedTicketId,
-                tickets = viewModel.tickets,
+            LazyList(
+                data = viewModel.tickets,
+                getKey = { it.id },
                 isEmpty = viewModel.isEmpty,
+                emptyTitleRes = R.string.empty_state_ticket_title,
+                emptyTextRes = R.string.empty_state_ticket_text,
                 listState = listState
-            )
+            ) { ticket -> TicketItem(viewModel::onDelete, viewModel.highlightedTicketId, ticket) }
 
             FloatingActionButton(
                 onClick = { createTicketLauncher.launch(Unit) },
@@ -81,49 +75,5 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
     LaunchedEffect(viewModel.scrollToTopEvent) {
         viewModel.scrollToTopEvent.collect { listState.animateScrollToItem(0) }
-    }
-}
-
-@Composable
-fun TicketListContent(
-    onDelete: (Long) -> Unit,
-    tickets: Flow<PagingData<TicketListData>>,
-    highlightedTicketId: Flow<Long?>,
-    isEmpty: Flow<Boolean>,
-    listState: LazyListState
-) {
-    LazyList(
-        data = tickets,
-        getKey = { it.id },
-        isEmpty = isEmpty,
-        emptyTitleRes = R.string.empty_state_ticket_title,
-        emptyTextRes = R.string.empty_state_ticket_text,
-        listState = listState
-    ) { ticket -> TicketItem(onDelete, highlightedTicketId, ticket) }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TicketListPreview() {
-    PreviewTheme {
-        TicketListContent(
-            onDelete = { },
-            tickets = flowOf(
-                PagingData.from(
-                    listOf(
-                        TicketListData(
-                            0,
-                            "KlimaTicket",
-                            "100,00 €",
-                            "01.01.20 - 01.01.21",
-                            ProgressRoundData(0.5f, "20,5%")
-                        )
-                    )
-                )
-            ),
-            highlightedTicketId = flowOf(0),
-            isEmpty = flowOf(false),
-            rememberLazyListState()
-        )
     }
 }
