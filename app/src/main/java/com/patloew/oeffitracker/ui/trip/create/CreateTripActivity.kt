@@ -51,12 +51,23 @@ import java.time.LocalDate
  * limitations under the License. */
 
 private const val EXTRA_EDIT_TRIP = "editTrip"
+private const val EXTRA_TEMPLATE_TRIP = "templateTrip"
 
 class CreateTripActivity : FragmentActivity() {
 
     object CreateContract : ActivityResultContract<Unit, Boolean>() {
         override fun createIntent(context: Context, input: Unit): Intent =
             Intent(context, CreateTripActivity::class.java)
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
+            resultCode == Activity.RESULT_OK
+    }
+
+    object CreateFromTemplateContract : ActivityResultContract<Trip, Boolean>() {
+        override fun createIntent(context: Context, input: Trip): Intent =
+            Intent(context, CreateTripActivity::class.java).apply {
+                putExtra(EXTRA_TEMPLATE_TRIP, input)
+            }
 
         override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
             resultCode == Activity.RESULT_OK
@@ -75,10 +86,11 @@ class CreateTripActivity : FragmentActivity() {
     private val viewModelFactory: CreateTripViewModel.Factory by inject()
     private val viewModel: CreateTripViewModel by viewModelFactory {
         val editTrip: Trip? = intent.getParcelableExtra(EXTRA_EDIT_TRIP)
-        if (editTrip != null) {
-            viewModelFactory.edit(editTrip)
-        } else {
-            viewModelFactory.create()
+        val templateTrip: Trip? = intent.getParcelableExtra(EXTRA_TEMPLATE_TRIP)
+        when {
+            editTrip != null -> viewModelFactory.edit(editTrip)
+            templateTrip != null -> viewModelFactory.createFromTemplate(templateTrip)
+            else -> viewModelFactory.create()
         }
     }
 
@@ -127,6 +139,7 @@ class CreateTripActivity : FragmentActivity() {
 
 class CreateTripViewModel(
     private val tripDao: TripDao,
+    template: Trip?,
     private val editTrip: Trip?
 ) : ViewModel() {
 
@@ -144,25 +157,26 @@ class CreateTripViewModel(
         R.string.button_edit
     }
 
-    val startCity: MutableStateFlow<String> = MutableStateFlow(editTrip?.startCity ?: "")
-    val endCity: MutableStateFlow<String> = MutableStateFlow(editTrip?.endCity ?: "")
+    val startCity: MutableStateFlow<String> = MutableStateFlow(template?.startCity ?: editTrip?.startCity ?: "")
+    val endCity: MutableStateFlow<String> = MutableStateFlow(template?.endCity ?: editTrip?.endCity ?: "")
 
-    val date: MutableStateFlow<LocalDate> = MutableStateFlow(editTrip?.date ?: LocalDate.now())
+    val date: MutableStateFlow<LocalDate> = MutableStateFlow(template?.date ?: editTrip?.date ?: LocalDate.now())
     val dateString: Flow<String> = date.map { dateFormat.format(it) }
 
-    private val fare: MutableStateFlow<Int?> = MutableStateFlow(editTrip?.fare)
-    val initialFare = editTrip?.floatFareString ?: ""
+    private val fare: MutableStateFlow<Int?> = MutableStateFlow(template?.fare ?: editTrip?.fare)
+    val initialFare = template?.floatFareString ?: editTrip?.floatFareString ?: ""
 
-    val duration: MutableStateFlow<Duration?> = MutableStateFlow(editTrip?.duration)
+    val duration: MutableStateFlow<Duration?> = MutableStateFlow(template?.duration ?: editTrip?.duration)
     val durationString: Flow<String> = duration.map { it?.let(::formatDuration) ?: "" }
 
-    val delay: MutableStateFlow<Duration?> = MutableStateFlow(editTrip?.delay)
+    val delay: MutableStateFlow<Duration?> = MutableStateFlow(template?.delay ?: editTrip?.delay)
     val delayString: Flow<String> = delay.map { it?.let(::formatDuration) ?: "" }
 
-    private val distance: MutableStateFlow<Float?> = MutableStateFlow(editTrip?.distance)
-    val initialDistance = editTrip?.floatDistanceString ?: ""
+    private val distance: MutableStateFlow<Float?> = MutableStateFlow(template?.distance ?: editTrip?.distance)
+    val initialDistance = template?.floatDistanceString ?: editTrip?.floatDistanceString ?: ""
 
-    val types: MutableStateFlow<Map<TransportType, Boolean>> = MutableStateFlow(typesWithSelected(editTrip?.type))
+    val types: MutableStateFlow<Map<TransportType, Boolean>> =
+        MutableStateFlow(typesWithSelected(template?.type ?: editTrip?.type))
     val selectedType: TransportType?
         get() = types.value.firstNotNullOfOrNull { (type, isSelected) -> type.takeIf { isSelected } }
 
@@ -252,8 +266,9 @@ class CreateTripViewModel(
         }
 
     class Factory(private val tripDao: TripDao) {
-        fun create() = CreateTripViewModel(tripDao, editTrip = null)
-        fun edit(trip: Trip) = CreateTripViewModel(tripDao, editTrip = trip)
+        fun create() = CreateTripViewModel(tripDao, template = null, editTrip = null)
+        fun createFromTemplate(template: Trip) = CreateTripViewModel(tripDao, template, editTrip = null)
+        fun edit(trip: Trip) = CreateTripViewModel(tripDao, template = null, editTrip = trip)
     }
 
 }

@@ -55,11 +55,17 @@ import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
 fun TripItem(
     trip: Trip?,
     onDelete: (id: Long) -> Unit,
-    onDuplicateForToday: (Trip) -> Unit,
-    onReturnTrip: (Trip) -> Unit
+    getTemplateForToday: (Trip) -> Trip,
+    getReturnTemplate: (Trip) -> Trip,
+    scrollToTop: () -> Unit
 ) {
     if (trip != null) {
         val editTripLauncher = rememberLauncherForActivityResult(contract = CreateTripActivity.EditContract) { }
+        val createFromTemplateLauncher =
+            rememberLauncherForActivityResult(contract = CreateTripActivity.CreateFromTemplateContract) { created ->
+                if (created) scrollToTop()
+            }
+
 
         ConstraintLayout(
             modifier = Modifier
@@ -180,12 +186,12 @@ fun TripItem(
             ) {
                 DropdownMenuItem(onClick = {
                     showMoreMenu.value = false
-                    onDuplicateForToday(trip)
+                    createFromTemplateLauncher.launch(getTemplateForToday(trip))
                 }) { Text(stringResource(id = R.string.action_duplicate_for_today)) }
 
                 DropdownMenuItem(onClick = {
                     showMoreMenu.value = false
-                    onReturnTrip(trip)
+                    createFromTemplateLauncher.launch(getReturnTemplate(trip))
                 }) { Text(stringResource(id = R.string.action_return_trip)) }
 
                 DropdownMenuItem(onClick = {

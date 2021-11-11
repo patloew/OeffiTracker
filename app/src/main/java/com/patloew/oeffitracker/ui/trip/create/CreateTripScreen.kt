@@ -43,8 +43,8 @@ import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.TransportType
 import com.patloew.oeffitracker.ui.amountVisualTransformation
 import com.patloew.oeffitracker.ui.common.Chip
-import com.patloew.oeffitracker.ui.common.FlowRowTextField
 import com.patloew.oeffitracker.ui.common.ClickActionTextField
+import com.patloew.oeffitracker.ui.common.FlowRowTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

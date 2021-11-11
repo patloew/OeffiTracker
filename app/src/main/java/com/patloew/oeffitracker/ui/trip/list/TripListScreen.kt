@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -23,16 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.paging.PagingData
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.common.PriceProgress
-import com.patloew.oeffitracker.ui.common.ProgressData
 import com.patloew.oeffitracker.ui.main.Screen
 import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -62,17 +57,35 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
-            TripListContent(
-                onProgressClick = { navController.navigate(Screen.Tickets) },
-                viewModel::onDelete,
-                viewModel::onDuplicateForToday,
-                viewModel::onReturnTrip,
-                viewModel.trips,
-                viewModel.isEmpty,
-                viewModel.showProgress,
-                viewModel.fareProgressData,
-                listState
-            )
+            Column {
+                if (viewModel.showProgress.collectAsState(initial = false).value) {
+                    Surface(
+                        elevation = 8.dp,
+                        modifier = Modifier.clickable { navController.navigate(Screen.Tickets) }) {
+                        PriceProgress(
+                            progressDataFlow = viewModel.fareProgressData,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+
+                LazyList(
+                    data = viewModel.trips,
+                    getKey = { it.id },
+                    isEmpty = viewModel.isEmpty,
+                    emptyTitleRes = R.string.empty_state_trip_title,
+                    emptyTextRes = R.string.empty_state_trip_text,
+                    listState = listState
+                ) { trip ->
+                    TripItem(
+                        trip,
+                        viewModel::onDelete,
+                        viewModel::getTemplateForToday,
+                        viewModel::getReturnTemplate,
+                        scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
+                    )
+                }
+            }
 
             FloatingActionButton(
                 onClick = { createTripLauncher.launch(Unit) },
@@ -91,38 +104,5 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
 
     LaunchedEffect(viewModel.scrollToTopEvent) {
         viewModel.scrollToTopEvent.collect { listState.animateScrollToItem(0) }
-    }
-}
-
-@Composable
-fun TripListContent(
-    onProgressClick: () -> Unit,
-    onDelete: (id: Long) -> Unit,
-    onDuplicateForToday: (Trip) -> Unit,
-    onReturnTrip: (Trip) -> Unit,
-    trips: Flow<PagingData<Trip>>,
-    isEmpty: Flow<Boolean>,
-    showProgress: Flow<Boolean>,
-    fareProgressData: Flow<ProgressData>,
-    listState: LazyListState
-) {
-    Column {
-        if (showProgress.collectAsState(initial = false).value) {
-            Surface(elevation = 8.dp, modifier = Modifier.clickable { onProgressClick() }) {
-                PriceProgress(
-                    progressDataFlow = fareProgressData,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
-        LazyList(
-            data = trips,
-            getKey = { it.id },
-            isEmpty = isEmpty,
-            emptyTitleRes = R.string.empty_state_trip_title,
-            emptyTextRes = R.string.empty_state_trip_text,
-            listState = listState
-        ) { trip -> TripItem(trip, onDelete, onDuplicateForToday, onReturnTrip) }
     }
 }

@@ -67,31 +67,19 @@ class TripListViewModel(
         }
     }
 
-    fun onDuplicateForToday(trip: Trip) {
-        viewModelScope.launch {
-            val newTrip = trip.copy(
-                id = 0,
-                date = LocalDate.now(),
-                delay = null,
-                createdTimestamp = System.currentTimeMillis()
-            )
-            tripDao.insert(newTrip)
-            scrollToTopChannel.send(Unit)
-        }
-    }
+    fun getTemplateForToday(trip: Trip): Trip = trip.copy(
+        id = 0,
+        date = LocalDate.now(),
+        delay = null,
+        createdTimestamp = System.currentTimeMillis()
+    )
 
-    fun onReturnTrip(trip: Trip) {
-        viewModelScope.launch {
-            val newTrip = trip.copy(
-                id = 0,
-                startCity = trip.endCity,
-                endCity = trip.startCity,
-                date = LocalDate.now(),
-                delay = null,
-                createdTimestamp = System.currentTimeMillis()
-            )
-            tripDao.insert(newTrip)
-            scrollToTopChannel.send(Unit)
-        }
-    }
+    fun getReturnTemplate(trip: Trip): Trip = trip.copy(
+        id = 0,
+        startCity = trip.endCity,
+        endCity = trip.startCity,
+        date = LocalDate.now(),
+        delay = null,
+        createdTimestamp = System.currentTimeMillis()
+    )
 }
