@@ -2,6 +2,7 @@ package com.patloew.oeffitracker.ui.common
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -9,6 +10,7 @@ import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -36,6 +38,7 @@ fun <T : Any> LazyList(
     @StringRes emptyTitleRes: Int,
     @StringRes emptyTextRes: Int,
     listState: LazyListState,
+    contentPadding: PaddingValues = PaddingValues(bottom = 84.dp),
     item: @Composable (T?) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -43,7 +46,7 @@ fun <T : Any> LazyList(
             EmptyState(titleRes = emptyTitleRes, textRes = emptyTextRes)
         } else {
             val lazyTicketItems = data.collectAsLazyPagingItems()
-            LazyColumn(state = listState) {
+            LazyColumn(state = listState, contentPadding = contentPadding) {
                 items(items = lazyTicketItems, key = getKey) { itemData ->
                     item(itemData)
                     Divider()
