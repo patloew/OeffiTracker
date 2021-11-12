@@ -52,4 +52,7 @@
     <string name="transport_type_subway">Subway</string>
     <string name="label_transport_type">Means of transport</string>
     <string name="accessibility_icon_selected">Selected</string>
+    <string name="item_ticket_duration_sum">Spent %s in public transport</string>
+    <string name="item_ticket_delay_sum">%s total delay</string>
+    <string name="item_ticket_distance_sum">Traveled %s in public transport</string>
 </resources>

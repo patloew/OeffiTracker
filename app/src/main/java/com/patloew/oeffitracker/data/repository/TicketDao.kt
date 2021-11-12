@@ -62,21 +62,11 @@ interface TicketDao {
             ticket.price, 
             ticket.startDate, 
             ticket.endDate,
-            trips.fareSum,
-            trips.durationSum,
-            trips.delaySum,
-            trips.distanceSum
-        FROM 
-            ticket
-        LEFT JOIN (
-            SELECT 
-                date, 
-                COALESCE(SUM(fare), 0) as fareSum,
-                SUM(duration) as durationSum,
-                SUM(delay) as delaySum, 
-                SUM(distance) as distanceSum
-            FROM trip
-        ) trips ON trips.date BETWEEN ticket.startDate and ticket.endDate
+            (SELECT COALESCE(SUM(fare), 0) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as fareSum,
+            (SELECT SUM(duration) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as durationSum,
+            (SELECT SUM(delay) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as delaySum,
+            (SELECT SUM(distance) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as distanceSum
+        FROM ticket
         ORDER BY ticket.startDate DESC
     """
     )

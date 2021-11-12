@@ -41,7 +41,8 @@ import java.time.format.FormatStyle
 val percentageFormat = DecimalFormat("0.0%")
 val priceFormatFloat = DecimalFormat("0.00 €")
 val priceFormatInteger = DecimalFormat("0 €")
-val distanceFormat = DecimalFormat("0.#km")
+val distanceFormatShort = DecimalFormat("0.#km")
+val distanceFormat = DecimalFormat("0.## km")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
@@ -91,7 +92,7 @@ fun showDurationPicker(
     onDurationSelected: (selectedDuration: Duration?) -> Unit
 ) {
     // Workaround until https://issuetracker.google.com/issues/205866514 is fixed
-    val (hours, minutes) = preSelected.hoursMin
+    val (_, hours, minutes) = preSelected.daysHoursMin
     MaterialTimePicker.Builder()
         .setTitleText(titleText)
         .setHour(hours)
@@ -123,30 +124,38 @@ fun formatPrice(price: Int): String {
 }
 
 // Workaround until https://issuetracker.google.com/issues/205866514 is fixed
-private val Duration.hoursMin: Pair<Int, Int>
+private val Duration.daysHoursMin: Triple<Int, Int, Int>
     get() {
-        val hours = (toMinutes() / 60f).toInt()
+        val days = (toHours() / 24f).toInt()
+        val hours = (toMinutes() / 60f).toInt().mod(24)
         val minutes = toMinutes().mod(60)
-        return hours to minutes
+        return Triple(days, hours, minutes)
     }
 
 // Workaround until https://issuetracker.google.com/issues/205866514 is fixed
 fun formatDuration(duration: Duration): String {
-    val (hours, minutes) = duration.hoursMin
-    return if (hours == 0) {
-        "$minutes min"
-    } else {
+    val (days, hours, minutes) = duration.daysHoursMin
+    return buildString {
+        var hasTextBefore = false
+        if (days > 0) {
+            append("$days d")
+            hasTextBefore = true
+        }
+        if (hours > 0) {
+            if (hasTextBefore) append(' ')
+            append("$hours h")
+            hasTextBefore = true
+        }
         if (minutes > 0) {
-            "$hours h $minutes min"
-        } else {
-            "$hours h"
+            if (hasTextBefore) append(' ')
+            append("$minutes min")
         }
     }
 }
 
 // Workaround until https://issuetracker.google.com/issues/205866514 is fixed
 fun formatDurationShort(duration: Duration): String {
-    val (hours, minutes) = duration.hoursMin
+    val (_, hours, minutes) = duration.daysHoursMin
     return if (hours == 0) {
         "${minutes}m"
     } else {

@@ -1,11 +1,10 @@
 package com.patloew.oeffitracker.ui.ticket.list
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -20,20 +19,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.MoreMenu
 import com.patloew.oeffitracker.ui.common.PriceProgressRound
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
+import com.patloew.oeffitracker.ui.distanceFormat
+import com.patloew.oeffitracker.ui.formatDuration
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import java.time.Duration
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -61,7 +58,8 @@ fun TicketItem(
                 .fillMaxWidth()
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
-            val (name, dateIcon, date, priceIcon, price, favIcon, favorite, progress, moreIcon) = createRefs()
+            val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()
+            val (distanceIcon, distance, favIcon, favorite, progress, moreIcon) = createRefs()
             val isHighlightedTicket = highlightedTicketId.collectAsState(initial = null).value == ticket.id
 
             Text(
@@ -88,7 +86,6 @@ fun TicketItem(
                     .constrainAs(dateIcon) {
                         start.linkTo(parent.start)
                         top.linkTo(name.bottom, margin = 12.dp)
-                        end.linkTo(date.start)
                     },
                 tint = MaterialTheme.colors.primary
             )
@@ -116,7 +113,6 @@ fun TicketItem(
                     .constrainAs(priceIcon) {
                         start.linkTo(parent.start)
                         top.linkTo(dateIcon.bottom, margin = 8.dp)
-                        end.linkTo(price.start)
                     },
                 tint = MaterialTheme.colors.primary
             )
@@ -138,15 +134,128 @@ fun TicketItem(
                 style = MaterialTheme.typography.body2
             )
 
+            if (ticket.durationSum != null) {
+                Icon(
+                    painterResource(id = R.drawable.ic_clock),
+                    stringResource(id = R.string.accessibility_icon_price),
+                    Modifier
+                        .constrainAs(durationIcon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(priceIcon.bottom, margin = 8.dp)
+                        },
+                    tint = MaterialTheme.colors.primary
+                )
+
+                Text(
+                    modifier = Modifier
+                        .constrainAs(duration) {
+                            start.linkTo(durationIcon.end, margin = 8.dp)
+                            top.linkTo(durationIcon.top)
+                            bottom.linkTo(durationIcon.bottom)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(bottom = 1.dp),
+                    text = stringResource(id = R.string.item_ticket_duration_sum, formatDuration(ticket.durationSum)),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2
+                )
+            } else {
+                Spacer(
+                    Modifier.constrainAs(durationIcon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(priceIcon.bottom)
+                    }
+                )
+            }
+
+            if (ticket.delaySum != null) {
+                Icon(
+                    painterResource(id = R.drawable.ic_delay),
+                    stringResource(id = R.string.accessibility_icon_price),
+                    Modifier
+                        .constrainAs(delayIcon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(durationIcon.bottom, margin = 8.dp)
+                        },
+                    tint = MaterialTheme.colors.primary
+                )
+
+                Text(
+                    modifier = Modifier
+                        .constrainAs(delay) {
+                            start.linkTo(delayIcon.end, margin = 8.dp)
+                            top.linkTo(delayIcon.top)
+                            bottom.linkTo(delayIcon.bottom)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(bottom = 1.dp),
+                    text = stringResource(id = R.string.item_ticket_delay_sum, formatDuration(ticket.delaySum)),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2
+                )
+            } else {
+                Spacer(
+                    Modifier.constrainAs(delayIcon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(duration.bottom)
+                    }
+                )
+            }
+
+            if (ticket.distanceSum != null) {
+                Icon(
+                    painterResource(id = R.drawable.ic_distance),
+                    stringResource(id = R.string.accessibility_icon_price),
+                    Modifier
+                        .constrainAs(distanceIcon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(delayIcon.bottom, margin = 8.dp)
+                        },
+                    tint = MaterialTheme.colors.primary
+                )
+
+                Text(
+                    modifier = Modifier
+                        .constrainAs(distance) {
+                            start.linkTo(distanceIcon.end, margin = 8.dp)
+                            top.linkTo(distanceIcon.top)
+                            bottom.linkTo(distanceIcon.bottom)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(bottom = 1.dp),
+                    text = stringResource(
+                        id = R.string.item_ticket_distance_sum,
+                        distanceFormat.format(ticket.distanceSum)
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2
+                )
+            } else {
+                Spacer(
+                    Modifier.constrainAs(distanceIcon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(delay.bottom)
+                    }
+                )
+            }
+
             if (isHighlightedTicket) {
                 Icon(
                     painterResource(id = R.drawable.ic_tram),
                     contentDescription = null,
                     Modifier
                         .constrainAs(favIcon) {
-                            start.linkTo(priceIcon.start)
-                            top.linkTo(priceIcon.bottom, margin = 8.dp)
-                            end.linkTo(priceIcon.end)
+                            start.linkTo(parent.start)
+                            top.linkTo(distanceIcon.bottom, margin = 8.dp)
                         }
                         .size(22.dp),
                     tint = MaterialTheme.colors.primary
@@ -266,30 +375,6 @@ fun TicketItem(
                     bottom.linkTo(parent.bottom)
                 }
             )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TicketItemPreview() {
-    PreviewTheme {
-        Column {
-            TicketItem(
-                onDelete = { },
-                highlightedTicketId = flowOf(0),
-                ticket = TicketListData(
-                    0,
-                    "KlimaTicket",
-                    "100,00 €",
-                    "01.01.20 - 01.01.21",
-                    ProgressRoundData(0.5f, "20,5%"),
-                    Duration.ZERO
-                )
-            )
-            Divider()
-            TicketItem(onDelete = { }, highlightedTicketId = flowOf(0), ticket = null)
-            Divider()
         }
     }
 }

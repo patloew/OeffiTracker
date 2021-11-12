@@ -47,7 +47,9 @@ class TicketListViewModel(
                         progress = percentage.coerceAtMost(1f),
                         percentageString = percentageFormat.format(percentage)
                     ),
-                    durationSum = ticket.durationSum
+                    durationSum = ticket.durationSum,
+                    delaySum = ticket.delaySum,
+                    distanceSum = ticket.distanceSum
                 )
             }
         }

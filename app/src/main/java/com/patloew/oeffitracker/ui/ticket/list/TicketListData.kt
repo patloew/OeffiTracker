@@ -12,7 +12,9 @@ data class TicketListData(
     val price: String,
     val validityPeriod: String,
     val progressData: ProgressRoundData,
-    val durationSum: Duration?
+    val durationSum: Duration?,
+    val delaySum: Duration?,
+    val distanceSum: Float?
 )
 
 val Ticket.validityPeriod: String get() = dateFormat.format(startDate) + " – " + dateFormat.format(endDate)

@@ -53,4 +53,7 @@
     <string name="transport_type_subway">U-Bahn</string>
     <string name="label_transport_type">Transportmittel</string>
     <string name="accessibility_icon_selected">Ausgewählt</string>
+    <string name="item_ticket_duration_sum">%s in Öffis verbracht</string>
+    <string name="item_ticket_delay_sum">%s Verspätung insgesamt</string>
+    <string name="item_ticket_distance_sum">%s in Öffis zurückgelegt</string>
 </resources>
