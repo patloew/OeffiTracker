@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
@@ -73,7 +75,8 @@ fun TripItem(
                 .clickable { editTripLauncher.launch(trip) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
-            val (startIcon, startCity, endIcon, endCity, line, price, date, moreIcon) = createRefs()
+            val (startIcon, startCity, endIcon, endCity, line, price, date, additionalInfos, moreIcon) = createRefs()
+            val additionalInfoBarrier = createStartBarrier(price, date, additionalInfos)
 
             Icon(
                 Icons.Filled.Place,
@@ -93,7 +96,7 @@ fun TripItem(
                         start.linkTo(startIcon.end, margin = 8.dp)
                         top.linkTo(startIcon.top)
                         bottom.linkTo(startIcon.bottom)
-                        end.linkTo(price.start, margin = 16.dp)
+                        end.linkTo(additionalInfoBarrier, margin = 12.dp)
                         width = Dimension.fillToConstraints
                     }
                     .padding(bottom = 2.dp),
@@ -136,7 +139,7 @@ fun TripItem(
                         start.linkTo(startIcon.end, margin = 8.dp)
                         top.linkTo(endIcon.top)
                         bottom.linkTo(endIcon.bottom)
-                        end.linkTo(date.start, margin = 16.dp)
+                        end.linkTo(additionalInfoBarrier, margin = 12.dp)
                         width = Dimension.fillToConstraints
                     }
                     .padding(bottom = 2.dp),
@@ -161,17 +164,48 @@ fun TripItem(
                 style = MaterialTheme.typography.body1
             )
 
+            val typeAndDate = buildString {
+                if (trip.type != null) {
+                    append(stringResource(id = trip.type.stringRes))
+                    append(", ")
+                }
+                append(dateFormat.format(trip.date))
+            }
             Text(
                 modifier = Modifier.constrainAs(date) {
                     end.linkTo(moreIcon.start)
                     top.linkTo(price.bottom)
-                    bottom.linkTo(parent.bottom)
+                    bottom.linkTo(additionalInfos.top)
                 },
-                text = dateFormat.format(trip.date),
+                text = typeAndDate,
                 maxLines = 1,
                 fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.67f),
                 style = MaterialTheme.typography.caption
             )
+
+            if (trip.hasAdditionalInfos) {
+                Text(
+                    modifier = Modifier
+                        .constrainAs(additionalInfos) {
+                            end.linkTo(moreIcon.start)
+                            top.linkTo(date.bottom)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .padding(top = 1.dp),
+                    text = trip.additionalInfo,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                    fontSize = 10.sp,
+                    style = MaterialTheme.typography.caption
+                )
+            } else {
+                Spacer(modifier = Modifier.constrainAs(additionalInfos) {
+                    end.linkTo(moreIcon.start)
+                    top.linkTo(date.bottom)
+                    bottom.linkTo(parent.bottom)
+                })
+            }
 
             val showMoreMenu = remember { mutableStateOf(false) }
             val showDeleteDialog = remember { mutableStateOf(false) }

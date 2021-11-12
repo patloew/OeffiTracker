@@ -41,6 +41,7 @@ import java.time.format.FormatStyle
 val percentageFormat = DecimalFormat("0.0%")
 val priceFormatFloat = DecimalFormat("0.00 €")
 val priceFormatInteger = DecimalFormat("0 €")
+val distanceFormat = DecimalFormat("0.#km")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable
@@ -135,7 +136,25 @@ fun formatDuration(duration: Duration): String {
     return if (hours == 0) {
         "$minutes min"
     } else {
-        "$hours h $minutes min"
+        if (minutes > 0) {
+            "$hours h $minutes min"
+        } else {
+            "$hours h"
+        }
+    }
+}
+
+// Workaround until https://issuetracker.google.com/issues/205866514 is fixed
+fun formatDurationShort(duration: Duration): String {
+    val (hours, minutes) = duration.hoursMin
+    return if (hours == 0) {
+        "${minutes}m"
+    } else {
+        if (minutes > 0) {
+            "${hours}h${minutes}m"
+        } else {
+            "${hours}h"
+        }
     }
 }
 /*
