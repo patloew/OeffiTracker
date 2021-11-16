@@ -43,6 +43,7 @@ val priceFormatFloat = DecimalFormat("0.00 €")
 val priceFormatInteger = DecimalFormat("0 €")
 val distanceFormatShort = DecimalFormat("0.#km")
 val distanceFormat = DecimalFormat("0.## km")
+val weightFormat = DecimalFormat("0 kg")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 @Composable

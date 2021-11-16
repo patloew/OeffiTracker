@@ -30,6 +30,10 @@ import kotlinx.coroutines.launch
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+// Rough estimate, as this depends on many factors.
+// Based on: https://www.quarks.de/umwelt/klimawandel/co2-rechner-fuer-auto-flugzeug-und-co/
+private const val kgCo2PerKm: Float = 0.15f
+
 class TicketListViewModel(
     private val ticketDao: TicketDao
 ) : ViewModel() {
@@ -49,7 +53,8 @@ class TicketListViewModel(
                     ),
                     durationSum = ticket.durationSum,
                     delaySum = ticket.delaySum,
-                    distanceSum = ticket.distanceSum
+                    distanceSum = ticket.distanceSum,
+                    co2savedSum = ticket.distanceSum?.times(kgCo2PerKm)
                 )
             }
         }

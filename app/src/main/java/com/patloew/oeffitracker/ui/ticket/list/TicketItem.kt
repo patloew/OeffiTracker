@@ -30,6 +30,7 @@ import com.patloew.oeffitracker.ui.common.PriceProgressRound
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.distanceFormat
 import com.patloew.oeffitracker.ui.formatDuration
+import com.patloew.oeffitracker.ui.weightFormat
 import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
@@ -59,7 +60,7 @@ fun TicketItem(
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()
-            val (distanceIcon, distance, favIcon, favorite, progress, moreIcon) = createRefs()
+            val (distanceIcon, distance, co2Icon, co2, favIcon, favorite, progress, moreIcon) = createRefs()
             val isHighlightedTicket = highlightedTicketId.collectAsState(initial = null).value == ticket.id
 
             Text(
@@ -137,7 +138,7 @@ fun TicketItem(
             if (ticket.durationSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_clock),
-                    stringResource(id = R.string.accessibility_icon_price),
+                    contentDescription = null,
                     Modifier
                         .constrainAs(durationIcon) {
                             start.linkTo(parent.start)
@@ -174,7 +175,7 @@ fun TicketItem(
             if (ticket.delaySum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_delay),
-                    stringResource(id = R.string.accessibility_icon_price),
+                    contentDescription = null,
                     Modifier
                         .constrainAs(delayIcon) {
                             start.linkTo(parent.start)
@@ -203,7 +204,7 @@ fun TicketItem(
                 Spacer(
                     Modifier.constrainAs(delayIcon) {
                         start.linkTo(parent.start)
-                        top.linkTo(duration.bottom)
+                        top.linkTo(durationIcon.bottom)
                     }
                 )
             }
@@ -211,7 +212,7 @@ fun TicketItem(
             if (ticket.distanceSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_distance),
-                    stringResource(id = R.string.accessibility_icon_price),
+                    contentDescription = null,
                     Modifier
                         .constrainAs(distanceIcon) {
                             start.linkTo(parent.start)
@@ -243,7 +244,47 @@ fun TicketItem(
                 Spacer(
                     Modifier.constrainAs(distanceIcon) {
                         start.linkTo(parent.start)
-                        top.linkTo(delay.bottom)
+                        top.linkTo(delayIcon.bottom)
+                    }
+                )
+            }
+
+            if (ticket.co2savedSum != null) {
+                Icon(
+                    painterResource(id = R.drawable.ic_nature),
+                    contentDescription = null,
+                    Modifier
+                        .constrainAs(co2Icon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(distanceIcon.bottom, margin = 8.dp)
+                        },
+                    tint = MaterialTheme.colors.primary
+                )
+
+                Text(
+                    modifier = Modifier
+                        .constrainAs(co2) {
+                            start.linkTo(co2Icon.end, margin = 8.dp)
+                            top.linkTo(co2Icon.top)
+                            bottom.linkTo(co2Icon.bottom)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(bottom = 1.dp),
+                    text = stringResource(
+                        id = R.string.item_ticket_co2_saved_sum,
+                        weightFormat.format(ticket.co2savedSum)
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2
+                )
+            } else {
+                Spacer(
+                    Modifier.constrainAs(co2Icon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(distanceIcon.bottom)
                     }
                 )
             }
@@ -255,7 +296,7 @@ fun TicketItem(
                     Modifier
                         .constrainAs(favIcon) {
                             start.linkTo(parent.start)
-                            top.linkTo(distanceIcon.bottom, margin = 8.dp)
+                            top.linkTo(co2Icon.bottom, margin = 8.dp)
                         }
                         .size(22.dp),
                     tint = MaterialTheme.colors.primary

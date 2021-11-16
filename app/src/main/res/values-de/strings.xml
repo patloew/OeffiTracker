@@ -56,4 +56,5 @@
     <string name="item_ticket_duration_sum">%s in Öffis verbracht</string>
     <string name="item_ticket_delay_sum">%s Verspätung insgesamt</string>
     <string name="item_ticket_distance_sum">%s in Öffis zurückgelegt</string>
+    <string name="item_ticket_co2_saved_sum">~%s CO₂ gespart</string>
 </resources>

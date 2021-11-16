@@ -176,7 +176,7 @@ fun CreateTicketContent(
         val (validityHintText, validityHintColor) = when {
             endDateBeforeStartDate.collectAsState(initial = false).value ->
                 stringResource(id = R.string.ticket_trip_validity_hint_enddate_startdate_error) to
-                        MaterialTheme.colors.error
+                    MaterialTheme.colors.error
             overlappingTicketValue != null ->
                 stringResource(
                     id = R.string.ticket_trip_validity_hint_overlap_error,

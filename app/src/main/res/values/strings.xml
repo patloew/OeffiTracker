@@ -55,4 +55,5 @@
     <string name="item_ticket_duration_sum">Spent %s in public transport</string>
     <string name="item_ticket_delay_sum">%s total delay</string>
     <string name="item_ticket_distance_sum">Traveled %s in public transport</string>
+    <string name="item_ticket_co2_saved_sum">~%s CO₂ saved</string>
 </resources>
