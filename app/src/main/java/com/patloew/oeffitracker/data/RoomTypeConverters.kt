@@ -38,8 +38,9 @@ object Converters {
         value?.let { Duration.ofMinutes(value.toLong()) }
 
     @TypeConverter
-    fun stringFromTransportType(value: TransportType?): String? = value?.toString()
+    fun stringFromTransportTypeList(value: List<TransportType>?): String? = value?.joinToString(separator = ",")
 
     @TypeConverter
-    fun stringToTransportType(value: String?): TransportType? = value?.let(TransportType::valueOf)
+    fun stringToTransportTypeList(value: String?): List<TransportType>? =
+        value?.takeIf { it.isNotEmpty() }?.split(',')?.map(TransportType::valueOf)
 }

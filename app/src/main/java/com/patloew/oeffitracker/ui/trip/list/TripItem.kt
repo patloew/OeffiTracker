@@ -165,8 +165,12 @@ fun TripItem(
             )
 
             val typeAndDate = buildString {
-                if (trip.type != null) {
-                    append(stringResource(id = trip.type.stringRes))
+                if (!trip.type.isNullOrEmpty()) {
+                    if (trip.type.size > 1) {
+                        append(stringResource(id = R.string.transport_type_multiple))
+                    } else {
+                        append(stringResource(id = trip.type.first().stringRes))
+                    }
                     append(", ")
                 }
                 append(dateFormat.format(trip.date))

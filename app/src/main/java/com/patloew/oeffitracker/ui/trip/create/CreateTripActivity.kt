@@ -177,8 +177,8 @@ class CreateTripViewModel(
 
     val types: MutableStateFlow<Map<TransportType, Boolean>> =
         MutableStateFlow(typesWithSelected(template?.type ?: editTrip?.type))
-    val selectedType: TransportType?
-        get() = types.value.firstNotNullOfOrNull { (type, isSelected) -> type.takeIf { isSelected } }
+    val selectedTypes: List<TransportType>
+        get() = types.value.filterValues { isSelected -> isSelected }.keys.toList()
 
     val saveEnabled: Flow<Boolean> = combine(startCity, endCity, fare) { startCity, endCity, fare ->
         startCity.isNotEmpty() && endCity.isNotEmpty() && (fare == null || fare > 0)
@@ -199,7 +199,7 @@ class CreateTripViewModel(
                         duration = duration.value,
                         distance = distance.value,
                         delay = delay.value,
-                        type = selectedType
+                        type = selectedTypes
                     )
                 )
             } else {
@@ -212,7 +212,7 @@ class CreateTripViewModel(
                         duration = duration.value,
                         delay = delay.value,
                         distance = distance.value,
-                        type = selectedType,
+                        type = selectedTypes,
                         createdTimestamp = System.currentTimeMillis()
                     )
                 )
@@ -222,15 +222,11 @@ class CreateTripViewModel(
     }
 
     fun onTypeClick(type: TransportType) {
-        if (types.value[type] == true) { // type is currently selected
-            types.value = typesWithSelected(null)
-        } else {
-            types.value = typesWithSelected(type)
-        }
+        types.value = types.value.toMutableMap().apply { set(type, !getOrDefault(type, false)) }
     }
 
-    private fun typesWithSelected(selected: TransportType?) =
-        TransportType.values().associateWith { type -> type == selected }
+    private fun typesWithSelected(selected: List<TransportType>?) =
+        TransportType.values().associateWith { type -> selected?.contains(type) ?: false }
 
     fun setDistance(distanceString: String): Boolean = when {
         distanceString.isEmpty() -> {
