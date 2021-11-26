@@ -57,4 +57,6 @@
     <string name="item_ticket_distance_sum">Traveled %s in public transport</string>
     <string name="item_ticket_co2_saved_sum">~%s CO₂ saved</string>
     <string name="transport_type_multiple">Multiple</string>
+    <string name="label_note">Notes</string>
+    <string name="label_additional_costs">Additional costs (e.g. seat reservation)</string>
 </resources>

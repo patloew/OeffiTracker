@@ -70,7 +70,9 @@ class TripListViewModel(
     fun getTemplateForToday(trip: Trip): Trip = trip.copy(
         id = 0,
         date = LocalDate.now(),
+        additionalCosts = null,
         delay = null,
+        notes = null,
         createdTimestamp = System.currentTimeMillis()
     )
 
@@ -79,7 +81,9 @@ class TripListViewModel(
         startCity = trip.endCity,
         endCity = trip.startCity,
         date = LocalDate.now(),
+        additionalCosts = null,
         delay = null,
+        notes = null,
         createdTimestamp = System.currentTimeMillis()
     )
 }

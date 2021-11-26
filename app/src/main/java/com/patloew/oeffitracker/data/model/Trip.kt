@@ -30,11 +30,13 @@ data class Trip(
     val startCity: String,
     val endCity: String,
     val fare: Int?,
+    val additionalCosts: Int?,
     val date: LocalDate,
     val duration: Duration?,
     val delay: Duration?,
     val distance: Float?,
     val type: List<TransportType>?,
+    val notes: String?,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) : Parcelable {

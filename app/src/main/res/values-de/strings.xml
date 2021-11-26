@@ -58,4 +58,6 @@
     <string name="item_ticket_distance_sum">%s in Öffis zurückgelegt</string>
     <string name="item_ticket_co2_saved_sum">~%s CO₂ gespart</string>
     <string name="transport_type_multiple">Mehrere</string>
+    <string name="label_note">Notizen</string>
+    <string name="label_additional_costs">Zusätzliche Kosten (z.B. Reservierung)</string>
 </resources>

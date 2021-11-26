@@ -160,11 +160,18 @@ class CreateTripViewModel(
     val startCity: MutableStateFlow<String> = MutableStateFlow(template?.startCity ?: editTrip?.startCity ?: "")
     val endCity: MutableStateFlow<String> = MutableStateFlow(template?.endCity ?: editTrip?.endCity ?: "")
 
+    val notes: MutableStateFlow<String> = MutableStateFlow(template?.notes ?: editTrip?.notes ?: "")
+
     val date: MutableStateFlow<LocalDate> = MutableStateFlow(template?.date ?: editTrip?.date ?: LocalDate.now())
     val dateString: Flow<String> = date.map { dateFormat.format(it) }
 
     private val fare: MutableStateFlow<Int?> = MutableStateFlow(template?.fare ?: editTrip?.fare)
-    val initialFare = template?.floatFareString ?: editTrip?.floatFareString ?: ""
+    val initialFare = template?.fare.formatAmount() ?: editTrip?.fare.formatAmount() ?: ""
+
+    private val additionalCosts: MutableStateFlow<Int?> =
+        MutableStateFlow(template?.additionalCosts ?: editTrip?.additionalCosts)
+    val initialAdditionalCosts =
+        template?.additionalCosts.formatAmount() ?: editTrip?.additionalCosts.formatAmount() ?: ""
 
     val duration: MutableStateFlow<Duration?> = MutableStateFlow(template?.duration ?: editTrip?.duration)
     val durationString: Flow<String> = duration.map { it?.let(::formatDuration) ?: "" }
@@ -195,11 +202,13 @@ class CreateTripViewModel(
                         startCity = startCity.value.trim(),
                         endCity = endCity.value.trim(),
                         fare = fare.value,
+                        additionalCosts.value,
                         date = date.value,
                         duration = duration.value,
                         distance = distance.value,
                         delay = delay.value,
-                        type = selectedTypes
+                        type = selectedTypes,
+                        notes = notes.value.takeIf { it.isNotEmpty() }
                     )
                 )
             } else {
@@ -208,11 +217,13 @@ class CreateTripViewModel(
                         startCity = startCity.value.trim(),
                         endCity = endCity.value.trim(),
                         fare = fare.value,
+                        additionalCosts = additionalCosts.value,
                         date = date.value,
                         duration = duration.value,
                         delay = delay.value,
                         distance = distance.value,
                         type = selectedTypes,
+                        notes = notes.value.takeIf { it.isNotEmpty() },
                         createdTimestamp = System.currentTimeMillis()
                     )
                 )
@@ -247,6 +258,14 @@ class CreateTripViewModel(
     fun setFare(fareString: String): Boolean =
         checkAndSetAmount(fareString) { newFare -> fare.value = newFare }
 
+    /**
+     * Parses and validates additional costs and sets it if valid.
+     *
+     * @return true if additional costs are valid
+     */
+    fun setAdditionalCosts(additionalCostsString: String): Boolean =
+        checkAndSetAmount(additionalCostsString) { newAdditionalCosts -> additionalCosts.value = newAdditionalCosts }
+
     private val Trip.floatDistanceString: String?
         get() = if (distance?.mod(1.0) == 0.0) {
             distance.toInt().toString()
@@ -254,11 +273,11 @@ class CreateTripViewModel(
             distance?.toString()?.replace('.', ',')
         }
 
-    private val Trip.floatFareString: String?
-        get() = if (fare?.mod(100) == 0) {
-            floatFare!!.toInt().toString()
+    private fun Int?.formatAmount(): String? =
+        if (this?.mod(100) == 0) {
+            div(100).toString()
         } else {
-            floatFare?.toString()?.replace('.', ',')
+            this?.div(100f)?.toString()?.replace('.', ',')
         }
 
     class Factory(private val tripDao: TripDao) {

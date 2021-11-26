@@ -3,6 +3,7 @@ package com.patloew.oeffitracker.ui.ticket.create
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.ui.PreviewTheme
@@ -198,8 +200,9 @@ fun CreateTicketContent(
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(64.dp)
                 .padding(top = 16.dp)
-        ) { Text(stringResource(id = R.string.button_add)) }
+        ) { Text(stringResource(id = R.string.button_add), fontSize = 16.sp) }
     }
 
 }
