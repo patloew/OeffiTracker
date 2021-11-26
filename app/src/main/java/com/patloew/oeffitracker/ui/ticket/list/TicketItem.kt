@@ -60,7 +60,8 @@ fun TicketItem(
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()
-            val (distanceIcon, distance, co2Icon, co2, favIcon, favorite, progress, moreIcon) = createRefs()
+            val (additionalCostsIcon, additionalCosts, distanceIcon, distance, co2Icon, co2) = createRefs()
+            val (favIcon, favorite, progress, moreIcon) = createRefs()
             val isHighlightedTicket = highlightedTicketId.collectAsState(initial = null).value == ticket.id
 
             Text(
@@ -135,6 +136,43 @@ fun TicketItem(
                 style = MaterialTheme.typography.body2
             )
 
+            if (ticket.additionalCostsSum != null) {
+                Icon(
+                    painterResource(id = R.drawable.ic_price_plus),
+                    contentDescription = null,
+                    Modifier
+                        .constrainAs(additionalCostsIcon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(priceIcon.bottom, margin = 8.dp)
+                        },
+                    tint = MaterialTheme.colors.primary
+                )
+
+                Text(
+                    modifier = Modifier
+                        .constrainAs(additionalCosts) {
+                            start.linkTo(additionalCostsIcon.end, margin = 8.dp)
+                            top.linkTo(additionalCostsIcon.top)
+                            bottom.linkTo(additionalCostsIcon.bottom)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(bottom = 1.dp),
+                    text = stringResource(id = R.string.item_ticket_additional_costs_sum, ticket.additionalCostsSum),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2
+                )
+            } else {
+                Spacer(
+                    Modifier.constrainAs(additionalCostsIcon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(priceIcon.bottom)
+                    }
+                )
+            }
+
             if (ticket.durationSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_clock),
@@ -142,7 +180,7 @@ fun TicketItem(
                     Modifier
                         .constrainAs(durationIcon) {
                             start.linkTo(parent.start)
-                            top.linkTo(priceIcon.bottom, margin = 8.dp)
+                            top.linkTo(additionalCostsIcon.bottom, margin = 8.dp)
                         },
                     tint = MaterialTheme.colors.primary
                 )
@@ -167,7 +205,7 @@ fun TicketItem(
                 Spacer(
                     Modifier.constrainAs(durationIcon) {
                         start.linkTo(parent.start)
-                        top.linkTo(priceIcon.bottom)
+                        top.linkTo(additionalCostsIcon.bottom)
                     }
                 )
             }

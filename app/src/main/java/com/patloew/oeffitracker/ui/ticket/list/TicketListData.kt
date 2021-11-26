@@ -12,6 +12,7 @@ data class TicketListData(
     val price: String,
     val validityPeriod: String,
     val progressData: ProgressRoundData,
+    val additionalCostsSum: String?,
     val durationSum: Duration?,
     val delaySum: Duration?,
     val distanceSum: Float?,

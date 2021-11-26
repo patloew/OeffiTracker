@@ -59,4 +59,5 @@
     <string name="transport_type_multiple">Multiple</string>
     <string name="label_note">Notes</string>
     <string name="label_additional_costs">Additional costs (e.g. seat reservation)</string>
+    <string name="item_ticket_additional_costs_sum">%s additional costs (e.g. seat reservations)</string>
 </resources>

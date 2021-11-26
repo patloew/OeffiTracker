@@ -10,6 +10,7 @@ data class TicketWithStatistics(
     val startDate: LocalDate,
     val endDate: LocalDate,
     val fareSum: Int,
+    val additionalCostsSum: Int?,
     val durationSum: Duration?,
     val delaySum: Duration?,
     val distanceSum: Float?

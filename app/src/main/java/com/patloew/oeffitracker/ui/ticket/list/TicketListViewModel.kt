@@ -40,21 +40,22 @@ class TicketListViewModel(
 
     val tickets: Flow<PagingData<TicketListData>> =
         Pager(PagingConfig(pageSize = 20)) { ticketDao.getTicketWithStatisticsPagingSource() }.flow.map { pagingData ->
-            pagingData.map { ticket ->
-                val percentage: Float = ticket.fareSum / ticket.price.toFloat()
+            pagingData.map { data ->
+                val percentage: Float = data.fareSum / data.price.toFloat()
                 TicketListData(
-                    id = ticket.id,
-                    name = ticket.name,
-                    price = formatPrice(ticket.fareSum) + " / " + formatPrice(ticket.price),
-                    validityPeriod = ticket.validityPeriod,
+                    id = data.id,
+                    name = data.name,
+                    price = formatPrice(data.fareSum) + " / " + formatPrice(data.price),
+                    validityPeriod = data.validityPeriod,
                     progressData = ProgressRoundData(
                         progress = percentage.coerceAtMost(1f),
                         percentageString = percentageFormat.format(percentage)
                     ),
-                    durationSum = ticket.durationSum,
-                    delaySum = ticket.delaySum,
-                    distanceSum = ticket.distanceSum,
-                    co2savedSum = ticket.distanceSum?.times(kgCo2PerKm)
+                    additionalCostsSum = data.additionalCostsSum?.let(::formatPrice),
+                    durationSum = data.durationSum,
+                    delaySum = data.delaySum,
+                    distanceSum = data.distanceSum,
+                    co2savedSum = data.distanceSum?.times(kgCo2PerKm)
                 )
             }
         }
