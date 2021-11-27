@@ -68,10 +68,10 @@ fun TripItem(
                 if (created) scrollToTop()
             }
 
-
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
                 .clickable { editTripLauncher.launch(trip) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {

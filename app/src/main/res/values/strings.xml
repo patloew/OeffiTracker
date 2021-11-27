@@ -17,7 +17,6 @@
     <string name="progress_description">%s of %s</string>
     <string name="bottombar_list">Trips</string>
     <string name="bottombar_tickets">Tickets</string>
-    <string name="bottombar_statistics">Statistics</string>
     <string name="empty_state_trip_title">No trips yet</string>
     <string name="empty_state_trip_text">Add trips to track your progress for a season ticket.</string>
     <string name="empty_state_ticket_title">No tickets yet</string>
@@ -60,4 +59,8 @@
     <string name="label_note">Notes</string>
     <string name="label_additional_costs">Additional costs (e.g. seat reservation)</string>
     <string name="item_ticket_additional_costs_sum">%s additional costs (e.g. seat reservations)</string>
+    <string name="toolbar_title_settings">Settings</string>
+    <string name="accessibility_icon_settings">Settings</string>
+    <string name="section_settings_optional_trip_fields">Optional trip data</string>
+    <string name="settings_optional_trip_fields_description">Disabling optional data here will hide them when creating or editing trips – data that you don\'t want to track can therefore be deactivated. Already entered data will not be deleted and will show up again when it is enabled again.</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.ticket.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,6 +58,7 @@ fun TicketItem(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()

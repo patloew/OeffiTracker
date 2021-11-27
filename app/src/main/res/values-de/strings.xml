@@ -18,7 +18,6 @@
     <string name="progress_description">%s von %s</string>
     <string name="bottombar_list">Fahrten</string>
     <string name="bottombar_tickets">Karten</string>
-    <string name="bottombar_statistics">Statistiken</string>
     <string name="empty_state_trip_title">Noch keine Fahrten</string>
     <string name="empty_state_trip_text">Füge Fahrten hinzu, um den Fortschritt für eine Zeitkarte nachzuverfolgen.</string>
     <string name="empty_state_ticket_title">Noch keine Karten</string>
@@ -61,4 +60,8 @@
     <string name="label_note">Notizen</string>
     <string name="label_additional_costs">Zusätzliche Kosten (z.B. Reservierung)</string>
     <string name="item_ticket_additional_costs_sum">%s zusätzliche Kosten (z.B. Reservierungen)</string>
+    <string name="toolbar_title_settings">Einstellungen</string>
+    <string name="accessibility_icon_settings">Einstellungen</string>
+    <string name="section_settings_optional_trip_fields">Optionale Angaben bei Fahrten</string>
+    <string name="settings_optional_trip_fields_description">Deaktivieren von optionalen Angaben in den Einstellungen blendet diese beim Erstellen oder Editieren einer Fahrt aus – Daten, die du nicht tracken willst, kannst du daher hier deaktivieren. Bereits eingegebene Daten gehen dabei nicht verloren und werden wieder angezeigt, sobald sie wieder aktiviert werden.</string>
 </resources>

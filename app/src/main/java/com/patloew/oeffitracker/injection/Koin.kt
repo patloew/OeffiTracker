@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
 import com.patloew.oeffitracker.data.repository.SettingsRepo
+import com.patloew.oeffitracker.ui.settings.SettingsViewModel
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketViewModel
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
 import com.patloew.oeffitracker.ui.trip.create.CreateTripViewModel
@@ -40,4 +41,5 @@ val appModule = module {
     viewModel { TripListViewModel(get(), get()) }
     viewModel { TicketListViewModel(get()) }
     viewModel { CreateTicketViewModel(get()) }
+    viewModel { SettingsViewModel(get()) }
 }

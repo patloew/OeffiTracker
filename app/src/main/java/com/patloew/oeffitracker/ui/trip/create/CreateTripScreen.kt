@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.ui.trip.create
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -149,6 +150,7 @@ fun CreateTripContent(
     Box(
         Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.surface)
             .padding(horizontal = 16.dp)
     ) {
         val coroutineScope = rememberCoroutineScope()

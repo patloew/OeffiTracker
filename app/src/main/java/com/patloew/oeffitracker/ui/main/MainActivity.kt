@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,22 +8,23 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.contentColorFor
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
@@ -31,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.navigate
+import com.patloew.oeffitracker.ui.settings.SettingsActivity
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import com.patloew.oeffitracker.ui.ticket.list.TicketListScreen
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
@@ -55,7 +58,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 sealed class Screen(val route: String, @StringRes val stringRes: Int, @DrawableRes val iconRes: Int) {
     object List : Screen("list", R.string.bottombar_list, R.drawable.ic_tram)
     object Tickets : Screen("tickets", R.string.bottombar_tickets, R.drawable.ic_receipt)
-    object Statistics : Screen("statistics", R.string.bottombar_statistics, R.drawable.ic_line_chart)
 }
 
 class MainActivity : ComponentActivity() {
@@ -74,7 +76,20 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     Scaffold(
                         scaffoldState = scaffoldState,
-                        topBar = { TopAppBar(title = { Text(stringResource(id = R.string.app_name)) }) },
+                        topBar = {
+                            TopAppBar(
+                                title = { Text(stringResource(id = R.string.app_name)) },
+                                actions = {
+                                    IconButton(onClick = ::startSettings) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_settings),
+                                            contentDescription = stringResource(id = R.string.accessibility_icon_settings),
+                                            tint = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)
+                                        )
+                                    }
+                                }
+                            )
+                        },
                         bottomBar = {
                             BottomNavigation {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -107,9 +122,6 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 composable(Screen.List.route) { TripListScreen(navController, tripListViewModel) }
                                 composable(Screen.Tickets.route) { TicketListScreen(ticketListViewModel) }
-                                composable(Screen.Statistics.route) {
-                                    Text("Statistics", textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
-                                }
                             }
                         }
                     )
@@ -118,4 +130,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun startSettings() = startActivity(Intent(this, SettingsActivity::class.java))
 }

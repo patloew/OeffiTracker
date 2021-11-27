@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -24,14 +25,18 @@ private val DarkColorPalette = darkColors(
     primary = Green300,
     primaryVariant = Green300Variant,
     secondary = TealA700,
-    secondaryVariant = TealA700Variant
+    secondaryVariant = TealA700Variant,
+    surface = Color(0xFF141414),
+    background = Color.Black
 )
 
 private val LightColorPalette = lightColors(
     primary = Green700,
     primaryVariant = Green700Variant,
     secondary = TealA400,
-    secondaryVariant = TealA400Variant
+    secondaryVariant = TealA400Variant,
+    surface = Color.White,
+    background = Color(0xFFFAFAFA)
 )
 
 @Composable

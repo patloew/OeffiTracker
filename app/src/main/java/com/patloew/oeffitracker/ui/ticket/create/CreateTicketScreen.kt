@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.ticket.create
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -115,6 +116,7 @@ fun CreateTicketContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.surface)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {

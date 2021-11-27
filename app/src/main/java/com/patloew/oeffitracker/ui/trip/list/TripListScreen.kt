@@ -3,8 +3,9 @@ package com.patloew.oeffitracker.ui.trip.list
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.FloatingActionButton
@@ -55,50 +56,49 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
         }
 
-    Surface(color = MaterialTheme.colors.background) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column {
-                if (viewModel.showProgress.collectAsState(initial = false).value) {
-                    Surface(
-                        elevation = 8.dp,
-                        modifier = Modifier.clickable { navController.navigate(Screen.Tickets) }) {
-                        PriceProgress(
-                            progressDataFlow = viewModel.fareProgressData,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyList(
+            data = viewModel.trips,
+            getKey = { it.id },
+            isEmpty = viewModel.isEmpty,
+            emptyTitleRes = R.string.empty_state_trip_title,
+            emptyTextRes = R.string.empty_state_trip_text,
+            listState = listState,
+            contentPadding = PaddingValues(top = 52.dp, bottom = 84.dp)
+        ) { trip ->
+            TripItem(
+                trip,
+                viewModel::onDelete,
+                viewModel::getTemplateForToday,
+                viewModel::getReturnTemplate,
+                scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
+            )
+        }
 
-                LazyList(
-                    data = viewModel.trips,
-                    getKey = { it.id },
-                    isEmpty = viewModel.isEmpty,
-                    emptyTitleRes = R.string.empty_state_trip_title,
-                    emptyTextRes = R.string.empty_state_trip_text,
-                    listState = listState
-                ) { trip ->
-                    TripItem(
-                        trip,
-                        viewModel::onDelete,
-                        viewModel::getTemplateForToday,
-                        viewModel::getReturnTemplate,
-                        scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
-                    )
-                }
-            }
-
-            FloatingActionButton(
-                onClick = { createTripLauncher.launch(Unit) },
+        if (viewModel.showProgress.collectAsState(initial = false).value) {
+            Surface(
+                elevation = 2.dp,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    stringResource(id = R.string.accessibility_icon_add),
-                    tint = MaterialTheme.colors.onSecondary
+                    .height(52.dp)
+                    .clickable { navController.navigate(Screen.Tickets) }) {
+                PriceProgress(
+                    progressDataFlow = viewModel.fareProgressData,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
+        }
+
+        FloatingActionButton(
+            onClick = { createTripLauncher.launch(Unit) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                Icons.Filled.Add,
+                stringResource(id = R.string.accessibility_icon_add),
+                tint = MaterialTheme.colors.onSecondary
+            )
         }
     }
 
