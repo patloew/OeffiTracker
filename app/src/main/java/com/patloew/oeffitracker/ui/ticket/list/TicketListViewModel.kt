@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.formatPrice
@@ -35,8 +36,11 @@ import kotlinx.coroutines.launch
 private const val kgCo2PerKm: Float = 0.15f
 
 class TicketListViewModel(
-    private val ticketDao: TicketDao
+    private val ticketDao: TicketDao,
+    private val settingsRepo: SettingsRepo
 ) : ViewModel() {
+
+    val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
 
     val tickets: Flow<PagingData<TicketListData>> =
         Pager(PagingConfig(pageSize = 20)) { ticketDao.getTicketWithStatisticsPagingSource() }.flow.map { pagingData ->

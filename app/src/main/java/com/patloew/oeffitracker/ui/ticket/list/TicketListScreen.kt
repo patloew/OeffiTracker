@@ -56,7 +56,14 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
                 emptyTitleRes = R.string.empty_state_ticket_title,
                 emptyTextRes = R.string.empty_state_ticket_text,
                 listState = listState
-            ) { ticket -> TicketItem(viewModel::onDelete, viewModel.highlightedTicketId, ticket) }
+            ) { ticket ->
+                TicketItem(
+                    viewModel::onDelete,
+                    viewModel.highlightedTicketId,
+                    viewModel.optionalTripFieldEnabledMap,
+                    ticket
+                )
+            }
 
             FloatingActionButton(
                 onClick = { createTicketLauncher.launch(Unit) },

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.MoreMenu
 import com.patloew.oeffitracker.ui.common.PriceProgressRound
@@ -33,6 +34,7 @@ import com.patloew.oeffitracker.ui.distanceFormat
 import com.patloew.oeffitracker.ui.formatDuration
 import com.patloew.oeffitracker.ui.weightFormat
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -52,6 +54,7 @@ import kotlinx.coroutines.flow.Flow
 fun TicketItem(
     onDelete: (Long) -> Unit,
     highlightedTicketId: Flow<Long?>,
+    optionalTripFieldEnabledMap: Map<OptionalTripField, StateFlow<Boolean>>,
     ticket: TicketListData?
 ) {
     if (ticket != null) {
@@ -61,6 +64,10 @@ fun TicketItem(
                 .background(MaterialTheme.colors.surface)
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
+            @Composable
+            fun isOptionalFieldEnabled(field: OptionalTripField): Boolean =
+                optionalTripFieldEnabledMap[field]!!.collectAsState().value
+
             val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()
             val (additionalCostsIcon, additionalCosts, distanceIcon, distance, co2Icon, co2) = createRefs()
             val (favIcon, favorite, progress, moreIcon) = createRefs()
@@ -138,7 +145,7 @@ fun TicketItem(
                 style = MaterialTheme.typography.body2
             )
 
-            if (ticket.additionalCostsSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS) && ticket.additionalCostsSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_price_plus),
                     contentDescription = null,
@@ -175,7 +182,7 @@ fun TicketItem(
                 )
             }
 
-            if (ticket.durationSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DURATION) && ticket.durationSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_clock),
                     contentDescription = null,
@@ -212,7 +219,7 @@ fun TicketItem(
                 )
             }
 
-            if (ticket.delaySum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DELAY) && ticket.delaySum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_delay),
                     contentDescription = null,
@@ -249,7 +256,7 @@ fun TicketItem(
                 )
             }
 
-            if (ticket.distanceSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && ticket.distanceSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_distance),
                     contentDescription = null,
@@ -289,7 +296,7 @@ fun TicketItem(
                 )
             }
 
-            if (ticket.co2savedSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && ticket.co2savedSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_nature),
                     contentDescription = null,
