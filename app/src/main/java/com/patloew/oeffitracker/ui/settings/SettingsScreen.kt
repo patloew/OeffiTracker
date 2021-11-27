@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,10 @@ fun SettingsContent(viewModel: SettingsViewModel) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        @Composable
+        fun isOptionalFieldEnabled(field: OptionalTripField): Boolean =
+            viewModel.optionalTripFieldEnabledMap[field]!!.collectAsState().value
+
         SectionHeader(
             text = stringResource(id = R.string.section_settings_optional_trip_fields),
             modifier = Modifier.background(MaterialTheme.colors.surface)
@@ -82,42 +87,42 @@ fun SettingsContent(viewModel: SettingsViewModel) {
         CheckedText(
             iconRes = R.drawable.ic_price_plus,
             text = stringResource(id = R.string.label_additional_costs),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.ADDITIONAL_COSTS),
+            checked = isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.ADDITIONAL_COSTS, it) }
         )
 
         CheckedText(
             iconRes = R.drawable.ic_distance,
             text = stringResource(id = R.string.label_distance),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.DISTANCE),
+            checked = isOptionalFieldEnabled(OptionalTripField.DISTANCE),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.DISTANCE, it) }
         )
 
         CheckedText(
             iconRes = R.drawable.ic_clock,
             text = stringResource(id = R.string.label_duration),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.DURATION),
+            checked = isOptionalFieldEnabled(OptionalTripField.DURATION),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.DURATION, it) }
         )
 
         CheckedText(
             iconRes = R.drawable.ic_delay,
             text = stringResource(id = R.string.label_delay),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.DELAY),
+            checked = isOptionalFieldEnabled(OptionalTripField.DELAY),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.DELAY, it) }
         )
 
         CheckedText(
             iconRes = R.drawable.ic_tram,
             text = stringResource(id = R.string.label_transport_type),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.TYPE),
+            checked = isOptionalFieldEnabled(OptionalTripField.TYPE),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.TYPE, it) }
         )
 
         CheckedText(
             iconRes = R.drawable.ic_note,
             text = stringResource(id = R.string.label_note),
-            checkedFlow = viewModel.getOptionalTripFieldEnabled(OptionalTripField.NOTES),
+            checked = isOptionalFieldEnabled(OptionalTripField.NOTES),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.NOTES, it) }
         )
 

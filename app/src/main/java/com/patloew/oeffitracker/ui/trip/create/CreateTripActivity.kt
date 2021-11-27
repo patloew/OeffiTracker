@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.TransportType
 import com.patloew.oeffitracker.data.model.Trip
+import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
@@ -139,6 +140,7 @@ class CreateTripActivity : FragmentActivity() {
 
 class CreateTripViewModel(
     private val tripDao: TripDao,
+    private val settingsRepo: SettingsRepo,
     template: Trip?,
     private val editTrip: Trip?
 ) : ViewModel() {
@@ -156,6 +158,8 @@ class CreateTripViewModel(
     } else {
         R.string.button_edit
     }
+
+    val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
 
     val startCity: MutableStateFlow<String> = MutableStateFlow(template?.startCity ?: editTrip?.startCity ?: "")
     val endCity: MutableStateFlow<String> = MutableStateFlow(template?.endCity ?: editTrip?.endCity ?: "")
@@ -280,10 +284,10 @@ class CreateTripViewModel(
             this?.div(100f)?.toString()?.replace('.', ',')
         }
 
-    class Factory(private val tripDao: TripDao) {
-        fun create() = CreateTripViewModel(tripDao, template = null, editTrip = null)
-        fun createFromTemplate(template: Trip) = CreateTripViewModel(tripDao, template, editTrip = null)
-        fun edit(trip: Trip) = CreateTripViewModel(tripDao, template = null, editTrip = trip)
+    class Factory(private val tripDao: TripDao, private val settingsRepo: SettingsRepo) {
+        fun create() = CreateTripViewModel(tripDao, settingsRepo, template = null, editTrip = null)
+        fun createFromTemplate(template: Trip) = CreateTripViewModel(tripDao, settingsRepo, template, editTrip = null)
+        fun edit(trip: Trip) = CreateTripViewModel(tripDao, settingsRepo, template = null, editTrip = trip)
     }
 
 }

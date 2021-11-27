@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -48,10 +46,8 @@ class SettingsActivity : FragmentActivity() {
 class SettingsViewModel(
     private val settingsRepo: SettingsRepo
 ) : ViewModel() {
-    private val optionalTripFields = settingsRepo.getOptionalTripFields()
 
-    fun getOptionalTripFieldEnabled(field: OptionalTripField): Flow<Boolean> =
-        optionalTripFields.map { it.contains(field) }
+    val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
 
     fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
         viewModelScope.launch { settingsRepo.setOptionalTripFieldEnabled(field, enabled) }

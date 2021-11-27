@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patloew.oeffitracker.R
+import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.data.model.TransportType
 import com.patloew.oeffitracker.ui.amountVisualTransformation
 import com.patloew.oeffitracker.ui.common.Chip
@@ -56,6 +58,7 @@ import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /* Copyright 2021 Patrick Löwenstein
@@ -104,6 +107,7 @@ fun CreateTripScreen(
                     viewModel::setAdditionalCosts,
                     viewModel::setDistance,
                     viewModel.saveEnabled,
+                    viewModel.optionalTripFieldEnabledMap,
                     viewModel.startCity,
                     viewModel.endCity,
                     viewModel.durationString,
@@ -135,6 +139,7 @@ fun CreateTripContent(
     setAdditionalCosts: (String) -> Boolean,
     setDistance: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
+    optionalTripFieldEnabledMap: Map<OptionalTripField, StateFlow<Boolean>>,
     startCityStateFlow: MutableStateFlow<String>,
     endCityStateFlow: MutableStateFlow<String>,
     durationFlow: Flow<String>,
@@ -155,12 +160,20 @@ fun CreateTripContent(
     ) {
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberScrollState()
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
+            @Composable
+            fun isOptionalFieldEnabled(field: OptionalTripField): Boolean =
+                optionalTripFieldEnabledMap[field]!!.collectAsState().value
+
+            val isAdditionalCostsEnabled = isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS)
+            val isDistanceEnabled = isOptionalFieldEnabled(OptionalTripField.DISTANCE)
+
             var fare by remember { mutableStateOf(initialFare) }
             var additionalCosts by remember { mutableStateOf(initialAdditionalCosts) }
             var distance by remember { mutableStateOf(initialDistance) }
@@ -237,110 +250,133 @@ fun CreateTripContent(
                 },
                 visualTransformation = amountVisualTransformation(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(onNext = { additionalCostsFocusRequester.requestFocus() }),
+                keyboardActions = KeyboardActions(onNext = {
+                    when {
+                        isAdditionalCostsEnabled -> additionalCostsFocusRequester.requestFocus()
+                        isDistanceEnabled -> distanceFocusRequester.requestFocus()
+                        else -> keyboardController?.hide()
+                    }
+                }),
                 label = { Text(stringResource(id = R.string.label_fare)) }
             )
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .focusRequester(additionalCostsFocusRequester),
-                value = additionalCosts,
-                onValueChange = { newValue -> if (setAdditionalCosts(newValue)) additionalCosts = newValue },
-                maxLines = 1,
-                leadingIcon = {
-                    Icon(
-                        painterResource(id = R.drawable.ic_price_plus),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                },
-                visualTransformation = amountVisualTransformation(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(onNext = { distanceFocusRequester.requestFocus() }),
-                label = { Text(stringResource(id = R.string.label_additional_costs)) }
-            )
+            if (isAdditionalCostsEnabled) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .focusRequester(additionalCostsFocusRequester),
+                    value = additionalCosts,
+                    onValueChange = { newValue -> if (setAdditionalCosts(newValue)) additionalCosts = newValue },
+                    maxLines = 1,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_price_plus),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    },
+                    visualTransformation = amountVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(onNext = {
+                        when {
+                            isDistanceEnabled -> distanceFocusRequester.requestFocus()
+                            else -> keyboardController?.hide()
+                        }
+                    }),
+                    label = { Text(stringResource(id = R.string.label_additional_costs)) }
+                )
+            }
 
-            val keyboardController = LocalSoftwareKeyboardController.current
+            if (isDistanceEnabled) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .focusRequester(distanceFocusRequester),
+                    value = distance,
+                    onValueChange = { newValue -> if (setDistance(newValue)) distance = newValue },
+                    maxLines = 1,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_distance),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    },
+                    visualTransformation = {
+                        val suffix = if (it.text.isNotEmpty()) " km" else ""
+                        TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(onNext = { keyboardController?.hide() }),
+                    label = { Text(stringResource(id = R.string.label_distance)) }
+                )
+            }
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .focusRequester(distanceFocusRequester),
-                value = distance,
-                onValueChange = { newValue -> if (setDistance(newValue)) distance = newValue },
-                maxLines = 1,
-                leadingIcon = {
-                    Icon(
-                        painterResource(id = R.drawable.ic_distance),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                },
-                visualTransformation = {
-                    val suffix = if (it.text.isNotEmpty()) " km" else ""
-                    TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(onNext = { keyboardController?.hide() }),
-                label = { Text(stringResource(id = R.string.label_distance)) }
-            )
+            if (isOptionalFieldEnabled(OptionalTripField.DURATION)) {
+                ClickActionTextField(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onClick = onDurationClick,
+                    onClear = onDurationClear,
+                    textFlow = durationFlow,
+                    iconRes = R.drawable.ic_clock,
+                    labelRes = R.string.label_duration
+                )
+            }
 
-            ClickActionTextField(
-                modifier = Modifier.padding(top = 8.dp),
-                onClick = onDurationClick,
-                onClear = onDurationClear,
-                textFlow = durationFlow,
-                iconRes = R.drawable.ic_clock,
-                labelRes = R.string.label_duration
-            )
+            if (isOptionalFieldEnabled(OptionalTripField.DELAY)) {
+                ClickActionTextField(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onClick = onDelayClick,
+                    onClear = onDelayClear,
+                    textFlow = delayFlow,
+                    iconRes = R.drawable.ic_delay,
+                    labelRes = R.string.label_delay
+                )
+            }
 
-            ClickActionTextField(
-                modifier = Modifier.padding(top = 8.dp),
-                onClick = onDelayClick,
-                onClear = onDelayClear,
-                textFlow = delayFlow,
-                iconRes = R.drawable.ic_delay,
-                labelRes = R.string.label_delay
-            )
-
-            FlowRowTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            ) {
-                types.collectAsState(initial = emptyMap()).value.entries.forEach { (type, selected) ->
-                    Chip(text = stringResource(id = type.stringRes), isSelected = selected) { onTypeClick(type) }
+            if (isOptionalFieldEnabled(OptionalTripField.TYPE)) {
+                FlowRowTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    types.collectAsState(initial = emptyMap()).value.entries.forEach { (type, selected) ->
+                        Chip(text = stringResource(id = type.stringRes), isSelected = selected) { onTypeClick(type) }
+                    }
                 }
             }
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 96.dp)
-                    .onFocusChanged { state ->
-                        if (state.isFocused) {
-                            coroutineScope.launch {
-                                delay(300)
-                                scrollState.animateScrollTo(Integer.MAX_VALUE)
+            if (isOptionalFieldEnabled(OptionalTripField.NOTES)) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .onFocusChanged { state ->
+                            if (state.isFocused) {
+                                coroutineScope.launch {
+                                    delay(300)
+                                    scrollState.animateScrollTo(Integer.MAX_VALUE)
+                                }
                             }
-                        }
+                        },
+                    value = notesFlow.collectAsState().value,
+                    onValueChange = { notesFlow.value = it },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_note),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
                     },
-                value = notesFlow.collectAsState().value,
-                onValueChange = { notesFlow.value = it },
-                leadingIcon = {
-                    Icon(
-                        painterResource(id = R.drawable.ic_note),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { keyboardController?.hide() }),
-                label = { Text(stringResource(id = R.string.label_note)) }
-            )
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { keyboardController?.hide() }),
+                    label = { Text(stringResource(id = R.string.label_note)) }
+                )
+            }
+
+            Spacer(Modifier.padding(bottom = 92.dp))
         }
 
         Button(

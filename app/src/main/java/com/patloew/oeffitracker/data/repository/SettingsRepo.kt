@@ -5,10 +5,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.patloew.oeffitracker.data.model.OptionalTripField
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.stateIn
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -30,23 +31,32 @@ class SettingsRepo(private val context: Context) {
 
     private val optionalTripFieldsKey = stringPreferencesKey("optionalTripFields")
 
-    fun getOptionalTripFields(): Flow<Set<OptionalTripField>> = context.dataStore.data.map { prefs ->
+    private val optionalTripFields: StateFlow<Set<OptionalTripField>> = context.dataStore.data.map { prefs ->
         prefs[optionalTripFieldsKey]?.let { enumString ->
-            enumString.takeIf { it.isNotEmpty() }?.split(',')?.map(OptionalTripField::valueOf)?.toSet()
+            if (enumString.isEmpty()) {
+                emptySet()
+            } else {
+                enumString.split(',').map(OptionalTripField::valueOf).toSet()
+            }
         } ?: OptionalTripField.values().toSet()
-    }
+    }.stateIn(GlobalScope, SharingStarted.Eagerly, emptySet())
+
+    val optionalTripFieldEnabledMap: Map<OptionalTripField, StateFlow<Boolean>> =
+        OptionalTripField.values().associateWith { field ->
+            optionalTripFields.map { it.contains(field) }
+                .stateIn(GlobalScope, SharingStarted.Eagerly, false)
+        }
 
     suspend fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
-        getOptionalTripFields().take(1).collect { enabledFields ->
-            val mutableEnabledFields = enabledFields.toMutableSet()
-            if (enabled && !enabledFields.contains(field)) {
-                mutableEnabledFields.add(field)
-            } else if (!enabled && enabledFields.contains(field)) {
-                mutableEnabledFields.remove(field)
-            }
-            context.dataStore.edit { prefs ->
-                prefs[optionalTripFieldsKey] = mutableEnabledFields.joinToString(",")
-            }
+        val enabledFields = optionalTripFields.value
+        val mutableEnabledFields = enabledFields.toMutableSet()
+        if (enabled && !enabledFields.contains(field)) {
+            mutableEnabledFields.add(field)
+        } else if (!enabled && enabledFields.contains(field)) {
+            mutableEnabledFields.remove(field)
+        }
+        context.dataStore.edit { prefs ->
+            prefs[optionalTripFieldsKey] = mutableEnabledFields.joinToString(",")
         }
     }
 

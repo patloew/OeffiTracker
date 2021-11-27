@@ -12,12 +12,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.Flow
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -37,10 +35,9 @@ import kotlinx.coroutines.flow.Flow
 fun CheckedText(
     @DrawableRes iconRes: Int,
     text: String,
-    checkedFlow: Flow<Boolean>,
+    checked: Boolean,
     setCheckedState: (Boolean) -> Unit
 ) {
-    val checked = checkedFlow.collectAsState(initial = false).value
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -59,7 +56,7 @@ fun CheckedText(
                 .padding(horizontal = 16.dp)
         )
         Checkbox(
-            checked = checkedFlow.collectAsState(initial = false).value,
+            checked = checked,
             onCheckedChange = setCheckedState,
             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.primary)
         )
