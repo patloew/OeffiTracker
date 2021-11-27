@@ -15,9 +15,11 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.ui.common.CheckedText
@@ -127,5 +129,14 @@ fun SettingsContent(viewModel: SettingsViewModel) {
         )
 
         Divider()
+
+        Text(
+            text = stringResource(id = R.string.app_name) + " v" + BuildConfig.VERSION_NAME,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.4f),
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally)
+        )
     }
 }
