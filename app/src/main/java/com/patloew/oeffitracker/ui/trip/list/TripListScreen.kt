@@ -57,6 +57,10 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
         }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        val showProgress = viewModel.showProgress.collectAsState(initial = false).value
+        val progressHeight = 52.dp
+        val listTopPadding = if (showProgress) progressHeight else 0.dp
+
         LazyList(
             data = viewModel.trips,
             getKey = { it.id },
@@ -64,7 +68,7 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             emptyTitleRes = R.string.empty_state_trip_title,
             emptyTextRes = R.string.empty_state_trip_text,
             listState = listState,
-            contentPadding = PaddingValues(top = 52.dp, bottom = 84.dp)
+            contentPadding = PaddingValues(top = listTopPadding, bottom = 84.dp)
         ) { trip ->
             TripItem(
                 trip,
@@ -75,11 +79,11 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             )
         }
 
-        if (viewModel.showProgress.collectAsState(initial = false).value) {
+        if (showProgress) {
             Surface(
                 elevation = 2.dp,
                 modifier = Modifier
-                    .height(52.dp)
+                    .height(progressHeight)
                     .clickable { navController.navigate(Screen.Tickets) }) {
                 PriceProgress(
                     progressDataFlow = viewModel.fareProgressData,
