@@ -1,11 +1,15 @@
 package com.patloew.oeffitracker.ui.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -14,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.OptionalTripField
+import com.patloew.oeffitracker.ui.CreateDocumentContract
 import com.patloew.oeffitracker.ui.common.CheckedText
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.common.SectionHeader
+import kotlinx.coroutines.flow.collect
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -59,10 +66,26 @@ fun SettingsScreen(
             content = { SettingsContent(viewModel) }
         )
     }
+
+    val csvExportSuccess = stringResource(id = R.string.snackbar_csv_export_success)
+    val csvExportError = stringResource(id = R.string.snackbar_csv_export_error)
+    LaunchedEffect("csvSnackbar") {
+        viewModel.csvExportEvent.collect { success ->
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = if (success) csvExportSuccess else csvExportError
+            )
+        }
+    }
 }
 
 @Composable
-fun SettingsContent(viewModel: SettingsViewModel) {
+fun SettingsContent(
+    viewModel: SettingsViewModel
+) {
+    val csvFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
+        uri?.run(viewModel::exportCsv)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +105,7 @@ fun SettingsContent(viewModel: SettingsViewModel) {
             color = MaterialTheme.colors.onBackground.copy(alpha = 0.67f),
             style = MaterialTheme.typography.caption,
             modifier = Modifier
+                .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         )
@@ -127,6 +151,34 @@ fun SettingsContent(viewModel: SettingsViewModel) {
             checked = isOptionalFieldEnabled(OptionalTripField.NOTES),
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.NOTES, it) }
         )
+
+        Divider()
+
+        SectionHeader(
+            text = stringResource(id = R.string.section_settings_export),
+            modifier = Modifier.background(MaterialTheme.colors.surface)
+        )
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .padding(16.dp)
+        ) {
+            Button(
+                onClick = {
+                    csvFileChooserLauncher.launch(
+                        CreateDocumentContract.Input(
+                            mimeType = "text/csv",
+                            title = "trips.csv"
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(id = R.string.button_export_csv))
+            }
+        }
 
         Divider()
 

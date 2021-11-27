@@ -40,5 +40,8 @@ interface TripDao {
     fun getSumOfFaresForTicketId(ticketId: Long): Flow<Int>
 
     @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
+    suspend fun getAll(): List<Trip>
+
+    @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>
 }

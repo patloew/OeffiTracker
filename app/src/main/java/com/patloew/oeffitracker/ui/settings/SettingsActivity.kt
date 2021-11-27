@@ -1,13 +1,18 @@
 package com.patloew.oeffitracker.ui.settings
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -44,12 +49,23 @@ class SettingsActivity : FragmentActivity() {
 }
 
 class SettingsViewModel(
-    private val settingsRepo: SettingsRepo
+    private val settingsRepo: SettingsRepo,
+    private val csvExporter: CsvExporter
 ) : ViewModel() {
 
     val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
 
+    private val csvExportChannel: Channel<Boolean> = Channel(Channel.CONFLATED)
+    val csvExportEvent: Flow<Boolean> = csvExportChannel.receiveAsFlow()
+
     fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
         viewModelScope.launch { settingsRepo.setOptionalTripFieldEnabled(field, enabled) }
+    }
+
+    fun exportCsv(uri: Uri) {
+        viewModelScope.launch {
+            val success = csvExporter.exportTo(uri)
+            csvExportChannel.send(success)
+        }
     }
 }

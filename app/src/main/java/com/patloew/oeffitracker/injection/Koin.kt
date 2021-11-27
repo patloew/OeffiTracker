@@ -3,6 +3,7 @@ package com.patloew.oeffitracker.injection
 import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
+import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.settings.SettingsViewModel
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketViewModel
@@ -35,11 +36,12 @@ val appModule = module {
     single { get<AppDatabase>().tripDao() }
     single { get<AppDatabase>().ticketDao() }
     single { SettingsRepo(get()) }
+    single { CsvExporter(get(), get()) }
 
     single { CreateTripViewModel.Factory(get(), get()) }
 
     viewModel { TripListViewModel(get(), get()) }
     viewModel { TicketListViewModel(get(), get()) }
     viewModel { CreateTicketViewModel(get()) }
-    viewModel { SettingsViewModel(get()) }
+    viewModel { SettingsViewModel(get(), get()) }
 }
