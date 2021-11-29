@@ -84,6 +84,7 @@ fun CreateTicketScreen(
                     onEndDateClick,
                     onCreateClick,
                     viewModel::setPrice,
+                    viewModel::setDeduction,
                     viewModel.saveEnabled,
                     viewModel.endDateBeforeStartDate,
                     viewModel.overlappingTicket,
@@ -91,6 +92,7 @@ fun CreateTicketScreen(
                     viewModel.startDateString,
                     viewModel.endDateString,
                     viewModel.initialPrice,
+                    viewModel.initialDeduction,
                     viewModel.buttonTextRes
                 )
             }
@@ -104,6 +106,7 @@ fun CreateTicketContent(
     onEndDateClick: () -> Unit,
     onCreateClick: () -> Unit,
     setPrice: (String) -> Boolean,
+    setDeduction: (String) -> Boolean,
     saveEnabled: Flow<Boolean>,
     endDateBeforeStartDate: Flow<Boolean>,
     overlappingTicket: Flow<Ticket?>,
@@ -111,6 +114,7 @@ fun CreateTicketContent(
     startDateFlow: Flow<String>,
     endDateFlow: Flow<String>,
     initialPrice: String,
+    initialDeduction: String,
     @StringRes buttonTextRes: Int
 ) {
     Column(
@@ -121,7 +125,9 @@ fun CreateTicketContent(
             .verticalScroll(rememberScrollState())
     ) {
         var price by remember { mutableStateOf(initialPrice) }
+        var deduction by remember { mutableStateOf(initialDeduction) }
         val priceFocusRequester = FocusRequester()
+        val deductionFocusRequester = FocusRequester()
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -156,8 +162,35 @@ fun CreateTicketContent(
             },
             visualTransformation = amountVisualTransformation(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
-            keyboardActions = KeyboardActions(onNext = { onStartDateClick() }),
+            keyboardActions = KeyboardActions(onNext = { deductionFocusRequester.requestFocus() }),
             label = { Text(stringResource(id = R.string.label_ticket_price)) }
+        )
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .focusRequester(deductionFocusRequester),
+            value = deduction,
+            onValueChange = { newValue -> if (setDeduction(newValue)) deduction = newValue },
+            maxLines = 1,
+            leadingIcon = {
+                Icon(
+                    painterResource(id = R.drawable.ic_deduction),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+            },
+            visualTransformation = amountVisualTransformation(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+            keyboardActions = KeyboardActions(onNext = { onStartDateClick() }),
+            label = { Text(stringResource(id = R.string.label_ticket_deduction)) }
+        )
+
+        Text(
+            text = stringResource(id = R.string.ticket_deduction_hint),
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp)
         )
 
         ClickActionTextField(
@@ -194,7 +227,7 @@ fun CreateTicketContent(
             text = validityHintText,
             style = MaterialTheme.typography.caption,
             color = validityHintColor,
-            modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp)
+            modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp)
         )
 
         Button(
@@ -202,8 +235,9 @@ fun CreateTicketContent(
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
-                .padding(top = 16.dp)
+                .padding(top = 24.dp)
+                .height(44.dp)
+
         ) { Text(stringResource(id = buttonTextRes), fontSize = 16.sp) }
     }
 

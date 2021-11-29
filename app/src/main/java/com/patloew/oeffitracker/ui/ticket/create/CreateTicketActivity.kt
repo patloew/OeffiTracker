@@ -116,7 +116,7 @@ class CreateTicketActivity : FragmentActivity() {
 
 class CreateTicketViewModel(
     private val ticketDao: TicketDao,
-    private val editTicket: Ticket?
+    private val editTicket: Ticket?,
 ) : ViewModel() {
 
     @StringRes
@@ -153,6 +153,9 @@ class CreateTicketViewModel(
     private val price: MutableStateFlow<Int?> = MutableStateFlow(editTicket?.price)
     val initialPrice = editTicket?.price.formatAmount() ?: ""
 
+    private val deduction: MutableStateFlow<Int?> = MutableStateFlow(editTicket?.deduction)
+    val initialDeduction = editTicket?.deduction.formatAmount() ?: ""
+
     val saveEnabled: Flow<Boolean> = combine(
         name,
         price,
@@ -173,6 +176,7 @@ class CreateTicketViewModel(
                     editTicket.copy(
                         name = name.value.trim(),
                         price = price.value!!,
+                        deduction = deduction.value,
                         startDate = startDate.value,
                         endDate = endDate.value
                     )
@@ -182,6 +186,7 @@ class CreateTicketViewModel(
                     Ticket(
                         name = name.value.trim(),
                         price = price.value!!,
+                        deduction = deduction.value,
                         startDate = startDate.value,
                         endDate = endDate.value,
                         createdTimestamp = System.currentTimeMillis()
@@ -199,6 +204,14 @@ class CreateTicketViewModel(
      */
     fun setPrice(priceString: String): Boolean =
         checkAndSetAmount(priceString) { newPrice -> price.value = newPrice }
+
+    /**
+     * Parses and validates deduction and sets it if valid.
+     *
+     * @return true if deduction is valid
+     */
+    fun setDeduction(deductionString: String): Boolean =
+        checkAndSetAmount(deductionString) { newDeduction -> deduction.value = newDeduction }
 
     class Factory(private val ticketDao: TicketDao) {
         fun create() = CreateTicketViewModel(ticketDao, editTicket = null)

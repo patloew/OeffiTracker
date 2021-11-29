@@ -59,7 +59,8 @@ interface TicketDao {
         SELECT
             ticket.id,
             ticket.name, 
-            ticket.price, 
+            ticket.price,
+            ticket.deduction,
             ticket.startDate, 
             ticket.endDate,
             ticket.createdTimestamp,

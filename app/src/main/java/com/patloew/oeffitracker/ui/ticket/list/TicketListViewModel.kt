@@ -51,6 +51,7 @@ class TicketListViewModel(
                     ticket = Ticket(
                         name = data.name,
                         price = data.price,
+                        deduction = data.deduction,
                         startDate = data.startDate,
                         endDate = data.endDate,
                         createdTimestamp = data.createdTimestamp,

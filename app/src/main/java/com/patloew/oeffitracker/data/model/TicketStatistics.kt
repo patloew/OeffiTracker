@@ -7,6 +7,7 @@ data class TicketWithStatistics(
     val id: Long,
     val name: String,
     val price: Int,
+    val deduction: Int?,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val createdTimestamp: Long,

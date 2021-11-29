@@ -384,8 +384,8 @@ fun CreateTripContent(
             enabled = saveEnabled.collectAsState(initial = false).value,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
                 .padding(bottom = 16.dp)
+                .height(44.dp)
                 .align(Alignment.BottomCenter)
         ) { Text(stringResource(id = buttonTextRes), fontSize = 16.sp) }
     }

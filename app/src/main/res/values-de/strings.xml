@@ -69,4 +69,6 @@
     <string name="snackbar_csv_export_success">CSV erfolgreich exportiert</string>
     <string name="snackbar_csv_export_error">Konnte CSV nicht exportieren</string>
     <string name="toolbar_title_edit_ticket">Karte bearbeiten</string>
+    <string name="label_ticket_deduction">Abzüge</string>
+    <string name="ticket_deduction_hint">Hier kannst du Kosten eintragen, die du dir dank dieser Karte ersparst. Das kann z.B. eine Jahreskarte für deine Stadt oder eine Rabattkarte eines Verkehrsunternehmens sein. Gib die Summe aller Abzüge an.</string>
 </resources>
