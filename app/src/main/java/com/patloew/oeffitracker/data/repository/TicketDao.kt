@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.patloew.oeffitracker.data.model.PriceDeduction
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.model.TicketWithStatistics
 import kotlinx.coroutines.flow.Flow
@@ -39,8 +40,8 @@ interface TicketDao {
     @Query("SELECT COUNT(*) FROM ticket")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT price FROM ticket WHERE id = :ticketId")
-    fun getPriceById(ticketId: Long): Flow<Int>
+    @Query("SELECT price, deduction FROM ticket WHERE id = :ticketId")
+    fun getPriceById(ticketId: Long): Flow<PriceDeduction>
 
     @Query("SELECT id FROM ticket WHERE date('now') BETWEEN startDate and endDate LIMIT 1")
     fun getLatestTicketId(): Flow<Long?>

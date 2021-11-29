@@ -1,5 +1,7 @@
 package com.patloew.oeffitracker.ui
 
+import com.patloew.oeffitracker.data.model.PriceDeduction
+
 /* Copyright 2021 Patrick Löwenstein
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,3 +44,23 @@ fun Int?.formatAmount(): String? =
     } else {
         this?.div(100f)?.toString()?.replace('.', ',')
     }
+
+fun getProgressSum(sum: Int, deduction: Int?, includeDeduction: Boolean): Int =
+    if (includeDeduction && deduction != null) {
+        sum + deduction
+    } else {
+        sum
+    }
+
+fun PriceDeduction.getSum(sum: Int, includeDeduction: Boolean): Int =
+    getProgressSum(sum, deduction, includeDeduction)
+
+fun getProgressGoal(price: Int, deduction: Int?, includeDeduction: Boolean): Int =
+    if (!includeDeduction && deduction != null) {
+        price - deduction
+    } else {
+        price
+    }
+
+fun PriceDeduction.getGoal(includeDeduction: Boolean): Int =
+    getProgressGoal(price, deduction, includeDeduction)

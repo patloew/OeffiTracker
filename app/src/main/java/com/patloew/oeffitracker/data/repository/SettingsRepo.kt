@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.data.repository
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -30,6 +31,7 @@ class SettingsRepo(private val context: Context) {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     private val optionalTripFieldsKey = stringPreferencesKey("optionalTripFields")
+    private val includeDeductionsInProgressKey = booleanPreferencesKey("includeDeductionsInProgress")
 
     private val optionalTripFields: StateFlow<Set<OptionalTripField>> = context.dataStore.data.map { prefs ->
         prefs[optionalTripFieldsKey]?.let { enumString ->
@@ -47,6 +49,10 @@ class SettingsRepo(private val context: Context) {
                 .stateIn(GlobalScope, SharingStarted.Eagerly, false)
         }
 
+    val includeDeductionsInProgress: StateFlow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[includeDeductionsInProgressKey] ?: true
+    }.stateIn(GlobalScope, SharingStarted.Eagerly, true)
+
     suspend fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
         val enabledFields = optionalTripFields.value
         val mutableEnabledFields = enabledFields.toMutableSet()
@@ -60,4 +66,7 @@ class SettingsRepo(private val context: Context) {
         }
     }
 
+    suspend fun setIncludeDeductionsInProgress(include: Boolean) {
+        context.dataStore.edit { prefs -> prefs[includeDeductionsInProgressKey] = include }
+    }
 }

@@ -54,12 +54,17 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
+    val includeDeductionsInProgress = settingsRepo.includeDeductionsInProgress
 
     private val csvExportChannel: Channel<Boolean> = Channel(Channel.CONFLATED)
     val csvExportEvent: Flow<Boolean> = csvExportChannel.receiveAsFlow()
 
     fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
         viewModelScope.launch { settingsRepo.setOptionalTripFieldEnabled(field, enabled) }
+    }
+
+    fun setIncludeDeductionsInProgress(include: Boolean) {
+        viewModelScope.launch { settingsRepo.setIncludeDeductionsInProgress(include) }
     }
 
     fun exportCsv(uri: Uri) {

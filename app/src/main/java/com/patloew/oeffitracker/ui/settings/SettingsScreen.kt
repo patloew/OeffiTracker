@@ -156,6 +156,19 @@ fun SettingsContent(
         Divider()
 
         SectionHeader(
+            text = stringResource(id = R.string.section_settings_progress),
+            modifier = Modifier.background(MaterialTheme.colors.surface)
+        )
+
+        CheckedText(
+            text = stringResource(id = R.string.settings_progress_description),
+            checked = viewModel.includeDeductionsInProgress.collectAsState().value,
+            setCheckedState = { viewModel.setIncludeDeductionsInProgress(it) }
+        )
+
+        Divider()
+
+        SectionHeader(
             text = stringResource(id = R.string.section_settings_export),
             modifier = Modifier.background(MaterialTheme.colors.surface)
         )

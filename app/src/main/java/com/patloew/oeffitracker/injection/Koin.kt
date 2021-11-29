@@ -41,7 +41,7 @@ val appModule = module {
     single { CreateTripViewModel.Factory(get(), get()) }
     single { CreateTicketViewModel.Factory(get()) }
 
-    viewModel { TripListViewModel(get(), get()) }
+    viewModel { TripListViewModel(get(), get(), get()) }
     viewModel { TicketListViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
 }

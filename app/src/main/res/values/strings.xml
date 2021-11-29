@@ -70,4 +70,6 @@
     <string name="toolbar_title_edit_ticket">Edit ticket</string>
     <string name="label_ticket_deduction">Deductions</string>
     <string name="ticket_deduction_hint">Expenses that you will not have because of this ticket can be entered here. This could be a season ticket for your city or a discount card of a transportation company. Enter the sum of all deductions.</string>
+    <string name="section_settings_progress">Progress</string>
+    <string name="settings_progress_description">Include deductions in progress calculation</string>
 </resources>

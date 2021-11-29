@@ -71,4 +71,6 @@
     <string name="toolbar_title_edit_ticket">Karte bearbeiten</string>
     <string name="label_ticket_deduction">Abzüge</string>
     <string name="ticket_deduction_hint">Hier kannst du Kosten eintragen, die du dir dank dieser Karte ersparst. Das kann z.B. eine Jahreskarte für deine Stadt oder eine Rabattkarte eines Verkehrsunternehmens sein. Gib die Summe aller Abzüge an.</string>
+    <string name="section_settings_progress">Fortschritt</string>
+    <string name="settings_progress_description">Abzüge bei der Fortschrittsberechnung miteinbeziehen</string>
 </resources>

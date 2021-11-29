@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CheckedText(
-    @DrawableRes iconRes: Int,
+    @DrawableRes iconRes: Int? = null,
     text: String,
     checked: Boolean,
     setCheckedState: (Boolean) -> Unit
@@ -47,13 +47,21 @@ fun CheckedText(
             .padding(16.dp)
 
     ) {
-        Icon(painter = painterResource(id = iconRes), contentDescription = null, tint = MaterialTheme.colors.primary)
+        if (iconRes != null) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary
+            )
+        }
         Text(
             text = text,
-            maxLines = 1,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 16.dp)
+                .padding(
+                    start = if (iconRes != null) 16.dp else 0.dp,
+                    end = 16.dp
+                )
         )
         Checkbox(
             checked = checked,

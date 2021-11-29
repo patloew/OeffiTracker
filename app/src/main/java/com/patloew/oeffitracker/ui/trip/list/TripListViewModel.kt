@@ -5,11 +5,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.patloew.oeffitracker.data.model.PriceDeduction
 import com.patloew.oeffitracker.data.model.Trip
+import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.common.ProgressData
 import com.patloew.oeffitracker.ui.formatPrice
+import com.patloew.oeffitracker.ui.getGoal
+import com.patloew.oeffitracker.ui.getSum
 import com.patloew.oeffitracker.ui.percentageFormat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +41,8 @@ import java.time.LocalDate
 
 class TripListViewModel(
     private val tripDao: TripDao,
-    private val ticketDao: TicketDao
+    private val ticketDao: TicketDao,
+    private val settingsRepo: SettingsRepo
 ) : ViewModel() {
 
     val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
@@ -47,16 +52,24 @@ class TripListViewModel(
     val showProgress: Flow<Boolean> = ticketDao.getLatestTicketId().map { it != null }
     private val fareSum: Flow<Int> = ticketDao.getLatestTicketId()
         .flatMapConcat { ticketId -> ticketId?.let { tripDao.getSumOfFaresForTicketId(it) } ?: flowOf(0) }
-    private val fareSumGoal: Flow<Int> = ticketDao.getLatestTicketId()
-        .flatMapConcat { ticketId -> ticketId?.let { ticketDao.getPriceById(it) } ?: flowOf(0) }
-    val fareProgressData: Flow<ProgressData> = combine(fareSum, fareSumGoal) { sum, goal ->
-        val progress = sum / goal.toFloat()
-        ProgressData(
-            progress = progress.coerceAtMost(1f),
-            percentageString = percentageFormat.format(progress),
-            priceString = formatPrice(goal)
-        )
-    }
+    private val fareSumGoal: Flow<PriceDeduction> = ticketDao.getLatestTicketId()
+        .flatMapConcat { id ->
+            id?.let { ticketDao.getPriceById(id) } ?: flowOf(PriceDeduction(0, null))
+        }
+    val fareProgressData: Flow<ProgressData> =
+        combine(
+            fareSum,
+            fareSumGoal,
+            settingsRepo.includeDeductionsInProgress
+        ) { sum, priceDeduction, includeDeduction ->
+            val goal = priceDeduction.getGoal(includeDeduction)
+            val progress = priceDeduction.getSum(sum, includeDeduction) / goal.toFloat()
+            ProgressData(
+                progress = progress.coerceAtMost(1f),
+                percentageString = percentageFormat.format(progress),
+                priceString = formatPrice(goal)
+            )
+        }
 
     private val scrollToTopChannel: Channel<Unit> = Channel(Channel.CONFLATED)
     val scrollToTopEvent: Flow<Unit> = scrollToTopChannel.receiveAsFlow()
