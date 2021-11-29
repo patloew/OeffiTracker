@@ -39,9 +39,9 @@ val appModule = module {
     single { CsvExporter(get(), get()) }
 
     single { CreateTripViewModel.Factory(get(), get()) }
+    single { CreateTicketViewModel.Factory(get()) }
 
     viewModel { TripListViewModel(get(), get()) }
     viewModel { TicketListViewModel(get(), get()) }
-    viewModel { CreateTicketViewModel(get()) }
     viewModel { SettingsViewModel(get(), get()) }
 }

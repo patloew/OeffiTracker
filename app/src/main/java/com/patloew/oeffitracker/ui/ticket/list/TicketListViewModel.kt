@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
@@ -47,8 +48,14 @@ class TicketListViewModel(
             pagingData.map { data ->
                 val percentage: Float = data.fareSum / data.price.toFloat()
                 TicketListData(
-                    id = data.id,
-                    name = data.name,
+                    ticket = Ticket(
+                        name = data.name,
+                        price = data.price,
+                        startDate = data.startDate,
+                        endDate = data.endDate,
+                        createdTimestamp = data.createdTimestamp,
+                        id = data.id
+                    ),
                     price = formatPrice(data.fareSum) + " / " + formatPrice(data.price),
                     validityPeriod = data.validityPeriod,
                     progressData = ProgressRoundData(

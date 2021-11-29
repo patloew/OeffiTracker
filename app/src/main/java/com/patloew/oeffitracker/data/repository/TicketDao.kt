@@ -45,11 +45,11 @@ interface TicketDao {
     @Query("SELECT id FROM ticket WHERE date('now') BETWEEN startDate and endDate LIMIT 1")
     fun getLatestTicketId(): Flow<Long?>
 
-    @Query("SELECT * FROM ticket WHERE (:startDate >= startDate AND :endDate <= endDate) OR (:endDate >= startDate AND :startDate < startDate) OR (:startDate <= endDate AND :endDate > endDate) LIMIT 1")
-    suspend fun getFirstOverlappingValidityTicket(startDate: String, endDate: String): Ticket?
+    @Query("SELECT * FROM ticket WHERE (:startDate >= startDate AND :endDate <= endDate) OR (:endDate >= startDate AND :startDate < startDate) OR (:startDate <= endDate AND :endDate > endDate) LIMIT 2")
+    suspend fun getFirstTwoOverlappingValidityTickets(startDate: String, endDate: String): List<Ticket>
 
-    suspend fun getFirstOverlappingValidityTicket(startDate: LocalDate, endDate: LocalDate): Ticket? =
-        getFirstOverlappingValidityTicket(
+    suspend fun getFirstTwoOverlappingValidityTickets(startDate: LocalDate, endDate: LocalDate): List<Ticket> =
+        getFirstTwoOverlappingValidityTickets(
             DateTimeFormatter.ISO_DATE.format(startDate),
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
@@ -62,6 +62,7 @@ interface TicketDao {
             ticket.price, 
             ticket.startDate, 
             ticket.endDate,
+            ticket.createdTimestamp,
             (SELECT COALESCE(SUM(fare), 0) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as fareSum,
             (SELECT SUM(additionalCosts) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as additionalCostsSum,
             (SELECT SUM(duration) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as durationSum,

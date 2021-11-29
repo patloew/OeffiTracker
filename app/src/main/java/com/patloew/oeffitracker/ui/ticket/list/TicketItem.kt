@@ -1,6 +1,8 @@
 package com.patloew.oeffitracker.ui.ticket.list
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +34,7 @@ import com.patloew.oeffitracker.ui.common.PriceProgressRound
 import com.patloew.oeffitracker.ui.common.ProgressRoundData
 import com.patloew.oeffitracker.ui.distanceFormat
 import com.patloew.oeffitracker.ui.formatDuration
+import com.patloew.oeffitracker.ui.ticket.create.CreateTicketActivity
 import com.patloew.oeffitracker.ui.weightFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,13 +58,16 @@ fun TicketItem(
     onDelete: (Long) -> Unit,
     highlightedTicketId: Flow<Long?>,
     optionalTripFieldEnabledMap: Map<OptionalTripField, StateFlow<Boolean>>,
-    ticket: TicketListData?
+    data: TicketListData?
 ) {
-    if (ticket != null) {
+    if (data != null) {
+        val editTicketLauncher = rememberLauncherForActivityResult(contract = CreateTicketActivity.EditContract) { }
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
+                .clickable { editTicketLauncher.launch(data.ticket) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
             @Composable
@@ -71,7 +77,7 @@ fun TicketItem(
             val (name, dateIcon, date, priceIcon, price, durationIcon, duration, delayIcon, delay) = createRefs()
             val (additionalCostsIcon, additionalCosts, distanceIcon, distance, co2Icon, co2) = createRefs()
             val (favIcon, favorite, progress, moreIcon) = createRefs()
-            val isHighlightedTicket = highlightedTicketId.collectAsState(initial = null).value == ticket.id
+            val isHighlightedTicket = highlightedTicketId.collectAsState(initial = null).value == data.ticket.id
 
             Text(
                 modifier = Modifier
@@ -81,7 +87,7 @@ fun TicketItem(
                         end.linkTo(progress.start, margin = 16.dp)
                         width = Dimension.fillToConstraints
                     },
-                text = ticket.name,
+                text = data.ticket.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
@@ -110,7 +116,7 @@ fun TicketItem(
                         end.linkTo(progress.start, margin = 16.dp)
                         width = Dimension.fillToConstraints
                     },
-                text = ticket.validityPeriod,
+                text = data.validityPeriod,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
@@ -138,14 +144,14 @@ fun TicketItem(
                         width = Dimension.fillToConstraints
                     }
                     .padding(bottom = 1.dp),
-                text = ticket.price,
+                text = data.price,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.body2
             )
 
-            if (isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS) && ticket.additionalCostsSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS) && data.additionalCostsSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_price_plus),
                     contentDescription = null,
@@ -167,7 +173,7 @@ fun TicketItem(
                             width = Dimension.fillToConstraints
                         }
                         .padding(bottom = 1.dp),
-                    text = stringResource(id = R.string.item_ticket_additional_costs_sum, ticket.additionalCostsSum),
+                    text = stringResource(id = R.string.item_ticket_additional_costs_sum, data.additionalCostsSum),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
@@ -182,7 +188,7 @@ fun TicketItem(
                 )
             }
 
-            if (isOptionalFieldEnabled(OptionalTripField.DURATION) && ticket.durationSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DURATION) && data.durationSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_clock),
                     contentDescription = null,
@@ -204,7 +210,7 @@ fun TicketItem(
                             width = Dimension.fillToConstraints
                         }
                         .padding(bottom = 1.dp),
-                    text = stringResource(id = R.string.item_ticket_duration_sum, formatDuration(ticket.durationSum)),
+                    text = stringResource(id = R.string.item_ticket_duration_sum, formatDuration(data.durationSum)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
@@ -219,7 +225,7 @@ fun TicketItem(
                 )
             }
 
-            if (isOptionalFieldEnabled(OptionalTripField.DELAY) && ticket.delaySum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DELAY) && data.delaySum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_delay),
                     contentDescription = null,
@@ -241,7 +247,7 @@ fun TicketItem(
                             width = Dimension.fillToConstraints
                         }
                         .padding(bottom = 1.dp),
-                    text = stringResource(id = R.string.item_ticket_delay_sum, formatDuration(ticket.delaySum)),
+                    text = stringResource(id = R.string.item_ticket_delay_sum, formatDuration(data.delaySum)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
@@ -256,7 +262,7 @@ fun TicketItem(
                 )
             }
 
-            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && ticket.distanceSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && data.distanceSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_distance),
                     contentDescription = null,
@@ -280,7 +286,7 @@ fun TicketItem(
                         .padding(bottom = 1.dp),
                     text = stringResource(
                         id = R.string.item_ticket_distance_sum,
-                        distanceFormat.format(ticket.distanceSum)
+                        distanceFormat.format(data.distanceSum)
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -296,7 +302,7 @@ fun TicketItem(
                 )
             }
 
-            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && ticket.co2savedSum != null) {
+            if (isOptionalFieldEnabled(OptionalTripField.DISTANCE) && data.co2savedSum != null) {
                 Icon(
                     painterResource(id = R.drawable.ic_nature),
                     contentDescription = null,
@@ -320,7 +326,7 @@ fun TicketItem(
                         .padding(bottom = 1.dp),
                     text = stringResource(
                         id = R.string.item_ticket_co2_saved_sum,
-                        weightFormat.format(ticket.co2savedSum)
+                        weightFormat.format(data.co2savedSum)
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -366,7 +372,7 @@ fun TicketItem(
             }
 
             PriceProgressRound(
-                progressData = ticket.progressData,
+                progressData = data.progressData,
                 modifier = Modifier.constrainAs(progress) {
                     top.linkTo(parent.top)
                     end.linkTo(moreIcon.start)
@@ -396,12 +402,12 @@ fun TicketItem(
                 title = stringResource(id = R.string.alert_delete_ticket_title),
                 text = stringResource(
                     id = R.string.alert_delete_ticket_text,
-                    ticket.name,
-                    ticket.validityPeriod
+                    data.ticket.name,
+                    data.validityPeriod
                 ),
                 confirmButtonText = stringResource(id = R.string.action_delete),
                 confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error),
-                positiveAction = { onDelete(ticket.id) }
+                positiveAction = { onDelete(data.ticket.id) }
             )
         }
 

@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.ticket.create
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,19 +34,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.Ticket
-import com.patloew.oeffitracker.ui.PreviewTheme
 import com.patloew.oeffitracker.ui.amountVisualTransformation
 import com.patloew.oeffitracker.ui.common.ClickActionTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.ticket.list.validityPeriod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -76,7 +74,7 @@ fun CreateTicketScreen(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(id = R.string.toolbar_title_create_ticket)) },
+                    title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
                     navigationIcon = { NavigationBackIcon { navigationAction() } }
                 )
             },
@@ -92,7 +90,8 @@ fun CreateTicketScreen(
                     viewModel.name,
                     viewModel.startDateString,
                     viewModel.endDateString,
-                    viewModel.initialPrice
+                    viewModel.initialPrice,
+                    viewModel.buttonTextRes
                 )
             }
         )
@@ -111,7 +110,8 @@ fun CreateTicketContent(
     nameStateFlow: MutableStateFlow<String>,
     startDateFlow: Flow<String>,
     endDateFlow: Flow<String>,
-    initialPrice: String
+    initialPrice: String,
+    @StringRes buttonTextRes: Int
 ) {
     Column(
         modifier = Modifier
@@ -204,27 +204,7 @@ fun CreateTicketContent(
                 .fillMaxWidth()
                 .height(64.dp)
                 .padding(top = 16.dp)
-        ) { Text(stringResource(id = R.string.button_add), fontSize = 16.sp) }
+        ) { Text(stringResource(id = buttonTextRes), fontSize = 16.sp) }
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CreateTicketPreview() {
-    PreviewTheme {
-        CreateTicketContent(
-            { },
-            { },
-            { },
-            { true },
-            flowOf(false),
-            flowOf(false),
-            flowOf(null),
-            MutableStateFlow(""),
-            flowOf(""),
-            flowOf(""),
-            ""
-        )
-    }
 }

@@ -34,3 +34,11 @@ fun checkAndSetAmount(amountString: String, setAmount: (amount: Int?) -> Unit): 
         else -> false
     }
 }
+
+/** Formats this Int as amount, omitting trailing zeros if not needed */
+fun Int?.formatAmount(): String? =
+    if (this?.mod(100) == 0) {
+        div(100).toString()
+    } else {
+        this?.div(100f)?.toString()?.replace('.', ',')
+    }

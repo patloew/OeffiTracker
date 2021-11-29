@@ -43,15 +43,16 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
-    val createTicketLauncher = rememberLauncherForActivityResult(contract = CreateTicketActivity.Contract) { created ->
-        if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
-    }
+    val createTicketLauncher =
+        rememberLauncherForActivityResult(contract = CreateTicketActivity.CreateContract) { created ->
+            if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
+        }
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyList(
                 data = viewModel.tickets,
-                getKey = { it.id },
+                getKey = { it.ticket.id },
                 isEmpty = viewModel.isEmpty,
                 emptyTitleRes = R.string.empty_state_ticket_title,
                 emptyTextRes = R.string.empty_state_ticket_text,

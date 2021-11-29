@@ -20,6 +20,7 @@ import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TripDao
 import com.patloew.oeffitracker.ui.checkAndSetAmount
 import com.patloew.oeffitracker.ui.dateFormat
+import com.patloew.oeffitracker.ui.formatAmount
 import com.patloew.oeffitracker.ui.formatDuration
 import com.patloew.oeffitracker.ui.showDatePicker
 import com.patloew.oeffitracker.ui.showDurationPicker
@@ -140,7 +141,7 @@ class CreateTripActivity : FragmentActivity() {
 
 class CreateTripViewModel(
     private val tripDao: TripDao,
-    private val settingsRepo: SettingsRepo,
+    settingsRepo: SettingsRepo,
     template: Trip?,
     private val editTrip: Trip?
 ) : ViewModel() {
@@ -275,13 +276,6 @@ class CreateTripViewModel(
             distance.toInt().toString()
         } else {
             distance?.toString()?.replace('.', ',')
-        }
-
-    private fun Int?.formatAmount(): String? =
-        if (this?.mod(100) == 0) {
-            div(100).toString()
-        } else {
-            this?.div(100f)?.toString()?.replace('.', ',')
         }
 
     class Factory(private val tripDao: TripDao, private val settingsRepo: SettingsRepo) {

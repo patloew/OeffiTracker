@@ -7,8 +7,7 @@ import com.patloew.oeffitracker.ui.dateFormat
 import java.time.Duration
 
 data class TicketListData(
-    val id: Long,
-    val name: String,
+    val ticket: Ticket,
     val price: String,
     val validityPeriod: String,
     val progressData: ProgressRoundData,

@@ -1,7 +1,9 @@
 package com.patloew.oeffitracker.data.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
@@ -19,6 +21,7 @@ import java.time.LocalDate
  * limitations under the License. */
 
 @Entity
+@Parcelize
 data class Ticket(
     val name: String,
     val price: Int,
@@ -26,4 +29,4 @@ data class Ticket(
     val endDate: LocalDate,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
-)
+) : Parcelable

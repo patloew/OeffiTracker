@@ -67,4 +67,5 @@
     <string name="button_export_csv">Export trips as CSV</string>
     <string name="snackbar_csv_export_success">CSV export successful</string>
     <string name="snackbar_csv_export_error">Could not export CSV</string>
+    <string name="toolbar_title_edit_ticket">Edit ticket</string>
 </resources>
