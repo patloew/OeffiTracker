@@ -98,7 +98,9 @@ fun SettingsContent(
 
         SectionHeader(
             text = stringResource(id = R.string.section_settings_optional_trip_fields),
-            modifier = Modifier.background(MaterialTheme.colors.surface)
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
         )
 
         Text(
@@ -157,7 +159,9 @@ fun SettingsContent(
 
         SectionHeader(
             text = stringResource(id = R.string.section_settings_progress),
-            modifier = Modifier.background(MaterialTheme.colors.surface)
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
         )
 
         CheckedText(
@@ -170,7 +174,9 @@ fun SettingsContent(
 
         SectionHeader(
             text = stringResource(id = R.string.section_settings_export),
-            modifier = Modifier.background(MaterialTheme.colors.surface)
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
         )
 
         Box(

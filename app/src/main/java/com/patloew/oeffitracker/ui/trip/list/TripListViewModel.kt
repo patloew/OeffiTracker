@@ -5,15 +5,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import com.patloew.oeffitracker.data.model.PriceDeduction
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
+import com.patloew.oeffitracker.ui.common.ListItem
 import com.patloew.oeffitracker.ui.common.ProgressData
 import com.patloew.oeffitracker.ui.formatPrice
 import com.patloew.oeffitracker.ui.getGoal
 import com.patloew.oeffitracker.ui.getSum
+import com.patloew.oeffitracker.ui.monthFormat
 import com.patloew.oeffitracker.ui.percentageFormat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -42,10 +46,21 @@ import java.time.LocalDate
 class TripListViewModel(
     private val tripDao: TripDao,
     private val ticketDao: TicketDao,
-    private val settingsRepo: SettingsRepo
+    settingsRepo: SettingsRepo
 ) : ViewModel() {
 
-    val trips: Flow<PagingData<Trip>> = Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
+    val trips: Flow<PagingData<ListItem<Trip>>> =
+        Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
+            .map { data ->
+                data.map { ListItem.Entry(it) }
+                    .insertSeparators { before, after ->
+                        if (after?.data != null && before?.data?.date?.month != after.data.date.month) {
+                            ListItem.Section(monthFormat.format(after.data.date))
+                        } else {
+                            null
+                        }
+                    }
+            }
 
     val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
 

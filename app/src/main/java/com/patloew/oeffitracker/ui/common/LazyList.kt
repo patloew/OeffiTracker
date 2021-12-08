@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
@@ -39,7 +40,7 @@ fun <T : Any> LazyList(
     @StringRes emptyTextRes: Int,
     listState: LazyListState,
     contentPadding: PaddingValues = PaddingValues(bottom = 84.dp),
-    item: @Composable (T?) -> Unit
+    item: @Composable LazyItemScope.(T?) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (isEmpty.collectAsState(initial = true).value) {

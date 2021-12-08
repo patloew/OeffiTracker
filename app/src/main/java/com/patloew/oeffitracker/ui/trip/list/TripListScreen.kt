@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.common.LazyList
+import com.patloew.oeffitracker.ui.common.ListItem
 import com.patloew.oeffitracker.ui.common.PriceProgress
+import com.patloew.oeffitracker.ui.common.SectionHeader
 import com.patloew.oeffitracker.ui.main.Screen
 import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
@@ -63,20 +65,29 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
 
         LazyList(
             data = viewModel.trips,
-            getKey = { it.id },
+            getKey = { listItem ->
+                when (listItem) {
+                    is ListItem.Entry -> listItem.data.id
+                    is ListItem.Section -> listItem.text.hashCode().shl(16)
+                }
+            },
             isEmpty = viewModel.isEmpty,
             emptyTitleRes = R.string.empty_state_trip_title,
             emptyTextRes = R.string.empty_state_trip_text,
             listState = listState,
             contentPadding = PaddingValues(top = listTopPadding, bottom = 84.dp)
-        ) { trip ->
-            TripItem(
-                trip,
-                viewModel::onDelete,
-                viewModel::getTemplateForToday,
-                viewModel::getReturnTemplate,
-                scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
-            )
+        ) { listItem ->
+            when (listItem) {
+                is ListItem.Entry -> TripItem(
+                    listItem.data,
+                    viewModel::onDelete,
+                    viewModel::getTemplateForToday,
+                    viewModel::getReturnTemplate,
+                    scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
+                )
+                is ListItem.Section -> SectionHeader(listItem.text, Modifier.padding(horizontal = 16.dp))
+            }
+
         }
 
         if (showProgress) {

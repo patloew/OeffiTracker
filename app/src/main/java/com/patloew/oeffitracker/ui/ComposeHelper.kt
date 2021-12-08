@@ -45,6 +45,7 @@ val distanceFormatShort = DecimalFormat("0.#km")
 val distanceFormat = DecimalFormat("0.## km")
 val weightFormat = DecimalFormat("0 kg")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+val monthFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
 
 @Composable
 fun PreviewTheme(content: @Composable () -> Unit) {

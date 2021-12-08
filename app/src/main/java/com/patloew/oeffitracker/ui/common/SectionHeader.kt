@@ -30,11 +30,11 @@ fun SectionHeader(
 ) {
     Text(
         text = text,
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
         fontWeight = FontWeight.Medium,
         style = MaterialTheme.typography.caption,
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+            .padding(top = 16.dp, bottom = 8.dp)
     )
 }

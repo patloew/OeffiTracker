@@ -55,6 +55,7 @@ import com.patloew.oeffitracker.ui.common.Chip
 import com.patloew.oeffitracker.ui.common.ClickActionTextField
 import com.patloew.oeffitracker.ui.common.FlowRowTextField
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
+import com.patloew.oeffitracker.ui.common.SectionHeader
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -227,16 +228,14 @@ fun CreateTripContent(
                 labelRes = R.string.label_date
             )
 
-            Text(
+            SectionHeader(
                 text = stringResource(id = R.string.create_trip_hint_optional_fields),
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(top = 24.dp)
+                modifier = Modifier.padding(top = 16.dp)
             )
 
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
                     .focusRequester(fareFocusRequester),
                 value = fare,
                 onValueChange = { newValue -> if (setFare(newValue)) fare = newValue },
