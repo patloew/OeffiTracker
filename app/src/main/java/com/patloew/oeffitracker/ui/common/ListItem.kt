@@ -14,7 +14,7 @@ package com.patloew.oeffitracker.ui.common
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-sealed class ListItem<out T> {
-    data class Entry<T>(val data: T) : ListItem<T>()
-    data class Section(val text: String) : ListItem<Nothing>()
+sealed class ListItem<out T, out S> {
+    data class Entry<T>(val data: T) : ListItem<T, Nothing>()
+    data class Section<S>(val data: S) : ListItem<Nothing, S>()
 }

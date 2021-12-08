@@ -68,7 +68,7 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             getKey = { listItem ->
                 when (listItem) {
                     is ListItem.Entry -> listItem.data.id
-                    is ListItem.Section -> listItem.text.hashCode().shl(16)
+                    is ListItem.Section -> listItem.data.hashCode().shl(16)
                 }
             },
             isEmpty = viewModel.isEmpty,
@@ -85,7 +85,11 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
                     viewModel::getReturnTemplate,
                     scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
                 )
-                is ListItem.Section -> SectionHeader(listItem.text, Modifier.padding(horizontal = 16.dp))
+                is ListItem.Section -> SectionHeader(
+                    Modifier.padding(horizontal = 16.dp),
+                    listItem.data.month,
+                    listItem.data.fareSum
+                )
             }
 
         }

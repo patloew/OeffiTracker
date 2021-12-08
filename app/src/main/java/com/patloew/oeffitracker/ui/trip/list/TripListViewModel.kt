@@ -19,6 +19,7 @@ import com.patloew.oeffitracker.ui.getGoal
 import com.patloew.oeffitracker.ui.getSum
 import com.patloew.oeffitracker.ui.monthFormat
 import com.patloew.oeffitracker.ui.percentageFormat
+import com.patloew.oeffitracker.ui.priceFormatFloat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -43,19 +44,32 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+data class TripSection(
+    val month: String,
+    val fareSum: String
+)
+
 class TripListViewModel(
     private val tripDao: TripDao,
     private val ticketDao: TicketDao,
     settingsRepo: SettingsRepo
 ) : ViewModel() {
 
-    val trips: Flow<PagingData<ListItem<Trip>>> =
+    val trips: Flow<PagingData<ListItem<Trip, TripSection>>> =
         Pager(PagingConfig(pageSize = 20)) { tripDao.getAllPagingSource() }.flow
             .map { data ->
                 data.map { ListItem.Entry(it) }
                     .insertSeparators { before, after ->
                         if (after?.data != null && before?.data?.date?.month != after.data.date.month) {
-                            ListItem.Section(monthFormat.format(after.data.date))
+                            val startDate = after.data.date.withDayOfMonth(1)
+                            val endDate = startDate.plusMonths(1).minusDays(1)
+                            val fareSum = tripDao.getSumOfFaresBetween(startDate, endDate) / 100f
+                            ListItem.Section(
+                                TripSection(
+                                    monthFormat.format(after.data.date),
+                                    priceFormatFloat.format(fareSum)
+                                )
+                            )
                         } else {
                             null
                         }

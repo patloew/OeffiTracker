@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.common
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -25,16 +26,32 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SectionHeader(
+    modifier: Modifier = Modifier,
     text: String,
-    modifier: Modifier = Modifier
+    endText: String? = null
 ) {
-    Text(
-        text = text,
-        color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
-        fontWeight = FontWeight.Medium,
-        style = MaterialTheme.typography.caption,
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 8.dp)
-    )
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
+            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.weight(1f)
+        )
+
+        if (endText != null) {
+            Text(
+                text = endText,
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.caption
+            )
+        }
+
+    }
+
 }

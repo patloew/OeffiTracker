@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun <T : Any> LazyList(
     data: Flow<PagingData<T>>,
-    getKey: (T) -> Any,
+    getKey: ((T) -> Any)? = null,
     isEmpty: Flow<Boolean>,
     @StringRes emptyTitleRes: Int,
     @StringRes emptyTextRes: Int,
