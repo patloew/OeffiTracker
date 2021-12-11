@@ -1,6 +1,8 @@
 package com.patloew.oeffitracker.data.export.model.v1
 
+import com.patloew.oeffitracker.data.model.Ticket
 import com.squareup.moshi.JsonClass
+import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -17,9 +19,22 @@ import com.squareup.moshi.JsonClass
  * limitations under the License. */
 
 @JsonClass(generateAdapter = true)
-data class JsonExportV1(
-    val schemaVersion: Int = 1,
-    val settings: SettingsV1,
-    val trips: List<TripV1>,
-    val tickets: List<TicketV1>
-)
+data class TicketV1(
+    val name: String,
+    val price: Int,
+    val deduction: Int?,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val createdTimestamp: Long
+) {
+    constructor(ticket: Ticket) : this(
+        ticket.name,
+        ticket.price,
+        ticket.deduction,
+        ticket.startDate,
+        ticket.endDate,
+        ticket.createdTimestamp
+    )
+
+    fun toTicket(): Ticket = Ticket(name, price, deduction, startDate, endDate, createdTimestamp)
+}

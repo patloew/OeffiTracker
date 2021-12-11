@@ -1,12 +1,8 @@
-package com.patloew.oeffitracker.data.model
+package com.patloew.oeffitracker.data.export.model.v1
 
-import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
+import com.patloew.oeffitracker.data.model.TransportType
+import com.patloew.oeffitracker.data.model.Trip
+import com.squareup.moshi.JsonClass
 import java.time.Duration
 import java.time.LocalDate
 
@@ -24,9 +20,8 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Entity(indices = [Index(value = ["date"], orders = [Index.Order.DESC], name = "index_trip_date")])
-@Parcelize
-data class Trip(
+@JsonClass(generateAdapter = true)
+data class TripV1(
     val startCity: String,
     val endCity: String,
     val fare: Int?,
@@ -37,9 +32,33 @@ data class Trip(
     val distance: Float?,
     val type: List<TransportType>?,
     val notes: String?,
-    val createdTimestamp: Long,
-    @PrimaryKey(autoGenerate = true) val id: Long = 0
-) : Parcelable {
-    @Ignore @IgnoredOnParcel
-    val floatFare: Float? = fare?.div(100f)
+    val createdTimestamp: Long
+) {
+    constructor(trip: Trip) : this(
+        trip.startCity,
+        trip.endCity,
+        trip.fare,
+        trip.additionalCosts,
+        trip.date,
+        trip.duration,
+        trip.delay,
+        trip.distance,
+        trip.type,
+        trip.notes,
+        trip.createdTimestamp
+    )
+
+    fun toTrip(): Trip = Trip(
+        startCity,
+        endCity,
+        fare,
+        additionalCosts,
+        date,
+        duration,
+        delay,
+        distance,
+        type,
+        notes,
+        createdTimestamp
+    )
 }

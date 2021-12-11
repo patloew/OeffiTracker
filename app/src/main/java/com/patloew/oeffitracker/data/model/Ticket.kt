@@ -3,7 +3,6 @@ package com.patloew.oeffitracker.data.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
@@ -23,7 +22,6 @@ import java.time.LocalDate
 
 @Entity
 @Parcelize
-@JsonClass(generateAdapter = true)
 data class Ticket(
     val name: String,
     val price: Int,

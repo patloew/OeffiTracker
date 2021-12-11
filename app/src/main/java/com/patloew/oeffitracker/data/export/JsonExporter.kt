@@ -5,6 +5,8 @@ import android.net.Uri
 import android.util.Log
 import com.patloew.oeffitracker.data.export.model.v1.JsonExportV1
 import com.patloew.oeffitracker.data.export.model.v1.SettingsV1
+import com.patloew.oeffitracker.data.export.model.v1.TicketV1
+import com.patloew.oeffitracker.data.export.model.v1.TripV1
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
@@ -51,8 +53,8 @@ class JsonExporter(
                 )
                 val export = JsonExportV1(
                     settings = settings,
-                    trips = tripDao.getAll(),
-                    tickets = ticketDao.getAll()
+                    trips = tripDao.getAll().map(::TripV1),
+                    tickets = ticketDao.getAll().map(::TicketV1)
                 )
                 moshi.adapter(JsonExportV1::class.java)
                     .indent("\t")

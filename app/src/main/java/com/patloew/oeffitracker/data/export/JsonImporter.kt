@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.patloew.oeffitracker.data.export.model.v1.JsonExportV1
+import com.patloew.oeffitracker.data.export.model.v1.TicketV1
+import com.patloew.oeffitracker.data.export.model.v1.TripV1
 import com.patloew.oeffitracker.data.repository.ImportDao
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.squareup.moshi.JsonReader
@@ -43,7 +45,9 @@ class JsonImporter(
         try {
             context.contentResolver.openInputStream(uri)?.source()?.buffer()?.let(JsonReader::of)?.use { jsonReader ->
                 val jsonExport = requireNotNull(moshi.adapter(JsonExportV1::class.java).fromJson(jsonReader))
-                importDao.import(jsonExport.tickets, jsonExport.trips)
+                val tickets = jsonExport.tickets.map(TicketV1::toTicket)
+                val trips = jsonExport.trips.map(TripV1::toTrip)
+                importDao.import(tickets, trips)
                 // TODO import settings
                 true
             } ?: false
