@@ -73,4 +73,7 @@
     <string name="ticket_deduction_hint">Hier kannst du Kosten eintragen, die du dir dank dieser Karte ersparst. Das kann z.B. eine Jahreskarte für deine Stadt oder eine Rabattkarte eines Verkehrsunternehmens sein. Gib die Summe aller Abzüge an.</string>
     <string name="section_settings_progress">Fortschritt</string>
     <string name="settings_progress_description">Abzüge bei der Fortschrittsberechnung miteinbeziehen</string>
+    <string name="button_export_json">Daten als JSON exportieren</string>
+    <string name="snackbar_json_export_error">Konnte JSON nicht exportieren</string>
+    <string name="snackbar_json_export_success">JSON erfolgreich exportiert</string>
 </resources>

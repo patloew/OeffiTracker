@@ -2,6 +2,8 @@ package com.patloew.oeffitracker.data
 
 import androidx.room.TypeConverter
 import com.patloew.oeffitracker.data.model.TransportType
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.ToJson
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -20,27 +22,33 @@ import java.time.format.DateTimeFormatter
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-object Converters {
+object CustomTypeConverters {
     @TypeConverter
+    @ToJson
     fun isoDateStringFromLocalDate(value: LocalDate?): String? =
         value?.format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     @TypeConverter
+    @FromJson
     fun isoDateStringToLocalDate(value: String?): LocalDate? =
         value?.let { LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE) }
 
     @TypeConverter
+    @ToJson
     fun minutesFromDuration(value: Duration?): Int? =
         value?.toMinutes()?.toInt()
 
     @TypeConverter
+    @FromJson
     fun minutesToDuration(value: Int?): Duration? =
         value?.let { Duration.ofMinutes(value.toLong()) }
 
     @TypeConverter
+    @ToJson
     fun stringFromTransportTypeList(value: List<TransportType>?): String? = value?.joinToString(separator = ",")
 
     @TypeConverter
+    @FromJson
     fun stringToTransportTypeList(value: String?): List<TransportType>? =
         value?.takeIf { it.isNotEmpty() }?.split(',')?.map(TransportType::valueOf)
 }

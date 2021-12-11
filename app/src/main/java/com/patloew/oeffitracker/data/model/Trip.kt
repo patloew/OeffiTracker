@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.time.Duration
@@ -26,6 +27,7 @@ import java.time.LocalDate
 
 @Entity(indices = [Index(value = ["date"], orders = [Index.Order.DESC], name = "index_trip_date")])
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class Trip(
     val startCity: String,
     val endCity: String,

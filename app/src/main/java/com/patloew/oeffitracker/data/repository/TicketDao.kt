@@ -55,6 +55,9 @@ interface TicketDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
+    @Query("SELECT * FROM ticket ORDER BY startDate DESC")
+    suspend fun getAll(): List<Ticket>
+
     @Query(
         """
         SELECT
@@ -71,7 +74,7 @@ interface TicketDao {
             (SELECT SUM(delay) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as delaySum,
             (SELECT SUM(distance) from trip WHERE date BETWEEN ticket.startDate and ticket.endDate) as distanceSum
         FROM ticket
-        ORDER BY ticket.startDate DESC
+        ORDER BY startDate DESC
     """
     )
     fun getTicketWithStatisticsPagingSource(): PagingSource<Int, TicketWithStatistics>

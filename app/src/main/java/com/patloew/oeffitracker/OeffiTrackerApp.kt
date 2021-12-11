@@ -5,6 +5,7 @@ import com.patloew.oeffitracker.injection.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -26,7 +27,7 @@ class OeffiTrackerApp : Application() {
         super.onCreate()
 
         startKoin {
-            if (BuildConfig.DEBUG) androidLogger()
+            if (BuildConfig.DEBUG) androidLogger(Level.ERROR)
             androidContext(this@OeffiTrackerApp)
             modules(appModule)
         }

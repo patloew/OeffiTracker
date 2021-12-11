@@ -1,5 +1,6 @@
 package com.patloew.oeffitracker.ui.settings
 
+import android.content.res.Resources
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,8 @@ import kotlinx.coroutines.flow.collect
 @Composable
 fun SettingsScreen(
     navigationAction: () -> Unit,
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    resources: Resources
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -68,12 +70,10 @@ fun SettingsScreen(
         )
     }
 
-    val csvExportSuccess = stringResource(id = R.string.snackbar_csv_export_success)
-    val csvExportError = stringResource(id = R.string.snackbar_csv_export_error)
-    LaunchedEffect("csvSnackbar") {
-        viewModel.csvExportEvent.collect { success ->
+    LaunchedEffect("snackbar") {
+        viewModel.snackbarEvent.collect { stringRes ->
             scaffoldState.snackbarHostState.showSnackbar(
-                message = if (success) csvExportSuccess else csvExportError
+                message = resources.getString(stringRes)
             )
         }
     }
@@ -85,6 +85,10 @@ fun SettingsContent(
 ) {
     val csvFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
         uri?.run(viewModel::exportCsv)
+    }
+
+    val jsonFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
+        uri?.run(viewModel::exportJson)
     }
 
     Column(
@@ -199,6 +203,30 @@ fun SettingsContent(
                     .height(44.dp)
             ) {
                 Text(stringResource(id = R.string.button_export_csv))
+            }
+        }
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
+        ) {
+            Button(
+                onClick = {
+                    jsonFileChooserLauncher.launch(
+                        CreateDocumentContract.Input(
+                            mimeType = "application/json",
+                            title = "public_transport_data.json"
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+            ) {
+                Text(stringResource(id = R.string.button_export_json))
             }
         }
 

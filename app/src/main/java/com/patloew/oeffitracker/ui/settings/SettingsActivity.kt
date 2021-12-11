@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.export.CsvExporter
+import com.patloew.oeffitracker.data.export.JsonExporter
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
@@ -41,7 +43,8 @@ class SettingsActivity : FragmentActivity() {
             OeffiTrackerTheme {
                 SettingsScreen(
                     navigationAction = { finish() },
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    resources = resources
                 )
             }
         }
@@ -50,14 +53,15 @@ class SettingsActivity : FragmentActivity() {
 
 class SettingsViewModel(
     private val settingsRepo: SettingsRepo,
-    private val csvExporter: CsvExporter
+    private val csvExporter: CsvExporter,
+    private val jsonExporter: JsonExporter
 ) : ViewModel() {
 
     val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
     val includeDeductionsInProgress = settingsRepo.includeDeductionsInProgress
 
-    private val csvExportChannel: Channel<Boolean> = Channel(Channel.CONFLATED)
-    val csvExportEvent: Flow<Boolean> = csvExportChannel.receiveAsFlow()
+    private val snackbarChannel: Channel<Int> = Channel(Channel.CONFLATED)
+    val snackbarEvent: Flow<Int> = snackbarChannel.receiveAsFlow()
 
     fun setOptionalTripFieldEnabled(field: OptionalTripField, enabled: Boolean) {
         viewModelScope.launch { settingsRepo.setOptionalTripFieldEnabled(field, enabled) }
@@ -70,7 +74,16 @@ class SettingsViewModel(
     fun exportCsv(uri: Uri) {
         viewModelScope.launch {
             val success = csvExporter.exportTo(uri)
-            csvExportChannel.send(success)
+            val messageRes = if (success) R.string.snackbar_csv_export_success else R.string.snackbar_csv_export_error
+            snackbarChannel.send(messageRes)
+        }
+    }
+
+    fun exportJson(uri: Uri) {
+        viewModelScope.launch {
+            val success = jsonExporter.exportTo(uri)
+            val messageRes = if (success) R.string.snackbar_json_export_success else R.string.snackbar_json_export_error
+            snackbarChannel.send(messageRes)
         }
     }
 }

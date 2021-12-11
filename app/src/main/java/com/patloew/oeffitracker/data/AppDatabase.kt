@@ -33,7 +33,7 @@ import com.patloew.oeffitracker.data.repository.TripDao
         AutoMigration(from = 4, to = 5),
     ]
 )
-@TypeConverters(Converters::class)
+@TypeConverters(CustomTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao
     abstract fun ticketDao(): TicketDao

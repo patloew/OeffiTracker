@@ -1,11 +1,7 @@
-package com.patloew.oeffitracker.data.model
+package com.patloew.oeffitracker.data.export.model.v1
 
-import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.squareup.moshi.JsonClass
-import kotlinx.parcelize.Parcelize
-import java.time.LocalDate
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -21,15 +17,8 @@ import java.time.LocalDate
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-@Entity
-@Parcelize
 @JsonClass(generateAdapter = true)
-data class Ticket(
-    val name: String,
-    val price: Int,
-    val deduction: Int?,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val createdTimestamp: Long,
-    @PrimaryKey(autoGenerate = true) val id: Long = 0
-) : Parcelable
+data class SettingsV1(
+    val enabledOptionalTripFields: Set<OptionalTripField>,
+    val includeDeductionsInProgress: Boolean
+)

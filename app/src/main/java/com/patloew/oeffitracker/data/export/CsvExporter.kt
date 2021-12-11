@@ -5,6 +5,8 @@ import android.net.Uri
 import android.util.Log
 import com.patloew.oeffitracker.data.model.Trip
 import com.patloew.oeffitracker.data.repository.TripDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.time.Instant
 import java.time.ZoneId
@@ -35,7 +37,7 @@ class CsvExporter(
      *
      * @return true if export was successful
      */
-    suspend fun exportTo(uri: Uri): Boolean =
+    suspend fun exportTo(uri: Uri): Boolean = withContext(Dispatchers.IO) {
         try {
             context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.use { writer ->
                 writer.writeCsvHeader()
@@ -46,6 +48,7 @@ class CsvExporter(
             Log.e("CsvExporter", "Could not write CSV", e)
             false
         }
+    }
 
     private fun BufferedWriter.writeCsvHeader() {
         write(""""createdDateTime","date","startCity","endCity","fare","additionalCosts","durationMinutes","delayMinutes","distanceKm","types","notes"""")
