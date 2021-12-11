@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.model.Trip
+import com.patloew.oeffitracker.data.repository.ImportDao
 import com.patloew.oeffitracker.data.repository.TicketDao
 import com.patloew.oeffitracker.data.repository.TripDao
 
@@ -37,4 +38,5 @@ import com.patloew.oeffitracker.data.repository.TripDao
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao
     abstract fun ticketDao(): TicketDao
+    abstract fun importDao(): ImportDao
 }

@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.patloew.oeffitracker.data.model.PriceDeduction
 import com.patloew.oeffitracker.data.model.Ticket
 import com.patloew.oeffitracker.data.model.TicketWithStatistics
@@ -43,6 +44,9 @@ interface TicketDao {
     @Query("SELECT price, deduction FROM ticket WHERE id = :ticketId")
     fun getPriceById(ticketId: Long): Flow<PriceDeduction>
 
+    @Query("SELECT price, deduction FROM ticket WHERE date('now') BETWEEN startDate and endDate")
+    fun getLatestTicketPrice(): Flow<PriceDeduction?>
+
     @Query("SELECT id FROM ticket WHERE date('now') BETWEEN startDate and endDate LIMIT 1")
     fun getLatestTicketId(): Flow<Long?>
 
@@ -55,9 +59,11 @@ interface TicketDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
+    @Transaction
     @Query("SELECT * FROM ticket ORDER BY startDate DESC")
     suspend fun getAll(): List<Ticket>
 
+    @Transaction
     @Query(
         """
         SELECT

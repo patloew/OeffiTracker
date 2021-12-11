@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.export.JsonExporter
+import com.patloew.oeffitracker.data.export.JsonImporter
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
@@ -54,7 +55,8 @@ class SettingsActivity : FragmentActivity() {
 class SettingsViewModel(
     private val settingsRepo: SettingsRepo,
     private val csvExporter: CsvExporter,
-    private val jsonExporter: JsonExporter
+    private val jsonExporter: JsonExporter,
+    private val jsonImporter: JsonImporter
 ) : ViewModel() {
 
     val optionalTripFieldEnabledMap = settingsRepo.optionalTripFieldEnabledMap
@@ -83,6 +85,14 @@ class SettingsViewModel(
         viewModelScope.launch {
             val success = jsonExporter.exportTo(uri)
             val messageRes = if (success) R.string.snackbar_json_export_success else R.string.snackbar_json_export_error
+            snackbarChannel.send(messageRes)
+        }
+    }
+
+    fun importJson(uri: Uri) {
+        viewModelScope.launch {
+            val success = jsonImporter.importFrom(uri)
+            val messageRes = if (success) R.string.snackbar_json_import_success else R.string.snackbar_json_import_error
             snackbarChannel.send(messageRes)
         }
     }

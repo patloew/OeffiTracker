@@ -23,8 +23,6 @@ import com.patloew.oeffitracker.ui.priceFormatFloat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -79,18 +77,15 @@ class TripListViewModel(
     val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
 
     val showProgress: Flow<Boolean> = ticketDao.getLatestTicketId().map { it != null }
-    private val fareSum: Flow<Int> = ticketDao.getLatestTicketId()
-        .flatMapConcat { ticketId -> ticketId?.let { tripDao.getSumOfFaresForTicketId(it) } ?: flowOf(0) }
-    private val fareSumGoal: Flow<PriceDeduction> = ticketDao.getLatestTicketId()
-        .flatMapConcat { id ->
-            id?.let { ticketDao.getPriceById(id) } ?: flowOf(PriceDeduction(0, null))
-        }
+    private val fareSum: Flow<Int> = tripDao.getSumOfFaresForLatestTicket()
+    private val fareSumGoal: Flow<PriceDeduction?> = ticketDao.getLatestTicketPrice()
     val fareProgressData: Flow<ProgressData> =
         combine(
             fareSum,
             fareSumGoal,
             settingsRepo.includeDeductionsInProgress
         ) { sum, priceDeduction, includeDeduction ->
+            val priceDeduction = priceDeduction ?: PriceDeduction(price = 0, deduction = null)
             val goal = priceDeduction.getGoal(includeDeduction)
             val progress = priceDeduction.getSum(sum, includeDeduction) / goal.toFloat()
             ProgressData(

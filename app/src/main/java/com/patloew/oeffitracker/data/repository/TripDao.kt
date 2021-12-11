@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.patloew.oeffitracker.data.model.Trip
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -38,8 +39,17 @@ interface TripDao {
     @Query("SELECT COUNT(*) FROM trip")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN (SELECT startDate FROM ticket WHERE id = :ticketId) and (SELECT endDate FROM ticket WHERE id = :ticketId)")
-    fun getSumOfFaresForTicketId(ticketId: Long): Flow<Int>
+    @Query(
+        """
+        SELECT 
+            COALESCE(SUM(fare), 0) 
+        FROM trip 
+        WHERE date BETWEEN 
+            (SELECT startDate FROM ticket WHERE date('now') BETWEEN startDate and endDate) 
+            and (SELECT endDate FROM ticket WHERE date('now') BETWEEN startDate and endDate)
+        """
+    )
+    fun getSumOfFaresForLatestTicket(): Flow<Int>
 
     @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
     suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Int
@@ -50,9 +60,11 @@ interface TripDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
+    @Transaction
     @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
     suspend fun getAll(): List<Trip>
 
+    @Transaction
     @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
     fun getAllPagingSource(): PagingSource<Int, Trip>
 }

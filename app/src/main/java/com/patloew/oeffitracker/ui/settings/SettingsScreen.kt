@@ -2,6 +2,7 @@ package com.patloew.oeffitracker.ui.settings
 
 import android.content.res.Resources
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,9 @@ import kotlinx.coroutines.flow.collect
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+private const val MIME_TYPE_CSV = "text/csv"
+private const val MIME_TYPE_JSON = "application/json"
+
 @Composable
 fun SettingsScreen(
     navigationAction: () -> Unit,
@@ -83,13 +87,18 @@ fun SettingsScreen(
 fun SettingsContent(
     viewModel: SettingsViewModel
 ) {
-    val csvFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
+    val csvExportFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
         uri?.run(viewModel::exportCsv)
     }
 
-    val jsonFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
+    val jsonExportFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
         uri?.run(viewModel::exportJson)
     }
+
+    val jsonImportFileChooserLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.run(viewModel::importJson)
+        }
 
     Column(
         modifier = Modifier
@@ -191,9 +200,9 @@ fun SettingsContent(
         ) {
             Button(
                 onClick = {
-                    csvFileChooserLauncher.launch(
+                    csvExportFileChooserLauncher.launch(
                         CreateDocumentContract.Input(
-                            mimeType = "text/csv",
+                            mimeType = MIME_TYPE_CSV,
                             title = "trips.csv"
                         )
                     )
@@ -215,9 +224,9 @@ fun SettingsContent(
         ) {
             Button(
                 onClick = {
-                    jsonFileChooserLauncher.launch(
+                    jsonExportFileChooserLauncher.launch(
                         CreateDocumentContract.Input(
-                            mimeType = "application/json",
+                            mimeType = MIME_TYPE_JSON,
                             title = "public_transport_data.json"
                         )
                     )
@@ -227,6 +236,31 @@ fun SettingsContent(
                     .height(44.dp)
             ) {
                 Text(stringResource(id = R.string.button_export_json))
+            }
+        }
+
+        Divider()
+
+        SectionHeader(
+            text = stringResource(id = R.string.section_settings_import),
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
+        )
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .padding(16.dp)
+        ) {
+            Button(
+                onClick = { jsonImportFileChooserLauncher.launch(arrayOf(MIME_TYPE_JSON)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+            ) {
+                Text(stringResource(id = R.string.button_import_json))
             }
         }
 

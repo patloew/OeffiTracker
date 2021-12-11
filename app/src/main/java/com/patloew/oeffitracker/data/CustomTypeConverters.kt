@@ -44,11 +44,10 @@ object CustomTypeConverters {
         value?.let { Duration.ofMinutes(value.toLong()) }
 
     @TypeConverter
-    @ToJson
     fun stringFromTransportTypeList(value: List<TransportType>?): String? = value?.joinToString(separator = ",")
 
     @TypeConverter
-    @FromJson
     fun stringToTransportTypeList(value: String?): List<TransportType>? =
         value?.takeIf { it.isNotEmpty() }?.split(',')?.map(TransportType::valueOf)
+
 }

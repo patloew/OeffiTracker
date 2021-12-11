@@ -6,6 +6,7 @@ import com.patloew.oeffitracker.data.AppDatabase
 import com.patloew.oeffitracker.data.CustomTypeConverters
 import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.export.JsonExporter
+import com.patloew.oeffitracker.data.export.JsonImporter
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.settings.SettingsViewModel
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketViewModel
@@ -38,9 +39,11 @@ val appModule = module {
     }
     single { get<AppDatabase>().tripDao() }
     single { get<AppDatabase>().ticketDao() }
+    single { get<AppDatabase>().importDao() }
     single { SettingsRepo(get()) }
     single { CsvExporter(get(), get()) }
     single { JsonExporter(get(), get(), get(), get(), get()) }
+    single { JsonImporter(get(), get(), get(), get()) }
 
     single { CreateTripViewModel.Factory(get(), get()) }
     single { CreateTicketViewModel.Factory(get()) }
@@ -49,5 +52,5 @@ val appModule = module {
 
     viewModel { TripListViewModel(get(), get(), get()) }
     viewModel { TicketListViewModel(get(), get()) }
-    viewModel { SettingsViewModel(get(), get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), get()) }
 }
