@@ -89,9 +89,9 @@ class SettingsViewModel(
         }
     }
 
-    fun importJson(uri: Uri) {
+    fun importJson(uri: Uri, importSettings: Boolean) {
         viewModelScope.launch {
-            val success = jsonImporter.importFrom(uri)
+            val success = jsonImporter.importFrom(uri, importSettings)
             val messageRes = if (success) R.string.snackbar_json_import_success else R.string.snackbar_json_import_error
             snackbarChannel.send(messageRes)
         }

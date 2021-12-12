@@ -37,24 +37,30 @@ class JsonImporter(
 ) {
 
     /**
-     * Imports (and overwrites) all app data from a JSON at [uri]
+     * Imports (and overwrites) all app data from a JSON at [uri].
      *
+     * @param importSettings Whether settings should also be imported
      * @return true if import was successful
      */
-    suspend fun importFrom(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    suspend fun importFrom(uri: Uri, importSettings: Boolean): Boolean = withContext(Dispatchers.IO) {
         try {
             context.contentResolver.openInputStream(uri)?.source()?.buffer()?.let(JsonReader::of)?.use { jsonReader ->
                 val jsonExport = requireNotNull(moshi.adapter(JsonExportV1::class.java).fromJson(jsonReader))
                 val tickets = jsonExport.tickets.map(TicketV1::toTicket)
                 val trips = jsonExport.trips.map(TripV1::toTrip)
                 importDao.import(tickets, trips)
-                // TODO import settings
+                if (importSettings) jsonExport.importSettings()
                 true
             } ?: false
         } catch (e: Exception) {
             Log.e("JsonImporter", "Could not read JSON", e)
             false
         }
+    }
+
+    private suspend fun JsonExportV1.importSettings() {
+        settingsRepo.setIncludeDeductionsInProgress(settings.includeDeductionsInProgress)
+        settingsRepo.setEnabledOptionalTripFields(settings.enabledOptionalTripFields)
     }
 
 }

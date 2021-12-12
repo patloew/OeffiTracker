@@ -80,4 +80,8 @@
     <string name="button_import_json">Daten aus JSON importieren</string>
     <string name="snackbar_json_import_success">Daten erfolgreich aus JSON importiert</string>
     <string name="snackbar_json_import_error">Konnte Daten nicht aus JSON importieren</string>
+    <string name="alert_import_json_title">Daten importieren</string>
+    <string name="alert_import_json_text">Vorhandene Daten in der App werden beim Importieren einer JSON Datei überschrieben. Zuvor eingegebene Daten werden durch die Daten aus der JSON Datei ersetzt und können nicht wiederhergestellt werden. Optional können auch die App Einstellungen importiert werden.</string>
+    <string name="alert_import_json_settings_import">Einstellungen importieren</string>
+    <string name="action_choose_file">Datei auswählen</string>
 </resources>

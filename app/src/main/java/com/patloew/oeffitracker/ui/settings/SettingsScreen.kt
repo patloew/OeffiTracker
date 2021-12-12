@@ -23,6 +23,8 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,6 +33,7 @@ import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.data.model.OptionalTripField
 import com.patloew.oeffitracker.ui.CreateDocumentContract
+import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.CheckedText
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.common.SectionHeader
@@ -87,6 +90,9 @@ fun SettingsScreen(
 fun SettingsContent(
     viewModel: SettingsViewModel
 ) {
+    val showImportDialog = remember { mutableStateOf(false) }
+    val importSettings = remember { mutableStateOf(false) }
+
     val csvExportFileChooserLauncher = rememberLauncherForActivityResult(CreateDocumentContract()) { uri ->
         uri?.run(viewModel::exportCsv)
     }
@@ -97,7 +103,7 @@ fun SettingsContent(
 
     val jsonImportFileChooserLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            uri?.run(viewModel::importJson)
+            uri?.let { uri -> viewModel.importJson(uri, importSettings.value) }
         }
 
     Column(
@@ -127,6 +133,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_price_plus,
             text = stringResource(id = R.string.label_additional_costs),
             checked = isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS),
@@ -134,6 +141,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_distance,
             text = stringResource(id = R.string.label_distance),
             checked = isOptionalFieldEnabled(OptionalTripField.DISTANCE),
@@ -141,6 +149,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_clock,
             text = stringResource(id = R.string.label_duration),
             checked = isOptionalFieldEnabled(OptionalTripField.DURATION),
@@ -148,6 +157,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_delay,
             text = stringResource(id = R.string.label_delay),
             checked = isOptionalFieldEnabled(OptionalTripField.DELAY),
@@ -155,6 +165,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_tram,
             text = stringResource(id = R.string.label_transport_type),
             checked = isOptionalFieldEnabled(OptionalTripField.TYPE),
@@ -162,6 +173,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             iconRes = R.drawable.ic_note,
             text = stringResource(id = R.string.label_note),
             checked = isOptionalFieldEnabled(OptionalTripField.NOTES),
@@ -178,6 +190,7 @@ fun SettingsContent(
         )
 
         CheckedText(
+            Modifier.padding(horizontal = 16.dp),
             text = stringResource(id = R.string.settings_progress_description),
             checked = viewModel.includeDeductionsInProgress.collectAsState().value,
             setCheckedState = { viewModel.setIncludeDeductionsInProgress(it) }
@@ -255,7 +268,10 @@ fun SettingsContent(
                 .padding(16.dp)
         ) {
             Button(
-                onClick = { jsonImportFileChooserLauncher.launch(arrayOf(MIME_TYPE_JSON)) },
+                onClick = {
+                    importSettings.value = false
+                    showImportDialog.value = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
@@ -273,6 +289,27 @@ fun SettingsContent(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.CenterHorizontally)
+        )
+
+
+        ActionAlertDialog(
+            showAlertDialog = showImportDialog,
+            title = stringResource(id = R.string.alert_import_json_title),
+            content = {
+                Column {
+                    Text(
+                        stringResource(id = R.string.alert_import_json_text),
+                        Modifier.padding(bottom = 16.dp)
+                    )
+                    CheckedText(
+                        iconRes = R.drawable.ic_settings,
+                        text = stringResource(id = R.string.alert_import_json_settings_import),
+                        checked = importSettings.value,
+                        setCheckedState = { importSettings.value = it })
+                }
+            },
+            confirmButtonText = stringResource(id = R.string.action_choose_file),
+            positiveAction = { jsonImportFileChooserLauncher.launch(arrayOf(MIME_TYPE_JSON)) }
         )
     }
 }

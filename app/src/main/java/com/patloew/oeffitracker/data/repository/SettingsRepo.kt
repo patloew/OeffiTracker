@@ -61,8 +61,12 @@ class SettingsRepo(private val context: Context) {
         } else if (!enabled && enabledFields.contains(field)) {
             mutableEnabledFields.remove(field)
         }
+        setEnabledOptionalTripFields(mutableEnabledFields)
+    }
+
+    suspend fun setEnabledOptionalTripFields(enabledFields: Set<OptionalTripField>) {
         context.dataStore.edit { prefs ->
-            prefs[optionalTripFieldsKey] = mutableEnabledFields.joinToString(",")
+            prefs[optionalTripFieldsKey] = enabledFields.joinToString(",")
         }
     }
 

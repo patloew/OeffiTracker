@@ -31,13 +31,33 @@ fun ActionAlertDialog(
     text: String,
     confirmButtonText: String,
     confirmButtonTextColor: ButtonColors = ButtonDefaults.textButtonColors(),
-    positiveAction: () -> Unit
+    positiveAction: () -> Unit,
+    dismissAction: (() -> Unit)? = null
+) = ActionAlertDialog(
+    showAlertDialog,
+    title,
+    { Text(text) },
+    confirmButtonText,
+    confirmButtonTextColor,
+    positiveAction,
+    dismissAction
+)
+
+@Composable
+fun ActionAlertDialog(
+    showAlertDialog: MutableState<Boolean>,
+    title: String,
+    content: @Composable () -> Unit,
+    confirmButtonText: String,
+    confirmButtonTextColor: ButtonColors = ButtonDefaults.textButtonColors(),
+    positiveAction: () -> Unit,
+    dismissAction: (() -> Unit)? = null
 ) {
     if (showAlertDialog.value) {
         AlertDialog(
             onDismissRequest = { showAlertDialog.value = false },
             title = { Text(title) },
-            text = { Text(text) },
+            text = content,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -50,6 +70,7 @@ fun ActionAlertDialog(
             dismissButton = {
                 TextButton(onClick = {
                     showAlertDialog.value = false
+                    dismissAction?.invoke()
                 }) { Text(stringResource(id = R.string.action_cancel)) }
             },
         )
