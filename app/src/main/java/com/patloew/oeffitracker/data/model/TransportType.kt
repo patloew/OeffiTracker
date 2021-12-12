@@ -2,6 +2,7 @@ package com.patloew.oeffitracker.data.model
 
 import androidx.annotation.StringRes
 import com.patloew.oeffitracker.R
+import com.squareup.moshi.JsonClass
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -17,6 +18,7 @@ import com.patloew.oeffitracker.R
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@JsonClass(generateAdapter = false)
 enum class TransportType(@StringRes val stringRes: Int) {
     TRAIN(R.string.transport_type_train),
     COACH(R.string.transport_type_coach),

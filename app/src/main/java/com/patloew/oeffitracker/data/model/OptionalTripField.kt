@@ -1,5 +1,7 @@
 package com.patloew.oeffitracker.data.model
 
+import com.squareup.moshi.JsonClass
+
 /* Copyright 2021 Patrick Löwenstein
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +16,7 @@ package com.patloew.oeffitracker.data.model
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@JsonClass(generateAdapter = false)
 enum class OptionalTripField {
     ADDITIONAL_COSTS,
     DISTANCE,
