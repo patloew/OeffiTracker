@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
 import com.patloew.oeffitracker.data.CustomTypeConverters
+import com.patloew.oeffitracker.data.migration.Migration5To6
 import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.export.JsonExporter
 import com.patloew.oeffitracker.data.export.JsonImporter
@@ -34,6 +35,7 @@ import org.koin.dsl.module
 val appModule = module {
     single {
         Room.databaseBuilder(get(), AppDatabase::class.java, "main")
+            .addMigrations(Migration5To6)
             .apply { if (BuildConfig.DEBUG) fallbackToDestructiveMigration() }
             .build()
     }

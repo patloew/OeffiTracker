@@ -25,7 +25,7 @@ import com.patloew.oeffitracker.data.repository.TripDao
  * limitations under the License. */
 
 @Database(
-    version = 5,
+    version = 6,
     entities = [Trip::class, Ticket::class],
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
