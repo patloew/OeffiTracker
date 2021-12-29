@@ -24,8 +24,8 @@ import java.time.LocalDate
 @Parcelize
 data class Ticket(
     val name: String,
-    val price: Int,
-    val deduction: Int?,
+    val price: Long,
+    val deduction: Long?,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val createdTimestamp: Long,

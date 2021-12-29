@@ -21,8 +21,8 @@ import java.time.LocalDate
 @JsonClass(generateAdapter = true)
 data class TicketV1(
     val name: String,
-    val price: Int,
-    val deduction: Int?,
+    val price: Long,
+    val deduction: Long?,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val createdTimestamp: Long

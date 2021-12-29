@@ -170,10 +170,10 @@ class CreateTripViewModel(
     val date: MutableStateFlow<LocalDate> = MutableStateFlow(template?.date ?: editTrip?.date ?: LocalDate.now())
     val dateString: Flow<String> = date.map { dateFormat.format(it) }
 
-    private val fare: MutableStateFlow<Int?> = MutableStateFlow(template?.fare ?: editTrip?.fare)
+    private val fare: MutableStateFlow<Long?> = MutableStateFlow(template?.fare ?: editTrip?.fare)
     val initialFare = template?.fare.formatAmount() ?: editTrip?.fare.formatAmount() ?: ""
 
-    private val additionalCosts: MutableStateFlow<Int?> =
+    private val additionalCosts: MutableStateFlow<Long?> =
         MutableStateFlow(template?.additionalCosts ?: editTrip?.additionalCosts)
     val initialAdditionalCosts =
         template?.additionalCosts.formatAmount() ?: editTrip?.additionalCosts.formatAmount() ?: ""
@@ -184,8 +184,8 @@ class CreateTripViewModel(
     val delay: MutableStateFlow<Duration?> = MutableStateFlow(template?.delay ?: editTrip?.delay)
     val delayString: Flow<String> = delay.map { it?.let(::formatDuration) ?: "" }
 
-    private val distance: MutableStateFlow<Float?> = MutableStateFlow(template?.distance ?: editTrip?.distance)
-    val initialDistance = template?.floatDistanceString ?: editTrip?.floatDistanceString ?: ""
+    private val distance: MutableStateFlow<Double?> = MutableStateFlow(template?.distance ?: editTrip?.distance)
+    val initialDistance = template?.doubleDistanceString ?: editTrip?.doubleDistanceString ?: ""
 
     val types: MutableStateFlow<Map<TransportType, Boolean>> =
         MutableStateFlow(typesWithSelected(template?.type ?: editTrip?.type))
@@ -207,7 +207,7 @@ class CreateTripViewModel(
                         startCity = startCity.value.trim(),
                         endCity = endCity.value.trim(),
                         fare = fare.value,
-                        additionalCosts.value,
+                        additionalCosts = additionalCosts.value,
                         date = date.value,
                         duration = duration.value,
                         distance = distance.value,
@@ -249,9 +249,14 @@ class CreateTripViewModel(
             distance.value = null
             true
         }
-        else -> distanceString.replace(',', '.').toFloatOrNull()?.let {
-            distance.value = it
-            true
+        else -> distanceString.replace(',', '.').toBigDecimalOrNull()?.let {
+            val parsedDistance = it.toDouble()
+            if (parsedDistance.toBigDecimal().compareTo(it) == 0) {
+                distance.value = parsedDistance
+                true
+            } else {
+                false
+            }
         } ?: false
     }
 
@@ -271,11 +276,11 @@ class CreateTripViewModel(
     fun setAdditionalCosts(additionalCostsString: String): Boolean =
         checkAndSetAmount(additionalCostsString) { newAdditionalCosts -> additionalCosts.value = newAdditionalCosts }
 
-    private val Trip.floatDistanceString: String?
+    private val Trip.doubleDistanceString: String?
         get() = if (distance?.mod(1.0) == 0.0) {
-            distance.toInt().toString()
+            distance.toLong().toString()
         } else {
-            distance?.toString()?.replace('.', ',')
+            distance?.toBigDecimal()?.toPlainString()?.replace('.', ',')
         }
 
     class Factory(private val tripDao: TripDao, private val settingsRepo: SettingsRepo) {

@@ -24,12 +24,12 @@ import java.time.LocalDate
 data class TripV1(
     val startCity: String,
     val endCity: String,
-    val fare: Int?,
-    val additionalCosts: Int?,
+    val fare: Long?,
+    val additionalCosts: Long?,
     val date: LocalDate,
     val duration: Duration?,
     val delay: Duration?,
-    val distance: Float?,
+    val distance: Double?,
     val type: List<TransportType>?,
     val notes: String?,
     val createdTimestamp: Long

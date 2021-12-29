@@ -1,6 +1,7 @@
 package com.patloew.oeffitracker.ui
 
 import com.patloew.oeffitracker.data.model.PriceDeduction
+import java.math.BigDecimal
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -16,51 +17,73 @@ import com.patloew.oeffitracker.data.model.PriceDeduction
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+private val amountRegex = Regex("^\\d+(\\.\\d{0,2})?$")
+
 /**
  * Parses and validates an amount and calls [setAmount] if valid.
  *
  * @return true if amount is valid
  */
-fun checkAndSetAmount(amountString: String, setAmount: (amount: Int?) -> Unit): Boolean {
+fun checkAndSetAmount(amountString: String, setAmount: (amount: Long?) -> Unit): Boolean {
     val newAmount = amountString.replace(',', '.')
     return when {
         newAmount.isEmpty() -> {
             setAmount(null)
             true
         }
-        newAmount.matches(Regex("^\\d+(\\.\\d{0,2})?$")) ->
-            newAmount.toFloatOrNull()?.let { newFareFloat ->
-                setAmount(newFareFloat.times(100).toInt())
-                true
+        newAmount.matches(amountRegex) ->
+            newAmount.toBigDecimalOrNull()?.let { newAmountBigDecimal ->
+                val newAmountLong = newAmountBigDecimal.times(BigDecimal.valueOf(100)).toLong()
+                val comparison = newAmountLong.toBigDecimal().divide(BigDecimal.valueOf(100))
+                if (comparison.compareTo(newAmountBigDecimal) == 0) {
+                    setAmount(newAmountLong)
+                    true
+                } else {
+                    false
+                }
             } ?: false
         else -> false
     }
 }
 
-/** Formats this Int as amount, omitting trailing zeros if not needed */
-fun Int?.formatAmount(): String? =
+/** Formats this Long as amount, omitting trailing zeros if not needed */
+fun Long?.formatAmount(): String? =
     if (this?.mod(100) == 0) {
         div(100).toString()
     } else {
-        this?.div(100f)?.toString()?.replace('.', ',')
+        this?.let {
+            val bd = toBigDecimal().divide(BigDecimal.valueOf(100))
+            amountFormatFloat.format(bd).replace('.', ',')
+        }
     }
 
-fun getProgressSum(sum: Int, deduction: Int?, includeDeduction: Boolean): Int =
+/** Formats this Long as price with currency, omitting trailing zeros if not needed */
+fun Long.formatPrice(): String {
+    val formatter = if (mod(100) == 0) {
+        priceFormatInteger
+    } else {
+        priceFormatFloat
+    }
+
+    return formatter.format(toBigDecimal().divide(BigDecimal.valueOf(100)))
+}
+
+fun getProgressSum(sum: Long, deduction: Long?, includeDeduction: Boolean): Long =
     if (includeDeduction && deduction != null) {
         sum + deduction
     } else {
         sum
     }
 
-fun PriceDeduction.getSum(sum: Int, includeDeduction: Boolean): Int =
+fun PriceDeduction.getSum(sum: Long, includeDeduction: Boolean): Long =
     getProgressSum(sum, deduction, includeDeduction)
 
-fun getProgressGoal(price: Int, deduction: Int?, includeDeduction: Boolean): Int =
+fun getProgressGoal(price: Long, deduction: Long?, includeDeduction: Boolean): Long =
     if (!includeDeduction && deduction != null) {
         price - deduction
     } else {
         price
     }
 
-fun PriceDeduction.getGoal(includeDeduction: Boolean): Int =
+fun PriceDeduction.getGoal(includeDeduction: Boolean): Long =
     getProgressGoal(price, deduction, includeDeduction)

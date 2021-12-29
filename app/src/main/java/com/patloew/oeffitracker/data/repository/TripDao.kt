@@ -49,12 +49,12 @@ interface TripDao {
             and (SELECT endDate FROM ticket WHERE date('now') BETWEEN startDate and endDate)
         """
     )
-    fun getSumOfFaresForLatestTicket(): Flow<Int>
+    fun getSumOfFaresForLatestTicket(): Flow<Long>
 
     @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate")
-    suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Int
+    suspend fun getSumOfFaresBetween(startDate: String, endDate: String): Long
 
-    suspend fun getSumOfFaresBetween(startDate: LocalDate, endDate: LocalDate): Int =
+    suspend fun getSumOfFaresBetween(startDate: LocalDate, endDate: LocalDate): Long =
         getSumOfFaresBetween(
             DateTimeFormatter.ISO_DATE.format(startDate),
             DateTimeFormatter.ISO_DATE.format(endDate)

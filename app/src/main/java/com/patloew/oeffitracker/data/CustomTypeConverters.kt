@@ -35,13 +35,11 @@ object CustomTypeConverters {
 
     @TypeConverter
     @ToJson
-    fun minutesFromDuration(value: Duration?): Int? =
-        value?.toMinutes()?.toInt()
+    fun minutesFromDuration(value: Duration?): Long? = value?.toMinutes()
 
     @TypeConverter
     @FromJson
-    fun minutesToDuration(value: Int?): Duration? =
-        value?.let { Duration.ofMinutes(value.toLong()) }
+    fun minutesToDuration(value: Long?): Duration? = value?.let { Duration.ofMinutes(value) }
 
     @TypeConverter
     fun stringFromTransportTypeList(value: List<TransportType>?): String? = value?.joinToString(separator = ",")

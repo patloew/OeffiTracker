@@ -77,7 +77,7 @@ class TripListViewModel(
     val isEmpty: Flow<Boolean> = tripDao.getCount().map { it == 0 }
 
     val showProgress: Flow<Boolean> = ticketDao.getLatestTicketId().map { it != null }
-    private val fareSum: Flow<Int> = tripDao.getSumOfFaresForLatestTicket()
+    private val fareSum: Flow<Long> = tripDao.getSumOfFaresForLatestTicket()
     private val fareSumGoal: Flow<PriceDeduction?> = ticketDao.getLatestTicketPrice()
     val fareProgressData: Flow<ProgressData> =
         combine(
@@ -91,7 +91,7 @@ class TripListViewModel(
             ProgressData(
                 progress = progress.coerceAtMost(1f),
                 percentageString = percentageFormat.format(progress),
-                priceString = formatPrice(goal)
+                priceString = goal.formatPrice()
             )
         }
 

@@ -65,13 +65,13 @@ class TicketListViewModel(
                             createdTimestamp = data.createdTimestamp,
                             id = data.id
                         ),
-                        price = formatPrice(sum) + " / " + formatPrice(goal),
+                        price = sum.formatPrice() + " / " + goal.formatPrice(),
                         validityPeriod = data.validityPeriod,
                         progressData = ProgressRoundData(
                             progress = percentage.coerceAtMost(1f),
                             percentageString = percentageFormat.format(percentage)
                         ),
-                        additionalCostsSum = data.additionalCostsSum?.let(::formatPrice),
+                        additionalCostsSum = data.additionalCostsSum?.let(Long::formatPrice),
                         durationSum = data.durationSum,
                         delaySum = data.delaySum,
                         distanceSum = data.distanceSum,

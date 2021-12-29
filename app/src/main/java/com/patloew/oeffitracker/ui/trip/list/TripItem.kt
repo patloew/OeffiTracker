@@ -159,7 +159,7 @@ fun TripItem(
                         bottom.linkTo(date.top)
                     }
                     .alpha(if (trip.fare == null) 0.6f else 1f),
-                text = trip.floatFare?.let(priceFormatFloat::format) ?: "? €",
+                text = trip.bigDecimalFare?.let(priceFormatFloat::format) ?: "? €",
                 maxLines = 1,
                 style = MaterialTheme.typography.body1
             )

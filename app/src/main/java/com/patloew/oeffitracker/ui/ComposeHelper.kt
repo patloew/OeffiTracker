@@ -39,6 +39,7 @@ import java.time.format.FormatStyle
  * limitations under the License. */
 
 val percentageFormat = DecimalFormat("0.0%")
+val amountFormatFloat = DecimalFormat("0.00")
 val priceFormatFloat = DecimalFormat("0.00 €")
 val priceFormatInteger = DecimalFormat("0 €")
 val distanceFormatShort = DecimalFormat("0.#km")
@@ -112,17 +113,6 @@ fun showDurationPicker(
             }
         }
         .show(fragmentManager, null)
-}
-
-/** Formats price as integer if it's ",00" */
-fun formatPrice(price: Int): String {
-    val formatter = if (price.mod(100) == 0) {
-        priceFormatInteger
-    } else {
-        priceFormatFloat
-    }
-
-    return formatter.format(price / 100f)
 }
 
 // Workaround until https://issuetracker.google.com/issues/205866514 is fixed

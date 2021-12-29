@@ -14,8 +14,8 @@ data class TicketListData(
     val additionalCostsSum: String?,
     val durationSum: Duration?,
     val delaySum: Duration?,
-    val distanceSum: Float?,
-    val co2savedSum: Float?
+    val distanceSum: Double?,
+    val co2savedSum: Double?
 )
 
 val Ticket.validityPeriod: String get() = dateFormat.format(startDate) + " – " + dateFormat.format(endDate)

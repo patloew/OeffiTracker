@@ -150,10 +150,10 @@ class CreateTicketViewModel(
     val endDateBeforeStartDate: Flow<Boolean> =
         combine(startDate, endDate) { startDate, endDate -> endDate <= startDate }
 
-    private val price: MutableStateFlow<Int?> = MutableStateFlow(editTicket?.price)
+    private val price: MutableStateFlow<Long?> = MutableStateFlow(editTicket?.price)
     val initialPrice = editTicket?.price.formatAmount() ?: ""
 
-    private val deduction: MutableStateFlow<Int?> = MutableStateFlow(editTicket?.deduction)
+    private val deduction: MutableStateFlow<Long?> = MutableStateFlow(editTicket?.deduction)
     val initialDeduction = editTicket?.deduction.formatAmount() ?: ""
 
     val saveEnabled: Flow<Boolean> = combine(

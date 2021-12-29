@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
 
@@ -29,17 +30,17 @@ import java.time.LocalDate
 data class Trip(
     val startCity: String,
     val endCity: String,
-    val fare: Int?,
-    val additionalCosts: Int?,
+    val fare: Long?,
+    val additionalCosts: Long?,
     val date: LocalDate,
     val duration: Duration?,
     val delay: Duration?,
-    val distance: Float?,
+    val distance: Double?,
     val type: List<TransportType>?,
     val notes: String?,
     val createdTimestamp: Long,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) : Parcelable {
     @Ignore @IgnoredOnParcel
-    val floatFare: Float? = fare?.div(100f)
+    val bigDecimalFare: BigDecimal? = fare?.toBigDecimal()?.divide(BigDecimal.valueOf(100))
 }
