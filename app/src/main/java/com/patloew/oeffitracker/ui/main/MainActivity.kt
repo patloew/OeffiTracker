@@ -18,14 +18,14 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,12 +33,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.navigate
+import com.patloew.oeffitracker.ui.onPrimarySurface
 import com.patloew.oeffitracker.ui.settings.SettingsActivity
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import com.patloew.oeffitracker.ui.ticket.list.TicketListScreen
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
 import com.patloew.oeffitracker.ui.trip.list.TripListScreen
 import com.patloew.oeffitracker.ui.trip.list.TripListViewModel
+import com.patloew.oeffitracker.ui.trip.list.search.TripSearchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /* Copyright 2021 Patrick Löwenstein
@@ -79,15 +81,7 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             TopAppBar(
                                 title = { Text(stringResource(id = R.string.app_name)) },
-                                actions = {
-                                    IconButton(onClick = ::startSettings) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_settings),
-                                            contentDescription = stringResource(id = R.string.accessibility_icon_settings),
-                                            tint = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)
-                                        )
-                                    }
-                                }
+                                actions = { TopAppBarActions(navController) }
                             )
                         },
                         bottomBar = {
@@ -131,5 +125,30 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun TopAppBarActions(navController: NavController) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+        if (navBackStackEntry?.destination?.route == Screen.List.route) {
+            IconButton(onClick = ::startTripSearch) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_search),
+                    contentDescription = stringResource(id = R.string.accessibility_icon_search),
+                    tint = MaterialTheme.colors.onPrimarySurface
+                )
+            }
+        }
+
+        IconButton(onClick = ::startSettings) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_settings),
+                contentDescription = stringResource(id = R.string.accessibility_icon_settings),
+                tint = MaterialTheme.colors.onPrimarySurface
+            )
+        }
+    }
+
     private fun startSettings() = startActivity(Intent(this, SettingsActivity::class.java))
+
+    private fun startTripSearch() = startActivity(Intent(this, TripSearchActivity::class.java))
 }

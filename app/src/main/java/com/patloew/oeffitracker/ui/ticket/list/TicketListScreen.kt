@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketActivity
@@ -50,8 +51,9 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
 
     Surface(color = MaterialTheme.colors.background) {
         Box(modifier = Modifier.fillMaxSize()) {
+            val items = viewModel.tickets.collectAsLazyPagingItems()
             LazyList(
-                data = viewModel.tickets,
+                items = items,
                 getKey = { it.ticket.id },
                 isEmpty = viewModel.isEmpty,
                 emptyTitleRes = R.string.empty_state_ticket_title,

@@ -1,9 +1,14 @@
 package com.patloew.oeffitracker.ui
 
+import androidx.compose.material.Colors
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.contentColorFor
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -169,3 +174,8 @@ fun amountVisualTransformation(): VisualTransformation = VisualTransformation {
     val suffix = if (it.text.isNotEmpty()) " €" else ""
     TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
 }
+
+val Colors.onPrimarySurface
+    @Composable
+    @ReadOnlyComposable
+    get() = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)

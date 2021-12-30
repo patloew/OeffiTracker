@@ -4,16 +4,17 @@ import androidx.room.Room
 import com.patloew.oeffitracker.BuildConfig
 import com.patloew.oeffitracker.data.AppDatabase
 import com.patloew.oeffitracker.data.CustomTypeConverters
-import com.patloew.oeffitracker.data.migration.Migration5To6
 import com.patloew.oeffitracker.data.export.CsvExporter
 import com.patloew.oeffitracker.data.export.JsonExporter
 import com.patloew.oeffitracker.data.export.JsonImporter
+import com.patloew.oeffitracker.data.migration.Migration5To6
 import com.patloew.oeffitracker.data.repository.SettingsRepo
 import com.patloew.oeffitracker.ui.settings.SettingsViewModel
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketViewModel
 import com.patloew.oeffitracker.ui.ticket.list.TicketListViewModel
 import com.patloew.oeffitracker.ui.trip.create.CreateTripViewModel
 import com.patloew.oeffitracker.ui.trip.list.TripListViewModel
+import com.patloew.oeffitracker.ui.trip.list.search.TripSearchViewModel
 import com.squareup.moshi.Moshi
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -53,6 +54,7 @@ val appModule = module {
     single { Moshi.Builder().add(CustomTypeConverters).build() }
 
     viewModel { TripListViewModel(get(), get(), get()) }
+    viewModel { TripSearchViewModel(get()) }
     viewModel { TicketListViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get(), get()) }
 }

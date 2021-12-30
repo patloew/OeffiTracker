@@ -15,7 +15,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,15 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.patloew.oeffitracker.R
-import com.patloew.oeffitracker.ui.common.LazyList
-import com.patloew.oeffitracker.ui.common.ListItem
 import com.patloew.oeffitracker.ui.common.PriceProgress
-import com.patloew.oeffitracker.ui.common.SectionHeader
 import com.patloew.oeffitracker.ui.main.Screen
 import com.patloew.oeffitracker.ui.navigate
 import com.patloew.oeffitracker.ui.trip.create.CreateTripActivity
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /* Copyright 2021 Patrick Löwenstein
@@ -63,36 +59,14 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
         val progressHeight = 52.dp
         val listTopPadding = if (showProgress) progressHeight else 0.dp
 
-        LazyList(
-            data = viewModel.trips,
-            getKey = { listItem ->
-                when (listItem) {
-                    is ListItem.Entry -> listItem.data.id
-                    is ListItem.Section -> listItem.data.hashCode().shl(16)
-                }
-            },
-            isEmpty = viewModel.isEmpty,
-            emptyTitleRes = R.string.empty_state_trip_title,
-            emptyTextRes = R.string.empty_state_trip_text,
+        val items = viewModel.trips.collectAsLazyPagingItems()
+        LazyTripList(
+            items = items,
+            viewModel = viewModel,
+            coroutineScope = coroutineScope,
             listState = listState,
             contentPadding = PaddingValues(top = listTopPadding, bottom = 84.dp)
-        ) { listItem ->
-            when (listItem) {
-                is ListItem.Entry -> TripItem(
-                    listItem.data,
-                    viewModel::onDelete,
-                    viewModel::getTemplateForToday,
-                    viewModel::getReturnTemplate,
-                    scrollToTop = { coroutineScope.launch { listState.animateScrollToItem(0) } }
-                )
-                is ListItem.Section -> SectionHeader(
-                    Modifier.padding(horizontal = 16.dp),
-                    listItem.data.month,
-                    listItem.data.fareSum
-                )
-            }
-
-        }
+        )
 
         if (showProgress) {
             Surface(
@@ -119,9 +93,5 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
                 tint = MaterialTheme.colors.onSecondary
             )
         }
-    }
-
-    LaunchedEffect(viewModel.scrollToTopEvent) {
-        viewModel.scrollToTopEvent.collect { listState.animateScrollToItem(0) }
     }
 }

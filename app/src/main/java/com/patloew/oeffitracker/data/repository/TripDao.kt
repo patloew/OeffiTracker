@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+private const val SEARCH_WHERE_CLAUSE = "startCity LIKE  '%' || :query || '%' OR endCity LIKE  '%' || :query || '%'"
+
 @Dao
 interface TripDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -38,6 +40,9 @@ interface TripDao {
 
     @Query("SELECT COUNT(*) FROM trip")
     fun getCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM trip WHERE $SEARCH_WHERE_CLAUSE")
+    fun getSearchCount(query: String): Flow<Int>
 
     @Query(
         """
@@ -60,9 +65,23 @@ interface TripDao {
             DateTimeFormatter.ISO_DATE.format(endDate)
         )
 
+    @Query("SELECT COALESCE(SUM(fare), 0) FROM trip WHERE date BETWEEN :startDate and :endDate AND ($SEARCH_WHERE_CLAUSE)")
+    suspend fun getSearchSumOfFaresBetween(query: String, startDate: String, endDate: String): Long
+
+    suspend fun getSearchSumOfFaresBetween(query: String, startDate: LocalDate, endDate: LocalDate): Long =
+        getSearchSumOfFaresBetween(
+            query,
+            DateTimeFormatter.ISO_DATE.format(startDate),
+            DateTimeFormatter.ISO_DATE.format(endDate)
+        )
+
     @Transaction
     @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")
     suspend fun getAll(): List<Trip>
+
+    @Transaction
+    @Query("SELECT * FROM trip WHERE $SEARCH_WHERE_CLAUSE ORDER BY date DESC, createdTimestamp DESC")
+    fun getSearchPagingSource(query: String): PagingSource<Int, Trip>
 
     @Transaction
     @Query("SELECT * FROM trip ORDER BY date DESC, createdTimestamp DESC")

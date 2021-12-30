@@ -25,6 +25,11 @@
         </activity>
 
         <activity
+            android:name=".ui.trip.list.search.TripSearchActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+
+        <activity
             android:name=".ui.trip.create.CreateTripActivity"
             android:label="@string/toolbar_title_create_trip"
             android:windowSoftInputMode="adjustResize"

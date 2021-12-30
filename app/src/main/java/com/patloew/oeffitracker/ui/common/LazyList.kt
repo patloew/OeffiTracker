@@ -12,8 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import kotlinx.coroutines.flow.Flow
 
@@ -33,7 +32,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun <T : Any> LazyList(
-    data: Flow<PagingData<T>>,
+    items: LazyPagingItems<T>,
     getKey: ((T) -> Any)? = null,
     isEmpty: Flow<Boolean>,
     @StringRes emptyTitleRes: Int,
@@ -46,9 +45,8 @@ fun <T : Any> LazyList(
         if (isEmpty.collectAsState(initial = true).value) {
             EmptyState(titleRes = emptyTitleRes, textRes = emptyTextRes)
         } else {
-            val lazyTicketItems = data.collectAsLazyPagingItems()
             LazyColumn(state = listState, contentPadding = contentPadding) {
-                items(items = lazyTicketItems, key = getKey) { itemData ->
+                items(items = items, key = getKey) { itemData ->
                     item(itemData)
                     Divider()
                 }

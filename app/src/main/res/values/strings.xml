@@ -83,4 +83,7 @@
     <string name="alert_import_json_text">Importing data from a JSON file will overwrite all existing app data. Any data you entered will be replaced by the data from the JSON file and can not be restored. Optionally, app settings can also be imported.</string>
     <string name="alert_import_json_settings_import">Import settings</string>
     <string name="action_choose_file">Choose file</string>
+    <string name="accessibility_icon_search">Search</string>
+    <string name="empty_state_trip_search_title">No trips found</string>
+    <string name="empty_state_trip_search_text">Found no trips which contain the search query in departure or destination.</string>
 </resources>

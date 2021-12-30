@@ -84,4 +84,7 @@
     <string name="alert_import_json_text">Vorhandene Daten in der App werden beim Importieren einer JSON Datei überschrieben. Zuvor eingegebene Daten werden durch die Daten aus der JSON Datei ersetzt und können nicht wiederhergestellt werden. Optional können auch die App Einstellungen importiert werden.</string>
     <string name="alert_import_json_settings_import">Einstellungen importieren</string>
     <string name="action_choose_file">Datei auswählen</string>
+    <string name="accessibility_icon_search">Suche</string>
+    <string name="empty_state_trip_search_title">Keine Fahrten gefunden</string>
+    <string name="empty_state_trip_search_text">Es wurden keine Fahrten gefunden, die den Suchbegriff im Start oder Ziel beinhalten.</string>
 </resources>
