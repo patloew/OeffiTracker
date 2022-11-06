@@ -66,6 +66,7 @@ fun LazyTripList(
                 listItem.data.month,
                 listItem.data.fareSum
             )
+            else -> Unit
         }
     }
 }

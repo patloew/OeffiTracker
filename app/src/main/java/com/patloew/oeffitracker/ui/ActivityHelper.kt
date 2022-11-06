@@ -23,6 +23,6 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModelFactory(
     crossinline createViewModel: () -> VM
 ): Lazy<VM> = viewModels {
     object : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T = createViewModel() as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = createViewModel() as T
     }
 }
