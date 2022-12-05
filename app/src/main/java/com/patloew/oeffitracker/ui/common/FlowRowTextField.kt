@@ -34,6 +34,7 @@ import com.patloew.oeffitracker.R
 @Composable
 fun FlowRowTextField(
     modifier: Modifier,
+    label: String,
     content: @Composable () -> Unit
 ) {
     Box(modifier = modifier) {
@@ -52,9 +53,9 @@ fun FlowRowTextField(
         )
 
         Text(
-            text = stringResource(id = R.string.label_transport_type),
+            text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .padding(start = 12.dp)
                 .background(MaterialTheme.colorScheme.surface)

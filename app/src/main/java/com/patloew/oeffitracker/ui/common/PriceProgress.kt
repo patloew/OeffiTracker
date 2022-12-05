@@ -59,7 +59,7 @@ fun PriceProgress(
                 progressData.percentageString,
                 progressData.priceString,
             ),
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.titleSmall
         )
     }
 }

@@ -42,7 +42,7 @@ fun CheckedText(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { setCheckedState(!checked) }
-            .padding(vertical = 16.dp)
+            .padding(vertical = 10.dp)
             .then(modifier)
 
     ) {
@@ -55,6 +55,7 @@ fun CheckedText(
         }
         Text(
             text = text,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f)
                 .padding(

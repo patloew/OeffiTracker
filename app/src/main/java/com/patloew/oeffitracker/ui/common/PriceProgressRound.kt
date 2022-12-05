@@ -43,8 +43,8 @@ fun PriceProgressRound(
     modifier: Modifier
 ) {
     Box(modifier = modifier) {
-        val h6Style = MaterialTheme.typography.titleSmall
-        var textStyle by remember { mutableStateOf(h6Style) }
+        val baseTextStyle = MaterialTheme.typography.titleMedium
+        var textStyle by remember { mutableStateOf(baseTextStyle) }
         var textSizingFinished by remember { mutableStateOf(false) }
 
         CircularProgressIndicator(

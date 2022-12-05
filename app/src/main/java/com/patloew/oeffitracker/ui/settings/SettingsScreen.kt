@@ -135,7 +135,7 @@ fun SettingsContent(
         Text(
             text = stringResource(id = R.string.settings_optional_trip_fields_description),
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.67f),
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
@@ -190,8 +190,6 @@ fun SettingsContent(
             setCheckedState = { viewModel.setOptionalTripFieldEnabled(OptionalTripField.NOTES, it) }
         )
 
-        Divider()
-
         SectionHeader(
             text = stringResource(id = R.string.section_settings_progress),
             modifier = Modifier
@@ -205,8 +203,6 @@ fun SettingsContent(
             checked = viewModel.includeDeductionsInProgress.collectAsState().value,
             setCheckedState = { viewModel.setIncludeDeductionsInProgress(it) }
         )
-
-        Divider()
 
         SectionHeader(
             text = stringResource(id = R.string.section_settings_export),
@@ -262,8 +258,6 @@ fun SettingsContent(
             }
         }
 
-        Divider()
-
         SectionHeader(
             text = stringResource(id = R.string.section_settings_import),
             modifier = Modifier
@@ -290,17 +284,14 @@ fun SettingsContent(
             }
         }
 
-        Divider()
-
         Text(
             text = stringResource(id = R.string.app_name) + " v" + BuildConfig.VERSION_NAME,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.CenterHorizontally)
         )
-
 
         ActionAlertDialog(
             showAlertDialog = showImportDialog,
@@ -309,7 +300,8 @@ fun SettingsContent(
                 Column {
                     Text(
                         stringResource(id = R.string.alert_import_json_text),
-                        Modifier.padding(bottom = 16.dp)
+                        Modifier.padding(bottom = 16.dp),
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                     CheckedText(
                         iconRes = R.drawable.ic_settings,

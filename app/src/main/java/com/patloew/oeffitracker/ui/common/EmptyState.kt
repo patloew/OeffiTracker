@@ -44,13 +44,13 @@ fun EmptyState(
         Text(
             text = stringResource(id = titleRes),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.headlineSmall
         )
         Text(
             modifier = Modifier.padding(top = 16.dp),
             text = stringResource(id = textRes),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 

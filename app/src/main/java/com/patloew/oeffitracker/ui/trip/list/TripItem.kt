@@ -104,8 +104,7 @@ fun TripItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium
             )
 
             Box(
@@ -147,8 +146,7 @@ fun TripItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium
             )
 
             Text(
@@ -161,7 +159,7 @@ fun TripItem(
                     .alpha(if (trip.fare == null) 0.6f else 1f),
                 text = trip.bigDecimalFare?.let(priceFormatFloat::format) ?: "? €",
                 maxLines = 1,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium
             )
 
             val typeAndDate = buildString {
@@ -185,7 +183,7 @@ fun TripItem(
                 maxLines = 1,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.67f),
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.bodySmall
             )
 
             if (trip.hasAdditionalInfos) {

@@ -39,7 +39,7 @@ fun SectionHeader(
             text = text,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.weight(1f)
         )
 
@@ -48,7 +48,7 @@ fun SectionHeader(
                 text = endText,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.titleSmall
             )
         }
 

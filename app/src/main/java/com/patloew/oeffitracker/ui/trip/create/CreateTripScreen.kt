@@ -350,6 +350,7 @@ fun CreateTripContent(
 
             if (isOptionalFieldEnabled(OptionalTripField.TYPE)) {
                 FlowRowTextField(
+                    label = stringResource(id = R.string.label_transport_type),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)

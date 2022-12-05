@@ -91,9 +91,7 @@ fun TicketItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium
             )
 
             Icon(
@@ -120,7 +118,7 @@ fun TicketItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Icon(
@@ -148,7 +146,7 @@ fun TicketItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
 
             if (isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS) && data.additionalCostsSum != null) {
@@ -177,7 +175,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Spacer(
@@ -214,7 +212,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Spacer(
@@ -251,7 +249,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Spacer(
@@ -291,7 +289,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Spacer(
@@ -331,7 +329,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Spacer(
@@ -367,7 +365,7 @@ fun TicketItem(
                         .padding(bottom = 2.dp),
                     text = stringResource(id = R.string.item_ticket_favorite_hint),
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
