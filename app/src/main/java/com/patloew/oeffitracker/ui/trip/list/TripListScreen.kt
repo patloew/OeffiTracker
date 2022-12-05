@@ -1,19 +1,18 @@
 package com.patloew.oeffitracker.ui.trip.list
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,6 +43,7 @@ import kotlinx.coroutines.launch
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
     val coroutineScope = rememberCoroutineScope()
@@ -56,8 +56,8 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         val showProgress = viewModel.showProgress.collectAsState(initial = false).value
-        val progressHeight = 52.dp
-        val listTopPadding = if (showProgress) progressHeight else 0.dp
+        val progressHeight = 48.dp
+        val listTopPadding = if (showProgress) progressHeight + 16.dp * 2 else 0.dp
 
         val items = viewModel.trips.collectAsLazyPagingItems()
         LazyTripList(
@@ -65,15 +65,16 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             viewModel = viewModel,
             coroutineScope = coroutineScope,
             listState = listState,
-            contentPadding = PaddingValues(top = listTopPadding, bottom = 84.dp)
+            contentPadding = PaddingValues(top = listTopPadding, bottom = 64.dp)
         )
 
         if (showProgress) {
-            Surface(
-                elevation = 2.dp,
+            Card(
                 modifier = Modifier
-                    .height(progressHeight)
-                    .clickable { navController.navigate(Screen.Tickets) }) {
+                    .padding(16.dp)
+                    .height(progressHeight),
+                onClick = { navController.navigate(Screen.Tickets) }
+            ) {
                 PriceProgress(
                     progressDataFlow = viewModel.fareProgressData,
                     modifier = Modifier.padding(16.dp)
@@ -90,7 +91,6 @@ fun TripListScreen(navController: NavController, viewModel: TripListViewModel) {
             Icon(
                 Icons.Filled.Add,
                 stringResource(id = R.string.accessibility_icon_add),
-                tint = MaterialTheme.colors.onSecondary
             )
         }
     }

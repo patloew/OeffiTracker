@@ -8,10 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.Flow
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClickActionTextField(
     modifier: Modifier = Modifier,
@@ -57,7 +59,7 @@ fun ClickActionTextField(
                 Icon(
                     painterResource(id = iconRes),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = { Text(stringResource(id = labelRes)) }
@@ -73,7 +75,7 @@ fun ClickActionTextField(
             Icon(
                 painterResource(id = R.drawable.ic_clear),
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface.copy(alpha = 0.67f),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.67f),
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .clip(CircleShape)

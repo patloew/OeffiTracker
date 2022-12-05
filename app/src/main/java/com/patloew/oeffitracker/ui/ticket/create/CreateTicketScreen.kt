@@ -1,7 +1,6 @@
 package com.patloew.oeffitracker.ui.ticket.create
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,15 +10,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -59,6 +61,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTicketScreen(
     navigationAction: () -> Unit,
@@ -67,41 +70,46 @@ fun CreateTicketScreen(
     onCreateClick: () -> Unit,
     viewModel: CreateTicketViewModel
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Surface(color = MaterialTheme.colors.background) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                TopAppBar(
-                    title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
-                    navigationIcon = { NavigationBackIcon { navigationAction() } }
-                )
-            },
-            content = {
-                CreateTicketContent(
-                    onStartDateClick,
-                    onEndDateClick,
-                    onCreateClick,
-                    viewModel::setPrice,
-                    viewModel::setDeduction,
-                    viewModel.saveEnabled,
-                    viewModel.endDateBeforeStartDate,
-                    viewModel.overlappingTicket,
-                    viewModel.name,
-                    viewModel.startDateString,
-                    viewModel.endDateString,
-                    viewModel.initialPrice,
-                    viewModel.initialDeduction,
-                    viewModel.buttonTextRes
-                )
-            }
-        )
-    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            MediumTopAppBar(
+                title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
+                navigationIcon = { NavigationBackIcon { navigationAction() } },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        content = { paddingValues ->
+            CreateTicketContent(
+                Modifier
+                    .padding(paddingValues)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                onStartDateClick,
+                onEndDateClick,
+                onCreateClick,
+                viewModel::setPrice,
+                viewModel::setDeduction,
+                viewModel.saveEnabled,
+                viewModel.endDateBeforeStartDate,
+                viewModel.overlappingTicket,
+                viewModel.name,
+                viewModel.startDateString,
+                viewModel.endDateString,
+                viewModel.initialPrice,
+                viewModel.initialDeduction,
+                viewModel.buttonTextRes
+            )
+        }
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTicketContent(
+    modifier: Modifier = Modifier,
     onStartDateClick: () -> Unit,
     onEndDateClick: () -> Unit,
     onCreateClick: () -> Unit,
@@ -118,9 +126,8 @@ fun CreateTicketContent(
     @StringRes buttonTextRes: Int
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -137,7 +144,7 @@ fun CreateTicketContent(
                 Icon(
                     painterResource(id = R.drawable.ic_receipt),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -157,7 +164,7 @@ fun CreateTicketContent(
                 Icon(
                     painterResource(id = R.drawable.ic_fare),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             visualTransformation = amountVisualTransformation(),
@@ -178,7 +185,7 @@ fun CreateTicketContent(
                 Icon(
                     painterResource(id = R.drawable.ic_deduction),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             visualTransformation = amountVisualTransformation(),
@@ -189,7 +196,7 @@ fun CreateTicketContent(
 
         Text(
             text = stringResource(id = R.string.ticket_deduction_hint),
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp)
         )
 
@@ -213,19 +220,19 @@ fun CreateTicketContent(
         val (validityHintText, validityHintColor) = when {
             endDateBeforeStartDate.collectAsState(initial = false).value ->
                 stringResource(id = R.string.ticket_trip_validity_hint_enddate_startdate_error) to
-                    MaterialTheme.colors.error
+                    MaterialTheme.colorScheme.error
             overlappingTicketValue != null ->
                 stringResource(
                     id = R.string.ticket_trip_validity_hint_overlap_error,
                     overlappingTicketValue.name,
                     overlappingTicketValue.validityPeriod
-                ) to MaterialTheme.colors.error
+                ) to MaterialTheme.colorScheme.error
             else -> stringResource(id = R.string.ticket_trip_validity_hint) to Color.Unspecified
         }
 
         Text(
             text = validityHintText,
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.labelSmall,
             color = validityHintColor,
             modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp)
         )

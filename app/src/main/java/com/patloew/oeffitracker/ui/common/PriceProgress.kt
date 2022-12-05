@@ -1,10 +1,11 @@
 package com.patloew.oeffitracker.ui.common
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -37,16 +38,17 @@ data class ProgressData(
 @Composable
 fun PriceProgress(
     progressDataFlow: Flow<ProgressData>,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
 ) {
     val progressData = progressDataFlow.collectAsState(initial = ProgressData(0f, "", "")).value
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LinearProgressIndicator(
             progress = progressData.progress,
-            backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.34f),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.34f),
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 16.dp)
@@ -57,7 +59,7 @@ fun PriceProgress(
                 progressData.percentageString,
                 progressData.priceString,
             ),
-            style = MaterialTheme.typography.subtitle2
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }

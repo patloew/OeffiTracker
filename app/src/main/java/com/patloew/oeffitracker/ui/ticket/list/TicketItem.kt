@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -66,7 +66,7 @@ fun TicketItem(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { editTicketLauncher.launch(data.ticket) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
@@ -93,7 +93,7 @@ fun TicketItem(
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Icon(
@@ -104,7 +104,7 @@ fun TicketItem(
                         start.linkTo(parent.start)
                         top.linkTo(name.bottom, margin = 12.dp)
                     },
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -120,7 +120,7 @@ fun TicketItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.bodySmall
             )
 
             Icon(
@@ -131,7 +131,7 @@ fun TicketItem(
                         start.linkTo(parent.start)
                         top.linkTo(dateIcon.bottom, margin = 8.dp)
                     },
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -148,7 +148,7 @@ fun TicketItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.bodySmall
             )
 
             if (isOptionalFieldEnabled(OptionalTripField.ADDITIONAL_COSTS) && data.additionalCostsSum != null) {
@@ -160,7 +160,7 @@ fun TicketItem(
                             start.linkTo(parent.start)
                             top.linkTo(priceIcon.bottom, margin = 8.dp)
                         },
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -177,7 +177,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 Spacer(
@@ -197,7 +197,7 @@ fun TicketItem(
                             start.linkTo(parent.start)
                             top.linkTo(additionalCostsIcon.bottom, margin = 8.dp)
                         },
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -214,7 +214,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 Spacer(
@@ -234,7 +234,7 @@ fun TicketItem(
                             start.linkTo(parent.start)
                             top.linkTo(durationIcon.bottom, margin = 8.dp)
                         },
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -251,7 +251,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 Spacer(
@@ -271,7 +271,7 @@ fun TicketItem(
                             start.linkTo(parent.start)
                             top.linkTo(delayIcon.bottom, margin = 8.dp)
                         },
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -291,7 +291,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 Spacer(
@@ -311,7 +311,7 @@ fun TicketItem(
                             start.linkTo(parent.start)
                             top.linkTo(distanceIcon.bottom, margin = 8.dp)
                         },
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -331,7 +331,7 @@ fun TicketItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 Spacer(
@@ -352,7 +352,7 @@ fun TicketItem(
                             top.linkTo(co2Icon.bottom, margin = 8.dp)
                         }
                         .size(22.dp),
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -367,7 +367,7 @@ fun TicketItem(
                         .padding(bottom = 2.dp),
                     text = stringResource(id = R.string.item_ticket_favorite_hint),
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
@@ -391,10 +391,13 @@ fun TicketItem(
                 },
                 showMoreMenu = showMoreMenu
             ) {
-                DropdownMenuItem(onClick = {
-                    showMoreMenu.value = false
-                    showDeleteDialog.value = true
-                }) { Text(stringResource(id = R.string.action_delete)) }
+                DropdownMenuItem(
+                    onClick = {
+                        showMoreMenu.value = false
+                        showDeleteDialog.value = true
+                    },
+                    text = { Text(stringResource(id = R.string.action_delete)) }
+                )
             }
 
             ActionAlertDialog(
@@ -406,7 +409,7 @@ fun TicketItem(
                     data.validityPeriod
                 ),
                 confirmButtonText = stringResource(id = R.string.action_delete),
-                confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error),
+                confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 positiveAction = { onDelete(data.ticket.id) }
             )
         }
@@ -432,7 +435,7 @@ fun TicketItem(
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Icon(
@@ -445,7 +448,7 @@ fun TicketItem(
                         bottom.linkTo(priceIcon.top)
                     }
                     .padding(bottom = 1.dp),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Icon(
@@ -458,7 +461,7 @@ fun TicketItem(
                         bottom.linkTo(parent.bottom)
                     }
                     .padding(bottom = 1.dp),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             PriceProgressRound(

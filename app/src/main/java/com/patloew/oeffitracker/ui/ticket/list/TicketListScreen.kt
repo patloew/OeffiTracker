@@ -2,15 +2,14 @@ package com.patloew.oeffitracker.ui.ticket.list
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,7 +21,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.common.LazyList
 import com.patloew.oeffitracker.ui.ticket.create.CreateTicketActivity
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /* Copyright 2021 Patrick Löwenstein
@@ -49,37 +47,35 @@ fun TicketListScreen(viewModel: TicketListViewModel) {
             if (created) coroutineScope.launch { listState.animateScrollToItem(0) }
         }
 
-    Surface(color = MaterialTheme.colors.background) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val items = viewModel.tickets.collectAsLazyPagingItems()
-            LazyList(
-                items = items,
-                getKey = { it.ticket.id },
-                isEmpty = viewModel.isEmpty,
-                emptyTitleRes = R.string.empty_state_ticket_title,
-                emptyTextRes = R.string.empty_state_ticket_text,
-                listState = listState
-            ) { ticket ->
-                TicketItem(
-                    viewModel::onDelete,
-                    viewModel.highlightedTicketId,
-                    viewModel.optionalTripFieldEnabledMap,
-                    ticket
-                )
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+        val items = viewModel.tickets.collectAsLazyPagingItems()
+        LazyList(
+            items = items,
+            getKey = { it.ticket.id },
+            isEmpty = viewModel.isEmpty,
+            emptyTitleRes = R.string.empty_state_ticket_title,
+            emptyTextRes = R.string.empty_state_ticket_text,
+            listState = listState,
+            contentPadding = PaddingValues(bottom = 64.dp)
+        ) { ticket ->
+            TicketItem(
+                viewModel::onDelete,
+                viewModel.highlightedTicketId,
+                viewModel.optionalTripFieldEnabledMap,
+                ticket
+            )
+        }
 
-            FloatingActionButton(
-                onClick = { createTicketLauncher.launch(Unit) },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    stringResource(id = R.string.accessibility_icon_add),
-                    tint = MaterialTheme.colors.onSecondary
-                )
-            }
+        FloatingActionButton(
+            onClick = { createTicketLauncher.launch(Unit) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                Icons.Filled.Add,
+                stringResource(id = R.string.accessibility_icon_add),
+            )
         }
     }
 

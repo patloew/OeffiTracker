@@ -3,9 +3,9 @@ package com.patloew.oeffitracker.ui.common
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,19 +43,19 @@ fun PriceProgressRound(
     modifier: Modifier
 ) {
     Box(modifier = modifier) {
-        val h6Style = MaterialTheme.typography.h6
+        val h6Style = MaterialTheme.typography.titleSmall
         var textStyle by remember { mutableStateOf(h6Style) }
         var textSizingFinished by remember { mutableStateOf(false) }
 
         CircularProgressIndicator(
             progress = 1f,
-            color = MaterialTheme.colors.primary.copy(alpha = 0.34f),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.34f),
             strokeWidth = 6.dp,
             modifier = Modifier.size(80.dp)
         )
         CircularProgressIndicator(
             progress = progressData.progress,
-            color = MaterialTheme.colors.primary,
+            color = MaterialTheme.colorScheme.primary,
             strokeWidth = 6.dp,
             modifier = Modifier.size(80.dp)
         )

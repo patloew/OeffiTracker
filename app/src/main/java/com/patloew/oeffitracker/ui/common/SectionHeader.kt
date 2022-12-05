@@ -3,8 +3,8 @@ package com.patloew.oeffitracker.ui.common
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,18 +37,18 @@ fun SectionHeader(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.weight(1f)
         )
 
         if (endText != null) {
             Text(
                 text = endText,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.labelMedium
             )
         }
 

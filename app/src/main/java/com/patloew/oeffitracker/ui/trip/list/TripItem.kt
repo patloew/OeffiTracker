@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +71,7 @@ fun TripItem(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { editTripLauncher.launch(trip) }
                 .padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 0.dp)
         ) {
@@ -87,7 +87,7 @@ fun TripItem(
                         top.linkTo(parent.top)
                     }
                     .padding(bottom = 1.dp),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -105,7 +105,7 @@ fun TripItem(
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Box(
@@ -118,7 +118,7 @@ fun TripItem(
                     }
                     .size(width = 1.5.dp, height = 8.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(MaterialTheme.colors.onSurface)
+                    .background(MaterialTheme.colorScheme.onSurface)
             )
 
             Icon(
@@ -130,7 +130,7 @@ fun TripItem(
                         top.linkTo(line.bottom)
                         bottom.linkTo(parent.bottom)
                     },
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Text(
@@ -148,7 +148,7 @@ fun TripItem(
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
@@ -161,7 +161,7 @@ fun TripItem(
                     .alpha(if (trip.fare == null) 0.6f else 1f),
                 text = trip.bigDecimalFare?.let(priceFormatFloat::format) ?: "? €",
                 maxLines = 1,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyMedium
             )
 
             val typeAndDate = buildString {
@@ -184,8 +184,8 @@ fun TripItem(
                 text = typeAndDate,
                 maxLines = 1,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.67f),
-                style = MaterialTheme.typography.caption
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.67f),
+                style = MaterialTheme.typography.labelSmall
             )
 
             if (trip.hasAdditionalInfos) {
@@ -199,9 +199,9 @@ fun TripItem(
                         .padding(top = 1.dp),
                     text = trip.additionalInfo,
                     fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 10.sp,
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.labelSmall
                 )
             } else {
                 Spacer(modifier = Modifier.constrainAs(additionalInfos) {
@@ -222,20 +222,29 @@ fun TripItem(
                 },
                 showMoreMenu = showMoreMenu
             ) {
-                DropdownMenuItem(onClick = {
-                    showMoreMenu.value = false
-                    createFromTemplateLauncher.launch(getTemplateForToday(trip))
-                }) { Text(stringResource(id = R.string.action_duplicate_for_today)) }
+                DropdownMenuItem(
+                    onClick = {
+                        showMoreMenu.value = false
+                        createFromTemplateLauncher.launch(getTemplateForToday(trip))
+                    },
+                    text = { Text(stringResource(id = R.string.action_duplicate_for_today)) }
+                )
 
-                DropdownMenuItem(onClick = {
-                    showMoreMenu.value = false
-                    createFromTemplateLauncher.launch(getReturnTemplate(trip))
-                }) { Text(stringResource(id = R.string.action_return_trip)) }
+                DropdownMenuItem(
+                    onClick = {
+                        showMoreMenu.value = false
+                        createFromTemplateLauncher.launch(getReturnTemplate(trip))
+                    },
+                    text = { Text(stringResource(id = R.string.action_return_trip)) }
+                )
 
-                DropdownMenuItem(onClick = {
-                    showMoreMenu.value = false
-                    showDeleteDialog.value = true
-                }) { Text(stringResource(id = R.string.action_delete)) }
+                DropdownMenuItem(
+                    onClick = {
+                        showMoreMenu.value = false
+                        showDeleteDialog.value = true
+                    },
+                    text = { Text(stringResource(id = R.string.action_delete)) }
+                )
             }
 
             ActionAlertDialog(
@@ -248,7 +257,7 @@ fun TripItem(
                     dateFormat.format(trip.date)
                 ),
                 confirmButtonText = stringResource(id = R.string.action_delete),
-                confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.error),
+                confirmButtonTextColor = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 positiveAction = { onDelete(trip.id) }
             )
 
@@ -270,7 +279,7 @@ fun TripItem(
                         top.linkTo(parent.top)
                     }
                     .padding(bottom = 1.dp),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Box(
@@ -283,7 +292,7 @@ fun TripItem(
                     }
                     .size(width = 1.5.dp, height = 6.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(MaterialTheme.colors.onSurface)
+                    .background(MaterialTheme.colorScheme.onSurface)
             )
 
             Icon(
@@ -295,7 +304,7 @@ fun TripItem(
                         top.linkTo(line.bottom)
                         bottom.linkTo(parent.bottom)
                     },
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }

@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,13 +44,13 @@ fun EmptyState(
         Text(
             text = stringResource(id = titleRes),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h5
+            style = MaterialTheme.typography.titleMedium
         )
         Text(
             modifier = Modifier.padding(top = 16.dp),
             text = stringResource(id = textRes),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 

@@ -12,14 +12,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patloew.oeffitracker.BuildConfig
@@ -37,7 +40,6 @@ import com.patloew.oeffitracker.ui.common.ActionAlertDialog
 import com.patloew.oeffitracker.ui.common.CheckedText
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.common.SectionHeader
-import kotlinx.coroutines.flow.collect
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -56,30 +58,37 @@ import kotlinx.coroutines.flow.collect
 private const val MIME_TYPE_CSV = "text/csv"
 private const val MIME_TYPE_JSON = "application/json"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navigationAction: () -> Unit,
     viewModel: SettingsViewModel,
     resources: Resources
 ) {
-    val scaffoldState = rememberScaffoldState()
-
-    Surface(color = MaterialTheme.colors.background) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                TopAppBar(
-                    title = { Text(stringResource(id = R.string.toolbar_title_settings)) },
-                    navigationIcon = { NavigationBackIcon { navigationAction() } }
-                )
-            },
-            content = { SettingsContent(viewModel) }
-        )
-    }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            MediumTopAppBar(
+                title = { Text(stringResource(id = R.string.toolbar_title_settings)) },
+                navigationIcon = { NavigationBackIcon { navigationAction() } },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        content = { paddingValues ->
+            SettingsContent(
+                viewModel = viewModel,
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+            )
+        }
+    )
 
     LaunchedEffect("snackbar") {
         viewModel.snackbarEvent.collect { stringRes ->
-            scaffoldState.snackbarHostState.showSnackbar(
+            snackbarHostState.showSnackbar(
                 message = resources.getString(stringRes)
             )
         }
@@ -88,7 +97,8 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsContent(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    modifier: Modifier = Modifier,
 ) {
     val showImportDialog = remember { mutableStateOf(false) }
     val importSettings = remember { mutableStateOf(false) }
@@ -107,7 +117,7 @@ fun SettingsContent(
         }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
@@ -118,17 +128,17 @@ fun SettingsContent(
         SectionHeader(
             text = stringResource(id = R.string.section_settings_optional_trip_fields),
             modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp)
         )
 
         Text(
             text = stringResource(id = R.string.settings_optional_trip_fields_description),
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.67f),
-            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.67f),
+            style = MaterialTheme.typography.labelSmall,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
@@ -185,7 +195,7 @@ fun SettingsContent(
         SectionHeader(
             text = stringResource(id = R.string.section_settings_progress),
             modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp)
         )
 
@@ -201,14 +211,14 @@ fun SettingsContent(
         SectionHeader(
             text = stringResource(id = R.string.section_settings_export),
             modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp)
         )
 
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
             Button(
@@ -231,7 +241,7 @@ fun SettingsContent(
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
         ) {
@@ -257,14 +267,14 @@ fun SettingsContent(
         SectionHeader(
             text = stringResource(id = R.string.section_settings_import),
             modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp)
         )
 
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
             Button(
@@ -284,8 +294,8 @@ fun SettingsContent(
 
         Text(
             text = stringResource(id = R.string.app_name) + " v" + BuildConfig.VERSION_NAME,
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.4f),
-            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
+            style = MaterialTheme.typography.labelSmall,
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.CenterHorizontally)

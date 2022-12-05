@@ -1,14 +1,10 @@
 package com.patloew.oeffitracker.ui
 
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.primarySurface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -53,6 +49,7 @@ val weightFormat = DecimalFormat("0 kg")
 val dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 val monthFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
 
+@ExperimentalMaterial3Api
 @Composable
 fun PreviewTheme(content: @Composable () -> Unit) {
     OeffiTrackerTheme {
@@ -172,10 +169,9 @@ fun formatDuration(duration: Duration) = if (duration.toHoursPart() == 0) {
 
 fun amountVisualTransformation(): VisualTransformation = VisualTransformation {
     val suffix = if (it.text.isNotEmpty()) " €" else ""
-    TransformedText(AnnotatedString("${it.text}$suffix"), OffsetMapping.Identity)
+    val offsetMapping: OffsetMapping = object : OffsetMapping {
+        override fun originalToTransformed(offset: Int): Int = offset
+        override fun transformedToOriginal(offset: Int): Int = offset.coerceAtMost(it.text.length)
+    }
+    TransformedText(AnnotatedString("${it.text}$suffix"), offsetMapping)
 }
-
-val Colors.onPrimarySurface
-    @Composable
-    @ReadOnlyComposable
-    get() = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)

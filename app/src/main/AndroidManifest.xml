@@ -13,8 +13,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.OeffiTracker.NoActionBar">
+            android:label="@string/app_name">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,26 +24,22 @@
 
         <activity
             android:name=".ui.trip.list.search.TripSearchActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.trip.create.CreateTripActivity"
             android:label="@string/toolbar_title_create_trip"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity
             android:name=".ui.ticket.create.CreateTicketActivity"
             android:label="@string/toolbar_title_create_ticket"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/toolbar_title_settings"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.OeffiTracker.NoActionBar" />
+            android:windowSoftInputMode="adjustResize"/>
 
     </application>
 

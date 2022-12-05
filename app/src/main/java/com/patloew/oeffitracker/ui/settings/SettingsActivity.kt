@@ -3,7 +3,8 @@ package com.patloew.oeffitracker.ui.settings
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patloew.oeffitracker.R
@@ -33,13 +34,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class SettingsActivity : FragmentActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             OeffiTrackerTheme {
                 SettingsScreen(

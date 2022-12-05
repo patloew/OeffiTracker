@@ -2,7 +2,8 @@ package com.patloew.oeffitracker.ui.trip.list.search
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,13 +21,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-class TripSearchActivity : FragmentActivity() {
+class TripSearchActivity : AppCompatActivity() {
 
     private val viewModel: TripSearchViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             OeffiTrackerTheme {
                 TripSearchScreen(

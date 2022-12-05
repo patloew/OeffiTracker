@@ -1,16 +1,14 @@
 package com.patloew.oeffitracker.ui.common
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +41,6 @@ fun CheckedText(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.surface)
             .clickable { setCheckedState(!checked) }
             .padding(vertical = 16.dp)
             .then(modifier)
@@ -53,7 +50,7 @@ fun CheckedText(
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
         Text(
@@ -68,7 +65,6 @@ fun CheckedText(
         Checkbox(
             checked = checked,
             onCheckedChange = setCheckedState,
-            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.primary)
         )
     }
 }

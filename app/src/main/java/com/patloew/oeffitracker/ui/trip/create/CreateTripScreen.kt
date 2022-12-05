@@ -1,7 +1,6 @@
 package com.patloew.oeffitracker.ui.trip.create
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,17 +12,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patloew.oeffitracker.R
@@ -76,6 +79,7 @@ import kotlinx.coroutines.launch
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTripScreen(
     navigationAction: () -> Unit,
@@ -84,51 +88,55 @@ fun CreateTripScreen(
     onDelayClick: () -> Unit,
     viewModel: CreateTripViewModel
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Surface(color = MaterialTheme.colors.background) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                TopAppBar(
-                    title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
-                    navigationIcon = { NavigationBackIcon { navigationAction() } }
-                )
-            },
-            content = {
-                CreateTripContent(
-                    onDateClick,
-                    onDurationClick,
-                    onDurationClear = { viewModel.duration.value = null },
-                    onDelayClick,
-                    onDelayClear = { viewModel.delay.value = null },
-                    viewModel::onTypeClick,
-                    viewModel::onCreate,
-                    viewModel::setFare,
-                    viewModel::setAdditionalCosts,
-                    viewModel::setDistance,
-                    viewModel.saveEnabled,
-                    viewModel.optionalTripFieldEnabledMap,
-                    viewModel.startCity,
-                    viewModel.endCity,
-                    viewModel.durationString,
-                    viewModel.delayString,
-                    viewModel.dateString,
-                    viewModel.types,
-                    viewModel.initialFare,
-                    viewModel.initialAdditionalCosts,
-                    viewModel.initialDistance,
-                    viewModel.notes,
-                    viewModel.buttonTextRes
-                )
-            }
-        )
-    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            MediumTopAppBar(
+                title = { Text(stringResource(id = viewModel.toolbarTitleRes)) },
+                navigationIcon = { NavigationBackIcon { navigationAction() } },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        content = { paddingValues ->
+            CreateTripContent(
+                Modifier
+                    .padding(paddingValues)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                onDateClick,
+                onDurationClick,
+                onDurationClear = { viewModel.duration.value = null },
+                onDelayClick,
+                onDelayClear = { viewModel.delay.value = null },
+                viewModel::onTypeClick,
+                viewModel::onCreate,
+                viewModel::setFare,
+                viewModel::setAdditionalCosts,
+                viewModel::setDistance,
+                viewModel.saveEnabled,
+                viewModel.optionalTripFieldEnabledMap,
+                viewModel.startCity,
+                viewModel.endCity,
+                viewModel.durationString,
+                viewModel.delayString,
+                viewModel.dateString,
+                viewModel.types,
+                viewModel.initialFare,
+                viewModel.initialAdditionalCosts,
+                viewModel.initialDistance,
+                viewModel.notes,
+                viewModel.buttonTextRes
+            )
+        }
+    )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTripContent(
+    modifier: Modifier = Modifier,
     onDateClick: () -> Unit,
     onDurationClick: () -> Unit,
     onDurationClear: () -> Unit,
@@ -154,9 +162,8 @@ fun CreateTripContent(
     @StringRes buttonTextRes: Int
 ) {
     Box(
-        Modifier
+        modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
             .padding(horizontal = 16.dp)
     ) {
         val coroutineScope = rememberCoroutineScope()
@@ -193,7 +200,7 @@ fun CreateTripContent(
                     Icon(
                         Icons.Filled.Place,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -212,7 +219,7 @@ fun CreateTripContent(
                     Icon(
                         painterResource(id = R.drawable.ic_flag),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -244,7 +251,7 @@ fun CreateTripContent(
                     Icon(
                         painterResource(id = R.drawable.ic_fare),
                         contentDescription = null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 visualTransformation = amountVisualTransformation(),
@@ -272,7 +279,7 @@ fun CreateTripContent(
                         Icon(
                             painterResource(id = R.drawable.ic_price_plus),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     visualTransformation = amountVisualTransformation(),
@@ -283,7 +290,13 @@ fun CreateTripContent(
                             else -> keyboardController?.hide()
                         }
                     }),
-                    label = { Text(stringResource(id = R.string.label_additional_costs)) }
+                    label = {
+                        Text(
+                            stringResource(id = R.string.label_additional_costs),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 )
             }
 
@@ -300,7 +313,7 @@ fun CreateTripContent(
                         Icon(
                             painterResource(id = R.drawable.ic_distance),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     visualTransformation = {
@@ -366,7 +379,7 @@ fun CreateTripContent(
                         Icon(
                             painterResource(id = R.drawable.ic_note),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),

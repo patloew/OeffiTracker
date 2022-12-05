@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -48,7 +47,6 @@ fun <T : Any> LazyList(
             LazyColumn(state = listState, contentPadding = contentPadding) {
                 items(items = items, key = getKey) { itemData ->
                     item(itemData)
-                    Divider()
                 }
             }
         }

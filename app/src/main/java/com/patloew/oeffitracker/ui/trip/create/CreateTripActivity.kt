@@ -7,7 +7,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.StringRes
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.flowWithLifecycle
@@ -29,7 +30,6 @@ import com.patloew.oeffitracker.ui.viewModelFactory
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -55,7 +55,7 @@ import java.time.LocalDate
 private const val EXTRA_EDIT_TRIP = "editTrip"
 private const val EXTRA_TEMPLATE_TRIP = "templateTrip"
 
-class CreateTripActivity : FragmentActivity() {
+class CreateTripActivity : AppCompatActivity() {
 
     object CreateContract : ActivityResultContract<Unit, Boolean>() {
         override fun createIntent(context: Context, input: Unit): Intent =
@@ -98,7 +98,7 @@ class CreateTripActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             OeffiTrackerTheme {
                 CreateTripScreen(
