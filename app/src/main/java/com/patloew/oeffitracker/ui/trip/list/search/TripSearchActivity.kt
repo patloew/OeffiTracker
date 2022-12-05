@@ -3,7 +3,6 @@ package com.patloew.oeffitracker.ui.trip.list.search
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import com.patloew.oeffitracker.ui.theme.OeffiTrackerTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -27,7 +26,6 @@ class TripSearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             OeffiTrackerTheme {
                 TripSearchScreen(

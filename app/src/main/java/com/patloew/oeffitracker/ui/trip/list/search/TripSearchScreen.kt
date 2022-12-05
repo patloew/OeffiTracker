@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.patloew.oeffitracker.R
 import com.patloew.oeffitracker.ui.common.NavigationBackIcon
 import com.patloew.oeffitracker.ui.trip.list.LazyTripList
+import kotlinx.coroutines.delay
 
 /* Copyright 2021 Patrick Löwenstein
  *
@@ -58,7 +60,7 @@ fun TripSearchScreen(viewModel: TripSearchViewModel, onNavigationClick: () -> Un
 
                     BasicTextField(
                         modifier = Modifier.focusRequester(queryFocusRequester),
-                        textStyle = MaterialTheme.typography.titleLarge,
+                        textStyle = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                         singleLine = true,
                         value = viewModel.query.collectAsState().value,
@@ -79,9 +81,9 @@ fun TripSearchScreen(viewModel: TripSearchViewModel, onNavigationClick: () -> Un
                         }
                     )
 
-                    DisposableEffect(Unit) {
+                    LaunchedEffect(Unit) {
+                        delay(50)
                         queryFocusRequester.requestFocus()
-                        onDispose { }
                     }
                 },
                 navigationIcon = { NavigationBackIcon { onNavigationClick() } }
